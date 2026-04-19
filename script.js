@@ -1,298 +1,231 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ========== КОНФИГУРАЦИЯ ПОЧТЫ ==========
-    // 🔑 Зарегистрируйтесь на https://web3forms.com/ (бесплатно)
-    // Создайте форму, скопируйте Access Key и вставьте сюда:
-    const EMAIL_ACCESS_KEY = 'ВАШ_КЛЮЧ_WEB3FORMS'; 
-    const EMAIL_RECIPIENT = 'ваш@email.com'; // Ваш email для получения результатов
-
-    // ========== ДАННЫЕ ТЕСТОВ ==========
-    const tests = [
-        {
-            id: 'knyazya',
-            title: 'Древняя Русь: первые князья',
-            description: 'Рюрик, Олег, Игорь, Ольга. Проверь знания о становлении государства.',
-            questions: [
-                { q: 'В каком году произошло призвание варягов на Русь?', options: ['862', '882', '911', '988'], correct: 0 },
-                { q: 'Кто захватил Киев в 882 году и объединил северные и южные земли?', options: ['Рюрик', 'Олег Вещий', 'Игорь Рюрикович', 'Святослав'], correct: 1 },
-                { q: 'Какое племя убило князя Игоря при сборе дани?', options: ['Поляне', 'Древляне', 'Кривичи', 'Вятичи'], correct: 1 },
-                { q: 'Что ввела княгиня Ольга вместо полюдья?', options: ['Налоги серебром', 'Уроки и погосты', 'Военную повинность', 'Торговые пошлины'], correct: 1 },
-                { q: 'Кто был первым правителем Древнерусского государства?', options: ['Олег Вещий', 'Игорь', 'Рюрик', 'Святослав'], correct: 2 }
-            ]
-        }
-    ];
-
-    // ========== СОСТОЯНИЕ ==========
+    // === НАСТРОЙКИ ===
+    const EMAIL_RECIPIENT = 'aniruf14.02@gmail.com';
+    let userFIO = '';
+    let userEmail = '';
+    let pendingTest = null;
     let currentTest = null;
     let currentQIndex = 0;
     let score = 0;
     let answered = false;
-    
-    // Пройденные тесты
-    let completedTests = JSON.parse(localStorage.getItem('foxGarden_completed') || '[]');
-    
-    // Тема
-    let isLightTheme = localStorage.getItem('foxGarden_theme') === 'light';
 
-    // ========== ТЕМА ==========
-    function applyTheme() {
-        document.body.classList.toggle('light-theme', isLightTheme);
-        document.querySelectorAll('.theme-toggle').forEach(btn => {
-            btn.textContent = isLightTheme ? '🌙' : '🌓';
-        });
-        localStorage.setItem('foxGarden_theme', isLightTheme ? 'light' : 'dark');
-    }
-    
-    document.querySelectorAll('.theme-toggle').forEach(btn => {
-        btn.addEventListener('click', () => {
-            isLightTheme = !isLightTheme;
-            applyTheme();
-        });
-    });
-    applyTheme();
+    // === ДАННЫЕ ТЕСТОВ ===
+    const tests = [
+        {
+            id: 'knyazya',
+            title: 'Древняя Русь: первые князья',
+            desc: 'Рюрик, Олег, Игорь, Ольга.',
+            questions: [
+                { q: 'В каком году произошло призвание варягов на Русь?', options: ['862', '882', '911', '988'], correct: 0 },
+                { q: 'Кто захватил Киев в 882 году?', options: ['Рюрик', 'Олег', 'Игорь', 'Святослав'], correct: 1 },
+                { q: 'Какое племя убило князя Игоря?', options: ['Поляне', 'Древляне', 'Вятичи', 'Кривичи'], correct: 1 },
+                { q: 'Что ввела княгиня Ольга вместо полюдья?', options: ['Налоги серебром', 'Уроки и погосты', 'Свободную торговлю', 'Воинскую повинность'], correct: 1 },
+                { q: 'Кто стал первым киевским князем династии Рюриковичей?', options: ['Рюрик', 'Олег', 'Игорь', 'Владимир'], correct: 1 }
+            ]
+        }
+    ];
 
-    // ========== НАВИГАЦИЯ ==========
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    renderTests();
+    applyTheme(localStorage.getItem('theme') === 'light');
+    createPetals();
+
+    // === НАВИГАЦИЯ ===
     window.switchTab = (tabId) => {
-        document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => 
-            btn.classList.toggle('active', btn.dataset.tab === tabId)
-        );
-        document.querySelectorAll('.tab-content').forEach(sec => 
-            sec.classList.toggle('active', sec.id === tabId)
-        );
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+        document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.id === tabId));
     };
 
     document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
 
-    // ========== РЕНДЕР ТЕСТОВ ==========
-    function renderTests() {
-        const testsGrid = document.getElementById('tests-grid');
-        testsGrid.innerHTML = '';
-        
-        tests.forEach(test => {
-            const isCompleted = completedTests.includes(test.id);
-            const card = document.createElement('div');
-            card.className = `test-card ${isCompleted ? 'completed' : ''}`;
-            card.innerHTML = `
-                ${isCompleted ? '<span class="completed-badge">✅ Пройден</span>' : ''}
-                <h3>${test.title}</h3>
-                <p>${test.description}</p>
-                <span class="badge">${test.questions.length} вопросов</span>
-            `;
-            card.addEventListener('click', () => startTest(test));
-            testsGrid.appendChild(card);
-        });
+    // === ТЕМА ===
+    function applyTheme(isLight) {
+        document.body.classList.toggle('light-theme', isLight);
+        document.querySelectorAll('.theme-toggle-btn').forEach(b => b.textContent = isLight ? '🌙' : '🌓');
     }
-    renderTests();
-
-    // Сброс прогресса
-    document.getElementById('reset-progress-btn')?.addEventListener('click', () => {
-        if(confirm('Сбросить весь прогресс тестов?')) {
-            completedTests = [];
-            localStorage.removeItem('foxGarden_completed');
-            renderTests();
-        }
+    document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const isLight = !document.body.classList.contains('light-theme');
+            applyTheme(isLight);
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        });
     });
 
-    // ========== ЛОГИКА ТЕСТА ==========
-    window.startTest = (test) => {
+    // === РЕНДЕР ТЕСТОВ ===
+    function renderTests() {
+        const grid = document.getElementById('tests-grid');
+        const completed = JSON.parse(localStorage.getItem('completed_tests') || '[]');
+        grid.innerHTML = '';
+        
+        tests.forEach(t => {
+            const isDone = completed.includes(t.id);
+            grid.innerHTML += `
+                <div class="test-card card" onclick="showFioModal('${t.id}')">
+                    ${isDone ? '<span class="completed-badge">✅ Пройден</span>' : ''}
+                    <h3>${t.title}</h3>
+                    <p>${t.desc}</p>
+                </div>`;
+        });
+    }
+
+    // === МОДАЛЬНОЕ ОКНО ФИО ===
+    window.showFioModal = (testId) => {
+        pendingTest = tests.find(t => t.id === testId);
+        document.getElementById('fio-modal').style.display = 'flex';
+        document.getElementById('fio-input').value = '';
+        document.getElementById('email-input').value = '';
+        document.getElementById('fio-input').focus();
+    };
+
+    document.getElementById('fio-start-btn').addEventListener('click', () => {
+        const fio = document.getElementById('fio-input').value.trim();
+        if (!fio) return alert('Шалфей не знает твоего имени... Введи ФИО!');
+        
+        userFIO = fio;
+        userEmail = document.getElementById('email-input').value.trim();
+        document.getElementById('fio-modal').style.display = 'none';
+        startTest(pendingTest);
+    });
+
+    document.getElementById('fio-cancel-btn').addEventListener('click', () => {
+        document.getElementById('fio-modal').style.display = 'none';
+        pendingTest = null;
+    });
+
+    // === ЛОГИКА ТЕСТА ===
+    function startTest(test) {
         currentTest = test;
         currentQIndex = 0;
         score = 0;
-        answered = false;
         document.getElementById('test-list-view').classList.add('hidden');
         document.getElementById('test-active-view').classList.remove('hidden');
-        renderQuestion();
-    };
+        showQuestion();
+    }
 
-    window.exitTest = () => {
-        document.getElementById('test-list-view').classList.remove('hidden');
-        document.getElementById('test-active-view').classList.add('hidden');
-        currentTest = null;
-        renderTests(); // Обновляем бейджи
-    };
-
-    function renderQuestion() {
-        const container = document.getElementById('quiz-container');
+    function showQuestion() {
         const q = currentTest.questions[currentQIndex];
-        const progress = ((currentQIndex) / currentTest.questions.length) * 100;
+        const container = document.getElementById('quiz-container');
+        answered = false;
         
         container.innerHTML = `
-            <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${progress}%"></div></div>
-            <div class="quiz-question">${currentQIndex + 1}. ${q.q}</div>
-            <div class="quiz-options" id="quiz-options"></div>
+            <h3 style="margin-bottom:15px; color:var(--accent)">${q.q}</h3>
+            <div id="options-box"></div>
         `;
-
-        const optsDiv = document.getElementById('quiz-options');
-        q.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'quiz-option';
-            btn.textContent = opt;
-            btn.addEventListener('click', () => selectAnswer(idx, btn));
-            optsDiv.appendChild(btn);
+        
+        const box = document.getElementById('options-box');
+        q.options.forEach((opt, i) => {
+            box.innerHTML += `<button class="quiz-option" onclick="checkAnswer(${i})">${opt}</button>`;
         });
     }
 
-    function selectAnswer(idx, btn) {
+    window.checkAnswer = (idx) => {
         if (answered) return;
         answered = true;
-        
-        const correct = currentTest.questions[currentQIndex].correct;
         const opts = document.querySelectorAll('.quiz-option');
+        const correct = currentTest.questions[currentQIndex].correct;
         
-        opts.forEach((o, i) => {
-            o.classList.add('disabled');
-            if (i === correct) o.classList.add('correct');
-            if (i === idx && idx !== correct) o.classList.add('wrong');
+        opts.forEach((btn, i) => {
+            if (i === correct) btn.classList.add('correct');
+            if (i === idx && i !== correct) btn.classList.add('wrong');
         });
 
         if (idx === correct) score++;
-
+        
         setTimeout(() => {
             currentQIndex++;
-            answered = false;
-            if (currentQIndex < currentTest.questions.length) {
-                renderQuestion();
-            } else {
-                showResults();
-            }
-        }, 1200);
-    }
+            if (currentQIndex < currentTest.questions.length) showQuestion();
+            else showResults();
+        }, 1500);
+    };
 
-    // ========== РЕЗУЛЬТАТЫ ТЕСТА + ОТПРАВКА НА ПОЧТУ ==========
-function showResults(){
-    const container = document.getElementById('quiz-container');
-    const percent = Math.round((score / currentTest.questions.length) * 100);
-    
-    // Формируем текст с ответами
-    const answersText = currentTest.questions.map((q, i) => 
-        `Вопрос ${i+1}: ${q.q}\n✓ Правильный ответ: ${q.options[q.correct]}`
-    ).join('\n\n');
-    
-    // Отмечаем тест как пройденный
-    if (!completedTests.includes(currentTest.id)) {
-        completedTests.push(currentTest.id);
-        localStorage.setItem('foxGarden_completed', JSON.stringify(completedTests));
-    }
-    
-    let message = percent >= 80 ? 'Отлично! Шалфей гордится тобой! 🦊✨' : 
-                  percent >= 50 ? 'Неплохо! Но можно лучше. Попробуй ещё раз!' : 
-                  'История требует повторения. Не сдавайся!';
-    
-    container.innerHTML = `
-        <div class="quiz-result">
-            <h3>🎉 Испытание завершено!</h3>
-            <p><strong>Результат:</strong> ${score} из ${currentTest.questions.length} (${percent}%)</p>
-            <p>${message}</p>
-            
-            <div class="email-section">
-                <p style="font-size:0.9rem; opacity:0.8; margin-bottom:8px;">📩 Отправить результаты Шалфею?</p>
-                <input type="email" id="result-email" class="email-input" placeholder="Ваш email (необязательно)">
-                <button class="email-btn" id="send-email-btn">📤 Отправить на aniruf14.02@gmail.com</button>
-            </div>
-            
-            <div style="margin-top:20px;">
-                <button class="retry-btn" onclick="startTest(currentTest)">🔄 Пройти снова</button>
-                <button class="retry-btn secondary" onclick="exitTest()">📋 К списку тестов</button>
-            </div>
-        </div>
-    `;
-    
-    // Обработчик отправки
-    document.getElementById('send-email-btn')?.addEventListener('click', sendResultsEmail);
-}
-
-// ========== ОТПРАВКА ЧЕРЕЗ MAILTO: ==========
-function sendResultsEmail(){
-    const RECIPIENT = 'aniruf14.02@gmail.com'; // ← Ваша почта
-    const emailInput = document.getElementById('result-email');
-    const userEmail = emailInput?.value.trim() || 'Не указан';
-    const btn = document.getElementById('send-email-btn');
-    
-    // Формируем тему и тело письма
-    const subject = `🦊 Лисий Сад: Тест "${currentTest.title}"`;
-    
-    const body = `
-Результаты теста по истории России (6 класс)
-═══════════════════════════════════════
-
-📚 Тест: ${currentTest.title}
-👤 Пользователь: ${userEmail}
-📊 Результат: ${score} из ${currentTest.questions.length} вопросов (${Math.round((score/currentTest.questions.length)*100)}%)
-
-───────────────────────────────────
-📋 Детали вопросов:
-
-${currentTest.questions.map((q, i) => 
-    `#${i+1}. ${q.q}\n   ✓ Правильно: ${q.options[q.correct]}`
-).join('\n\n')}
-
-───────────────────────────────────
-🦊 Отправлено из «Лисий Сад» — хранилище знаний Шалфея
-Дата: ${new Date().toLocaleString('ru-RU')}
-    `.trim();
-    
-    // Кодируем для mailto:
-    const encodedSubject = encodeURIComponent(subject);
-    const encodedBody = encodeURIComponent(body);
-    
-    // Визуальная обратная связь
-    btn.disabled = true;
-    btn.textContent = '✅ Открываю почту...';
-    
-    // Открываем почтовый клиент
-    setTimeout(() => {
-        window.location.href = `mailto:${RECIPIENT}?subject=${encodedSubject}&body=${encodedBody}`;
+    function showResults() {
+        const percent = Math.round((score / currentTest.questions.length) * 100);
+        const container = document.getElementById('quiz-container');
         
-        // Возвращаем кнопку через 3 секунды
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.textContent = '📤 Отправить ещё раз';
-        }, 3000);
-    }, 500);
-}
+        // Отметка о прохождении
+        let completed = JSON.parse(localStorage.getItem('completed_tests') || '[]');
+        if (!completed.includes(currentTest.id)) {
+            completed.push(currentTest.id);
+            localStorage.setItem('completed_tests', JSON.stringify(completed));
+            renderTests();
+        }
 
-    // ========== ЛЕПЕСТКИ ==========
-    const petalsContainer = document.getElementById('petals-container');
-    const isMobile = window.innerWidth < 768;
-    const petalCount = isMobile ? 6 : 12;
+        // Авто-отправка на почту
+        sendEmail(percent);
 
-    function createPetal() {
-        if (petalsContainer.children.length >= petalCount) return;
-        const p = document.createElement('div');
-        p.className = 'petal';
-        p.style.left = (Math.random() * 90 + 5) + '%';
-        const scale = 0.7 + Math.random() * 0.6;
-        const dur = Math.random() * 4 + 5;
-        const delay = Math.random() * 3;
-        p.style.animationDuration = dur + 's';
-        p.style.animationDelay = delay + 's';
-        p.style.transform = `scale(${scale}) rotate(${Math.random() * 40 - 20}deg)`;
-        petalsContainer.appendChild(p);
-        setTimeout(() => p.remove(), (dur + delay) * 1000 + 500);
+        container.innerHTML = `
+            <h2 style="text-align:center; margin-bottom:10px">Результат: ${percent}%</h2>
+            <p style="text-align:center; margin-bottom:20px">${score} из ${currentTest.questions.length} правильных ответов.</p>
+            <div id="email-status" style="text-align:center; padding:10px; background:rgba(255,255,255,0.1); border-radius:10px; font-size:0.9rem">
+                📤 Отправка результатов Шалфею...
+            </div>
+            <button class="retry-btn" style="width:100%; margin-top:15px" onclick="startTest(currentTest)">🔄 Пройти снова</button>
+            <button class="retry-btn secondary" style="width:100%; margin-top:10px; background:transparent; border:1px solid var(--border)" onclick="exitTest()">📋 К списку</button>
+        `;
     }
 
-    for (let i = 0; i < 8; i++) setTimeout(createPetal, i * 400);
-    setInterval(createPetal, 900);
+    // === ОТПРАВКА НА ПОЧТУ (FormSubmit AJAX) ===
+    async function sendEmail(percent) {
+        const statusEl = document.getElementById('email-status');
+        
+        const formData = {
+            access_key: 'YOUR_ACCESS_KEY', // Не нужен для direct ajax, но FormSubmit требует заголовок
+            _subject: `🦊 Тест "${currentTest.title}" — ${userFIO}`,
+            'ФИО': userFIO,
+            'Email': userEmail || 'Не указан',
+            'Результат': `${percent}% (${score}/${currentTest.questions.length})`,
+            'Тест': currentTest.title,
+            'Дата': new Date().toLocaleString('ru-RU'),
+            _captcha: 'false'
+        };
 
-    // ========== МЕНЮ ==========
-    const funFacts = [
-        'Шалфей появляется только тем, кто готов учиться 🦊',
-        'Древняя Русь называлась так по племени полян, живших в полях 🌾',
-        'Князь Олег прибил свой щит на врата Царьграда 🛡️',
-        'Каждый лепесток — это частичка древней мудрости 🌸'
-    ];
-    document.getElementById('menu-btn')?.addEventListener('click', () => {
-        alert(funFacts[Math.floor(Math.random() * funFacts.length)]);
-    });
+        try {
+            const response = await fetch(`https://formsubmit.co/ajax/${EMAIL_RECIPIENT}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            if(response.ok) {
+                statusEl.innerHTML = '✅ Результаты успешно отправлены!';
+                statusEl.style.background = 'rgba(76, 175, 80, 0.2)';
+            } else {
+                throw new Error('Ошибка сети');
+            }
+        } catch (e) {
+            console.error(e);
+            statusEl.innerHTML = '⚠️ Ошибка отправки. Попробуйте позже.';
+            statusEl.style.background = 'rgba(244, 67, 54, 0.2)';
+        }
+    }
 
-    document.getElementById('fox-logo')?.addEventListener('click', () => {
-        if (tests.length > 0) {
-            startTest(tests[Math.floor(Math.random() * tests.length)]);
-            switchTab('tests');
+    window.exitTest = () => {
+        document.getElementById('test-active-view').classList.add('hidden');
+        document.getElementById('test-list-view').classList.remove('hidden');
+    };
+
+    // === ЛЕПЕСТКИ ===
+    function createPetals() {
+        const container = document.getElementById('petals-container');
+        const count = window.innerWidth < 768 ? 8 : 15;
+        
+        for(let i=0; i<count; i++) {
+            const p = document.createElement('div');
+            p.className = 'petal';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            p.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(p);
+        }
+    }
+
+    // === СБРОС ===
+    document.getElementById('reset-progress-btn').addEventListener('click', () => {
+        if(confirm('Сбросить весь прогресс тестов?')) {
+            localStorage.removeItem('completed_tests');
+            renderTests();
         }
     });
-
-    console.log('🦊 Лисий Сад загружен. Шалфей ждёт тебя!');
 });
