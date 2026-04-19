@@ -275,3 +275,71 @@ body.light-theme .petal { background: radial-gradient(circle at 35% 35%, #ff9a9e
     .mobile-nav-btn .nav-icon { font-size: 1.3rem; }
     .main-title { font-size: 1.6rem; }
 }
+
+/* ========== СЕКЦИЯ ОТПРАВКИ НА ПОЧТУ ========== */
+.email-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 170, 102, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.email-input {
+    width: 100%;
+    max-width: 280px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 170, 102, 0.4);
+    border-radius: 12px;
+    color: white;
+    font-family: 'Comfortaa', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.email-input:focus {
+    border-color: #ffaa66;
+    box-shadow: 0 0 10px rgba(255, 170, 102, 0.3);
+}
+
+.email-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.email-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    font-family: 'Comfortaa', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 280px;
+}
+
+.email-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.4);
+}
+
+.email-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 480px) {
+    .email-input, .email-btn {
+        max-width: 100%;
+        font-size: 14px;
+    }
+}
