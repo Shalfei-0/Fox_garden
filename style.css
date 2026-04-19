@@ -166,3 +166,43 @@ body.light-theme .gradient-bg {
     .mobile-nav-btn .nav-icon { font-size: 1.4rem; margin-bottom: 4px; }
     .mobile-nav-btn.active { color: var(--accent); }
 }
+
+/* ========== Контент вкладок ========== */
+.tab-content {
+    position: absolute;
+    top: 60px;
+    left: 190px;
+    right: 10px;
+    bottom: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 16px;
+    display: none;
+    overflow: hidden; /* 🔒 Важно: убираем скролл всего окна, чтобы текст не вылезал за рамки */
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ========== Чат ========== */
+.textbox {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 🔒 Держит контент внутри границ окна */
+}
+
+#message {
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 60px;
+    word-break: break-word;
+    overflow-wrap: break-word; /* 🆕 Для длинных ссылок */
+    white-space: pre-wrap; /* 🆕 Сохраняет переносы строк */
+    flex: 1; /* Растягивается на всё свободное место */
+    color: white;
+    overflow-y: auto; /* 📜 Скролл появляется только у текста, если он длинный */
+    padding-right: 5px; /* Отступ, чтобы текст не прилипал к полосе прокрутки */
+}
