@@ -1,121 +1,126 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0f0a1a">
-    <title>Лисий Сад</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: file:; connect-src 'self'">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Шалфей</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Nosifer&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
-        <!-- Фон и эффекты -->
-        <div class="effects-container">
-            <div class="gradient-bg"></div>
-            <div class="petals-container" id="petals-container"></div>
-        </div>
+<div id="app">
+<!-- Фоновый слой (не обрезает рамки) -->
+<div class="effects-container">
+<div class="diamond-bg" id="diamond-bg"></div>
+<div id="sunRays" class="sun-rays"></div>
+<div id="moonLight" class="moon-light"></div>
+<div id="dustParticles" class="dust-particles"></div>
+<div id="spark-container" class="spark-container"></div>
+<div class="ember-romb" id="ember-romb">
+<div class="ember" style="--ox:0px; --oy:0px; --px:-3px; --py:-5px;"></div>
+<div class="ember" style="--ox:0px; --oy:0px; --px:4px; --py:-2px;"></div>
+<div class="ember" style="--ox:0px; --oy:0px; --px:-2px; --py:4px;"></div>
+<div class="ember" style="--ox:0px; --oy:0px; --px:3px; --py:3px;"></div>
+</div>
+</div>
 
-        <!-- Мобильная шапка -->
-        <header class="mobile-header">
-            <span class="mobile-title">Лисий Сад</span>
-            <div class="header-actions">
-                <button class="icon-btn theme-toggle-btn" id="theme-toggle-mobile" title="Сменить тему">🌓</button>
-            </div>
-        </header>
+<!-- Персонаж -->
+<div class="character-container">
+<div id="characterGlow" class="character-glow"></div>
+<div class="character-area">
+<img id="character" src="character.png" alt="Шалфей">
+<span id="emotion" class="emotion-badge">😊</span>
+</div>
+</div>
 
-        <!-- Главный логотип -->
-        <div class="fox-header">
-            <div class="character-wrapper">
-                <div class="fox-rings">
-                    <span class="ring"></span>
-                    <span class="ring"></span>
-                    <span class="ring"></span>
-                </div>
-                <img src="persi_fox.png" alt="Шалфей" class="fox-logo">
-            </div>
-            <h1 class="main-title">Лисий Сад</h1>
-            <p class="subtitle">хранилище знаний Шалфея</p>
-            <!-- Кнопка темы для десктопа -->
-            <button class="theme-toggle-btn desktop-theme-btn" id="theme-toggle-desktop">🌓</button>
-        </div>
+<!-- Вкладки -->
+<div class="tabs" id="main-tabs">
+<button class="tab-btn active" data-tab="chat">💬 Чат</button>
+<button class="tab-btn" data-tab="todo">✅ To-Do</button>
+<button class="tab-btn" data-tab="notes">📝 Заметки</button>
+</div>
 
-        <!-- Навигация -->
-        <nav class="desktop-nav" id="desktop-nav">
-            <button class="nav-btn active" data-tab="home">🏠 Главная</button>
-            <button class="nav-btn" data-tab="tests">📜 Тесты</button>
-            <button class="nav-btn" data-tab="about">🦊 О Шалфее</button>
-        </nav>
+<!-- Кнопки режима -->
+<button id="history-mode-btn" class="history-mode-btn" title="Режим истории">🔮</button>
+<button id="exit-history-mode-btn" class="exit-history-mode-btn">← Выход</button>
 
-        <!-- Контент -->
-        <main class="content-container">
-            <!-- Секция: Главная -->
-            <section id="home" class="tab-content active">
-                <div class="welcome-card">
-                    <h2>Добро пожаловать</h2>
-                    <p>Я Шалфей, хранитель древних знаний. Здесь ты можешь проверить свои силы в увлекательных испытаниях по истории России. Выбери тест и отправляйся в путь!</p>
-                    <button class="start-btn" onclick="switchTab('tests')">📜 Перейти к тестам</button>
-                </div>
-            </section>
+<!-- Контент -->
+<div id="chat-tab" class="tab-content active">
+<div class="textbox">
+<div id="drag-bar">
+<div id="drag-area"></div>
+<div id="window-controls">
+<button id="pin-btn" class="window-btn" title="Закрепить">📌</button>
+<button id="random-phrase-btn" class="window-btn" title="Случайная фраза">💭</button>
+<button id="close-btn" class="window-btn" title="Закрыть">✕</button>
+</div>
+</div>
+<div id="speaker">Шалфей</div>
+<div id="message">Загрузка...</div>
+<div class="input-area">
+<input type="text" id="command-input" placeholder="Напиши команду...">
+<button id="send-btn">➤</button>
+</div>
+</div>
+</div>
 
-            <!-- Секция: Тесты -->
-            <section id="tests" class="tab-content">
-                <!-- Список тестов -->
-                <div id="test-list-view">
-                    <h2 class="section-title">📜 Доступные испытания</h2>
-                    <div class="tests-grid" id="tests-grid">
-                        <!-- Тесты генерируются через JS -->
-                    </div>
-                    <button class="reset-btn" id="reset-progress-btn">🗑️ Сбросить прогресс</button>
-                </div>
+<div id="todo-tab" class="tab-content">
+<div class="todo-container">
+<h2>✅ Список задач</h2>
+<div class="add-task">
+<input type="text" id="newTaskInput" placeholder="Новая задача...">
+<button id="addTaskBtn">Добавить</button>
+</div>
+<div id="tasksList" class="tasks-list"></div>
+<div class="tasks-stats">Выполнено: <span id="completedCount">0</span> / <span id="totalCount">0</span></div>
+</div>
+</div>
 
-                <!-- Экран прохождения теста -->
-                <div id="test-active-view" class="hidden">
-                    <button class="back-btn" onclick="exitTest()">← Назад к списку</button>
-                    <div class="quiz-container" id="quiz-container"></div>
-                </div>
-            </section>
+<div id="notes-tab" class="tab-content">
+<div class="notes-container">
+<h2>📝 Заметки</h2>
+<div class="add-note">
+<textarea id="newNoteInput" placeholder="Введите текст заметки..."></textarea>
+<button id="addNoteBtn">Добавить</button>
+</div>
+<div id="notesList" class="notes-list"></div>
+</div>
+</div>
 
-            <!-- Секция: О Шалфее -->
-            <section id="about" class="tab-content">
-                <h2 class="section-title">🦊 О Шалфее</h2>
-                <div class="about-card">
-                    <p>Шалфей — это не просто лиса. Это дух-хранитель, собирающий знания веков. Он появляется в цветущем саду, когда кто-то готов учиться.</p>
-                    <p>Каждый тест — это небольшое путешествие во времени. Отвечай честно, думай внимательно, и Шалфей откроет тебе новые грани истории.</p>
-                </div>
-            </section>
-        </main>
+<div id="history-tab" class="tab-content history-tab-content">
+<div class="history-container">
+<div class="history-search-bar">
+<input type="text" id="history-search-input" class="history-search-input" placeholder="🔍 Поиск по истории...">
+<button id="history-search-clear" class="history-search-clear">✕</button>
+</div>
+<div class="history-content">
+<div id="history-message" class="history-message">Загрузка...</div>
+<div class="history-controls">
+<button id="history-prev-btn" class="history-btn">◀</button>
+<span id="history-counter" class="history-counter">1 / 1</span>
+<button id="history-next-btn" class="history-btn">▶</button>
+</div>
+<div class="history-bookmarks">
+<button id="history-bookmark-btn" class="history-bookmark-btn">⭐</button>
+<button id="history-bookmarks-list-btn" class="history-bookmarks-list-btn">📑</button>
+</div>
+</div>
+<div class="history-info">💡 Листай стрелочками или нажимай на сообщение</div>
+</div>
+</div>
 
-        <!-- Мобильная нижняя навигация -->
-        <nav class="mobile-nav">
-            <button class="mobile-nav-btn active" data-tab="home">
-                <span class="nav-icon">🏠</span>
-                <span class="nav-text">Главная</span>
-            </button>
-            <button class="mobile-nav-btn" data-tab="tests">
-                <span class="nav-icon">📜</span>
-                <span class="nav-text">Тесты</span>
-            </button>
-            <button class="mobile-nav-btn" data-tab="about">
-                <span class="nav-icon">🦊</span>
-                <span class="nav-text">О Шалфее</span>
-            </button>
-        </nav>
-
-        <!-- Модальное окно ФИО (Перед тестом) -->
-        <div id="fio-modal" class="modal-overlay">
-            <div class="modal-content">
-                <h3>🦊 Перед началом теста</h3>
-                <p>Представься, чтобы Шалфей мог отправить твои результаты.</p>
-                <input type="text" id="fio-input" placeholder="Твое ФИО *" class="modal-input">
-                <input type="email" id="email-input" placeholder="Твой email (необязательно)" class="modal-input">
-                <div class="modal-buttons">
-                    <button id="fio-start-btn" class="modal-btn primary">Начать тест</button>
-                    <button id="fio-cancel-btn" class="modal-btn secondary">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
+<div id="bookmarks-modal" class="bookmarks-modal">
+<div class="bookmarks-modal-content">
+<div class="bookmarks-header">
+<h3>📑 Закладки</h3>
+<button id="bookmarks-close-btn">✕</button>
+</div>
+<div id="bookmarks-list" class="bookmarks-list"></div>
+<div id="bookmarks-empty" class="bookmarks-empty">Нет закладок</div>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
