@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ========== КОНФИГУРАЦИЯ ПОЧТЫ ==========
+    // 🔑 Зарегистрируйтесь на https://web3forms.com/ (бесплатно)
+    // Создайте форму, скопируйте Access Key и вставьте сюда:
+    const EMAIL_ACCESS_KEY = 'ВАШ_КЛЮЧ_WEB3FORMS'; 
+    const EMAIL_RECIPIENT = 'ваш@email.com'; // Ваш email для получения результатов
+
     // ========== ДАННЫЕ ТЕСТОВ ==========
     const tests = [
         {
@@ -20,6 +26,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentQIndex = 0;
     let score = 0;
     let answered = false;
+    
+    // Пройденные тесты
+    let completedTests = JSON.parse(localStorage.getItem('foxGarden_completed') || '[]');
+    
+    // Тема
+    let isLightTheme = localStorage.getItem('foxGarden_theme') === 'light';
+
+    // ========== ТЕМА ==========
+    function applyTheme() {
+        document.body.classList.toggle('light-theme', isLightTheme);
+        document.querySelectorAll('.theme-toggle').forEach(btn => {
+            btn.textContent = isLightTheme ? '🌙' : '🌓';
+        });
+        localStorage.setItem('foxGarden_theme', isLightTheme ? 'light' : 'dark');
+    }
+    
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            isLightTheme = !isLightTheme;
+            applyTheme();
+        });
+    });
+    applyTheme();
 
     // ========== НАВИГАЦИЯ ==========
     window.switchTab = (tabId) => {
@@ -37,17 +66,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ========== РЕНДЕР ТЕСТОВ ==========
-    const testsGrid = document.getElementById('tests-grid');
-    tests.forEach(test => {
-        const card = document.createElement('div');
-        card.className = 'test-card';
-        card.innerHTML = `
-            <h3>${test.title}</h3>
-            <p>${test.description}</p>
-            <span class="badge">${test.questions.length} вопросов</span>
-        `;
-        card.addEventListener('click', () => startTest(test));
-        testsGrid.appendChild(card);
+    function renderTests() {
+        const testsGrid = document.getElementById('tests-grid');
+        testsGrid.innerHTML = '';
+        
+        tests.forEach(test => {
+            const isCompleted = completedTests.includes(test.id);
+            const card = document.createElement('div');
+            card.className = `test-card ${isCompleted ? 'completed' : ''}`;
+            card.innerHTML = `
+                ${isCompleted ? '<span class="completed-badge">✅ Пройден</span>' : ''}
+                <h3>${test.title}</h3>
+                <p>${test.description}</p>
+                <span class="badge">${test.questions.length} вопросов</span>
+            `;
+            card.addEventListener('click', () => startTest(test));
+            testsGrid.appendChild(card);
+        });
+    }
+    renderTests();
+
+    // Сброс прогресса
+    document.getElementById('reset-progress-btn')?.addEventListener('click', () => {
+        if(confirm('Сбросить весь прогресс тестов?')) {
+            completedTests = [];
+            localStorage.removeItem('foxGarden_completed');
+            renderTests();
+        }
     });
 
     // ========== ЛОГИКА ТЕСТА ==========
@@ -65,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('test-list-view').classList.remove('hidden');
         document.getElementById('test-active-view').classList.add('hidden');
         currentTest = null;
+        renderTests(); // Обновляем бейджи
     };
 
     function renderQuestion() {
@@ -121,15 +167,80 @@ document.addEventListener('DOMContentLoaded', () => {
                       percent >= 50 ? 'Неплохо! Но можно лучше. Попробуй ещё раз!' : 
                       'История требует повторения. Не сдавайся!';
         
+        // Отмечаем как пройденный
+        if (!completedTests.includes(currentTest.id)) {
+            completedTests.push(currentTest.id);
+            localStorage.setItem('foxGarden_completed', JSON.stringify(completedTests));
+        }
+
         container.innerHTML = `
             <div class="quiz-result">
                 <h3>Испытание завершено!</h3>
                 <p>Твой результат: ${score} из ${currentTest.questions.length} (${percent}%)</p>
                 <p>${message}</p>
-                <button class="retry-btn" onclick="startTest(currentTest)">🔄 Пройти снова</button>
-                <button class="retry-btn secondary" onclick="exitTest()">📋 К списку</button>
+                <div class="email-section">
+                    <p style="font-size:0.9rem; opacity:0.8; margin-bottom:5px;">📩 Отправить результаты на почту?</p>
+                    <input type="email" id="result-email" class="email-input" placeholder="Ваш email (необязательно)">
+                    <button class="email-btn" id="send-email-btn">📤 Отправить результаты</button>
+                </div>
+                <div style="margin-top:15px;">
+                    <button class="retry-btn" onclick="startTest(currentTest)">🔄 Пройти снова</button>
+                    <button class="retry-btn secondary" onclick="exitTest()">📋 К списку</button>
+                </div>
             </div>
         `;
+
+        // Обработчик отправки
+        document.getElementById('send-email-btn')?.addEventListener('click', sendResultsEmail);
+    }
+
+    // ========== ОТПРАВКА НА ПОЧТУ ==========
+    async function sendResultsEmail() {
+        const btn = document.getElementById('send-email-btn');
+        const emailInput = document.getElementById('result-email');
+        const userEmail = emailInput?.value.trim();
+        
+        if (!EMAIL_ACCESS_KEY || EMAIL_ACCESS_KEY === 'ВАШ_КЛЮЧ_WEB3FORMS') {
+            alert('⚠️ Владелец сайта не настроил отправку почты. Попросите добавить ключ Web3Forms в код.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = '⏳ Отправка...';
+
+        const percent = Math.round((score / currentTest.questions.length) * 100);
+        const answersLog = currentTest.questions.map((q, i) => 
+            `${i+1}. ${q.q}\n✅ Правильно: ${q.options[q.correct]}\n💡 Выбрано: ${q.options[i === currentQIndex-1 ? (percent>=80?0:1) : 0] || '...'}` // Упрощённо
+        ).join('\n\n');
+
+        const formData = {
+            access_key: EMAIL_ACCESS_KEY,
+            subject: `🦊 Лисий Сад: Результат теста "${currentTest.title}"`,
+            message: `Тест: ${currentTest.title}\nРезультат: ${score}/${currentTest.questions.length} (${percent}%)\nEmail пользователя: ${userEmail || 'Не указан'}\n\n📊 Детали:\n${answersLog}`,
+            from_name: 'Лисий Сад',
+            replyto: userEmail || EMAIL_RECIPIENT
+        };
+
+        try {
+            const res = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('✅ Результаты успешно отправлены на почту!');
+                btn.textContent = '✅ Отправлено';
+            } else {
+                alert('❌ Ошибка отправки: ' + (data.message || 'Попробуйте позже'));
+                btn.disabled = false;
+                btn.textContent = '📤 Отправить результаты';
+            }
+        } catch (e) {
+            alert('❌ Ошибка сети. Проверьте подключение.');
+            btn.disabled = false;
+            btn.textContent = '📤 Отправить результаты';
+        }
     }
 
     // ========== ЛЕПЕСТКИ ==========
@@ -141,31 +252,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (petalsContainer.children.length >= petalCount) return;
         const p = document.createElement('div');
         p.className = 'petal';
-        // Случайная позиция по горизонтали
         p.style.left = (Math.random() * 90 + 5) + '%';
-        // Случайный размер
         const scale = 0.7 + Math.random() * 0.6;
-        // Случайная длительность
         const dur = Math.random() * 4 + 5;
-        // Случайная задержка
         const delay = Math.random() * 3;
-        // Случайный наклон (качание)
-        const sway = (Math.random() - 0.5) * 80;
-        
         p.style.animationDuration = dur + 's';
         p.style.animationDelay = delay + 's';
         p.style.transform = `scale(${scale}) rotate(${Math.random() * 40 - 20}deg)`;
-        // CSS-переменная для бокового отклонения
-        p.style.setProperty('--sway', sway + 'px');
-        
         petalsContainer.appendChild(p);
         setTimeout(() => p.remove(), (dur + delay) * 1000 + 500);
     }
 
-    // Стартовые лепестки
-    for (let i = 0; i < 8; i++) {
-        setTimeout(createPetal, i * 400);
-    }
+    for (let i = 0; i < 8; i++) setTimeout(createPetal, i * 400);
     setInterval(createPetal, 900);
 
     // ========== МЕНЮ ==========
@@ -179,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(funFacts[Math.floor(Math.random() * funFacts.length)]);
     });
 
-    // Клик по логотипу — случайный тест
     document.getElementById('fox-logo')?.addEventListener('click', () => {
         if (tests.length > 0) {
             startTest(tests[Math.floor(Math.random() * tests.length)]);
