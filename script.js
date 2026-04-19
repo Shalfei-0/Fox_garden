@@ -160,88 +160,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1200);
     }
 
-    function showResults() {
-        const container = document.getElementById('quiz-container');
-        const percent = Math.round((score / currentTest.questions.length) * 100);
-        let message = percent >= 80 ? 'Отлично! Шалфей гордится тобой! 🦊✨' : 
-                      percent >= 50 ? 'Неплохо! Но можно лучше. Попробуй ещё раз!' : 
-                      'История требует повторения. Не сдавайся!';
-        
-        // Отмечаем как пройденный
-        if (!completedTests.includes(currentTest.id)) {
-            completedTests.push(currentTest.id);
-            localStorage.setItem('foxGarden_completed', JSON.stringify(completedTests));
-        }
-
-        container.innerHTML = `
-            <div class="quiz-result">
-                <h3>Испытание завершено!</h3>
-                <p>Твой результат: ${score} из ${currentTest.questions.length} (${percent}%)</p>
-                <p>${message}</p>
-                <div class="email-section">
-                    <p style="font-size:0.9rem; opacity:0.8; margin-bottom:5px;">📩 Отправить результаты на почту?</p>
-                    <input type="email" id="result-email" class="email-input" placeholder="Ваш email (необязательно)">
-                    <button class="email-btn" id="send-email-btn">📤 Отправить результаты</button>
-                </div>
-                <div style="margin-top:15px;">
-                    <button class="retry-btn" onclick="startTest(currentTest)">🔄 Пройти снова</button>
-                    <button class="retry-btn secondary" onclick="exitTest()">📋 К списку</button>
-                </div>
+    // ========== РЕЗУЛЬТАТЫ ТЕСТА + ОТПРАВКА НА ПОЧТУ ==========
+function showResults(){
+    const container = document.getElementById('quiz-container');
+    const percent = Math.round((score / currentTest.questions.length) * 100);
+    
+    // Формируем текст с ответами
+    const answersText = currentTest.questions.map((q, i) => 
+        `Вопрос ${i+1}: ${q.q}\n✓ Правильный ответ: ${q.options[q.correct]}`
+    ).join('\n\n');
+    
+    // Отмечаем тест как пройденный
+    if (!completedTests.includes(currentTest.id)) {
+        completedTests.push(currentTest.id);
+        localStorage.setItem('foxGarden_completed', JSON.stringify(completedTests));
+    }
+    
+    let message = percent >= 80 ? 'Отлично! Шалфей гордится тобой! 🦊✨' : 
+                  percent >= 50 ? 'Неплохо! Но можно лучше. Попробуй ещё раз!' : 
+                  'История требует повторения. Не сдавайся!';
+    
+    container.innerHTML = `
+        <div class="quiz-result">
+            <h3>🎉 Испытание завершено!</h3>
+            <p><strong>Результат:</strong> ${score} из ${currentTest.questions.length} (${percent}%)</p>
+            <p>${message}</p>
+            
+            <div class="email-section">
+                <p style="font-size:0.9rem; opacity:0.8; margin-bottom:8px;">📩 Отправить результаты Шалфею?</p>
+                <input type="email" id="result-email" class="email-input" placeholder="Ваш email (необязательно)">
+                <button class="email-btn" id="send-email-btn">📤 Отправить на aniruf14.02@gmail.com</button>
             </div>
-        `;
+            
+            <div style="margin-top:20px;">
+                <button class="retry-btn" onclick="startTest(currentTest)">🔄 Пройти снова</button>
+                <button class="retry-btn secondary" onclick="exitTest()">📋 К списку тестов</button>
+            </div>
+        </div>
+    `;
+    
+    // Обработчик отправки
+    document.getElementById('send-email-btn')?.addEventListener('click', sendResultsEmail);
+}
 
-        // Обработчик отправки
-        document.getElementById('send-email-btn')?.addEventListener('click', sendResultsEmail);
-    }
+// ========== ОТПРАВКА ЧЕРЕЗ MAILTO: ==========
+function sendResultsEmail(){
+    const RECIPIENT = 'aniruf14.02@gmail.com'; // ← Ваша почта
+    const emailInput = document.getElementById('result-email');
+    const userEmail = emailInput?.value.trim() || 'Не указан';
+    const btn = document.getElementById('send-email-btn');
+    
+    // Формируем тему и тело письма
+    const subject = `🦊 Лисий Сад: Тест "${currentTest.title}"`;
+    
+    const body = `
+Результаты теста по истории России (6 класс)
+═══════════════════════════════════════
 
-    // ========== ОТПРАВКА НА ПОЧТУ ==========
-    async function sendResultsEmail() {
-        const btn = document.getElementById('send-email-btn');
-        const emailInput = document.getElementById('result-email');
-        const userEmail = emailInput?.value.trim();
+📚 Тест: ${currentTest.title}
+👤 Пользователь: ${userEmail}
+📊 Результат: ${score} из ${currentTest.questions.length} вопросов (${Math.round((score/currentTest.questions.length)*100)}%)
+
+───────────────────────────────────
+📋 Детали вопросов:
+
+${currentTest.questions.map((q, i) => 
+    `#${i+1}. ${q.q}\n   ✓ Правильно: ${q.options[q.correct]}`
+).join('\n\n')}
+
+───────────────────────────────────
+🦊 Отправлено из «Лисий Сад» — хранилище знаний Шалфея
+Дата: ${new Date().toLocaleString('ru-RU')}
+    `.trim();
+    
+    // Кодируем для mailto:
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody = encodeURIComponent(body);
+    
+    // Визуальная обратная связь
+    btn.disabled = true;
+    btn.textContent = '✅ Открываю почту...';
+    
+    // Открываем почтовый клиент
+    setTimeout(() => {
+        window.location.href = `mailto:${RECIPIENT}?subject=${encodedSubject}&body=${encodedBody}`;
         
-        if (!EMAIL_ACCESS_KEY || EMAIL_ACCESS_KEY === 'ВАШ_КЛЮЧ_WEB3FORMS') {
-            alert('⚠️ Владелец сайта не настроил отправку почты. Попросите добавить ключ Web3Forms в код.');
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = '⏳ Отправка...';
-
-        const percent = Math.round((score / currentTest.questions.length) * 100);
-        const answersLog = currentTest.questions.map((q, i) => 
-            `${i+1}. ${q.q}\n✅ Правильно: ${q.options[q.correct]}\n💡 Выбрано: ${q.options[i === currentQIndex-1 ? (percent>=80?0:1) : 0] || '...'}` // Упрощённо
-        ).join('\n\n');
-
-        const formData = {
-            access_key: EMAIL_ACCESS_KEY,
-            subject: `🦊 Лисий Сад: Результат теста "${currentTest.title}"`,
-            message: `Тест: ${currentTest.title}\nРезультат: ${score}/${currentTest.questions.length} (${percent}%)\nEmail пользователя: ${userEmail || 'Не указан'}\n\n📊 Детали:\n${answersLog}`,
-            from_name: 'Лисий Сад',
-            replyto: userEmail || EMAIL_RECIPIENT
-        };
-
-        try {
-            const res = await fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert('✅ Результаты успешно отправлены на почту!');
-                btn.textContent = '✅ Отправлено';
-            } else {
-                alert('❌ Ошибка отправки: ' + (data.message || 'Попробуйте позже'));
-                btn.disabled = false;
-                btn.textContent = '📤 Отправить результаты';
-            }
-        } catch (e) {
-            alert('❌ Ошибка сети. Проверьте подключение.');
+        // Возвращаем кнопку через 3 секунды
+        setTimeout(() => {
             btn.disabled = false;
-            btn.textContent = '📤 Отправить результаты';
-        }
-    }
+            btn.textContent = '📤 Отправить ещё раз';
+        }, 3000);
+    }, 500);
+}
 
     // ========== ЛЕПЕСТКИ ==========
     const petalsContainer = document.getElementById('petals-container');
