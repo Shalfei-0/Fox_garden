@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
     {q:'Вы видите кого-то, с кем хотели бы познакомиться. Вы:', opts:['Радостно окликаете и идёте навстречу','Подходите, представляетесь и начинаете разговор','Подходите и ждёте, когда заговорят с Вами','Подходите и рассказываете о крупных делах','Ничего не говорите']},
     {q:'Незнакомец окликает Вас: "Привет!". Вы:', opts:['"Что Вам угодно?"','Ничего не говорите','"Оставьте меня в покое"','"Привет!", представляетесь и просите представиться','Киваете, "Привет!" и проходите мимо']}
   ];
-  // Ключ: а=0, б=1, в=2, г=3, д=4
   const michelsonKey = [2,4,1,3,0,2,0,2,2,3,3,0,2,4,1,3,0,2,4,1,3,2,4,0,4,1,3];
   const michelsonBlocks = {
     '🎁 Комплименты': [1,2,11,12], '🗣️ Справедливая критика': [4,13], '⚠️ Несправедливая критика': [3,9],
@@ -67,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
   let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
-  // ========== ТЕМА (по умолчанию тёмная) ==========
+  // ========== ТЕМА ==========
   const themeBtn = document.getElementById('theme-toggle');
   document.body.classList.remove('light-theme');
   themeBtn.textContent = '🌓';
@@ -83,10 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function initPetals() {
     if(petalsInitialized) return;
     petalsContainer.innerHTML = '';
-    for(let i=0; i<22; i++) {
+    for(let i=0; i<25; i++) {
       const p = document.createElement('div'); p.className = 'petal';
-      p.style.left = (Math.random() * 100 + 15) + '%';
-      p.style.top = (Math.random() * -20) + '%';
+      p.style.left = (Math.random() * 90 + 5) + '%';
+      p.style.top = (Math.random() * -30) + '%';
       p.style.animationDuration = (Math.random() * 5 + 10) + 's';
       p.style.animationDelay = (Math.random() * 8) + 's';
       p.style.transform = `scale(${0.8 + Math.random()*0.5})`;
@@ -99,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     
-    // ✅ Исправлено: ищем по точному ID, без "-tab"
+    // ✅ ИСПРАВЛЕН БАГ: Ищем по точному id (не id-tab)
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
     document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
@@ -130,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1500);
 
-  // ========== ИСТОРИЯ (МОДАЛКА + ТЕСТ) ==========
+  // ========== ИСТОРИЯ ==========
   const hList = document.getElementById('history-test-list');
   historyTests.forEach(t => {
     const card = document.createElement('div');
@@ -156,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-back-btn').classList.remove('hidden');
     showHistoryQuestion();
   }
-
   function showHistoryQuestion() {
     const q = currentTest.questions[qIdx];
     document.getElementById('history-quiz').innerHTML = `
@@ -167,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
     });
   }
-
   function checkHistoryAnswer(idx) {
     if(answered) return; answered=true;
     const correct = currentTest.questions[qIdx].correct;
@@ -181,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest();
     }, 1200);
   }
-
   async function finishHistoryTest() {
     const pct = Math.round((score/currentTest.questions.length)*100);
     document.getElementById('history-quiz').innerHTML = `
@@ -193,19 +189,19 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('h-mail-status').textContent='✅ Отправлено!';
     } catch(e) { document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети'; }
   }
-
   window.exitHistoryTest = () => {
     document.getElementById('history-quiz').classList.add('hidden');
     document.getElementById('history-test-list').classList.remove('hidden');
     document.getElementById('history-back-btn').classList.add('hidden');
   };
 
-  // ========== ПСИХОЛОГИЯ (ФИКС СБРОСА + ВЫХОД) ==========
+  // ========== ПСИХОЛОГИЯ (КНОПКА ВЫХОДА + СБРОС) ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
 
+  // ✅ КНОПКА ВЫХОДА ИЗ ПСИХОЛОГИИ
   window.closePsychOverlay = () => {
-    switchTab('home');
+    switchTab('home'); // Переключаем на главную, что закрывает overlay
   };
 
   window.openFioModal = (id) => {
@@ -214,13 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   };
-
-  document.getElementById('cancel-psych-btn').onclick = () => { 
+  document.getElementById('cancel-test-btn').onclick = () => { 
     document.getElementById('fio-modal').style.display='none'; 
     pendingTestId=null; historyUserInfo=null; 
   };
-
-  document.getElementById('start-psych-btn').onclick = () => {
+  document.getElementById('start-test-btn').onclick = () => {
     const fio = document.getElementById('fio-input').value.trim();
     if(!fio) return alert('Введи ФИО!');
     if(pendingTestId==='history') { 
@@ -242,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     psychBackBtn.classList.add('hidden');
     document.getElementById('psych-quiz').classList.remove('hidden'); document.getElementById('psych-quiz').innerHTML='';
     document.getElementById('psych-results').classList.add('hidden'); document.getElementById('psych-results').innerHTML='';
+    
     showPsychQuestion();
   }
 
@@ -291,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.backToPsychMenu = () => {
-    // ✅ Полный сброс состояния
+    // ✅ ПОЛНЫЙ СБРОС
     psychIndex=0; psychAnswers=[]; michelsonScores={}; currentTest=null;
     document.getElementById('psych-quiz').innerHTML=''; document.getElementById('psych-results').innerHTML='';
     document.getElementById('psych-quiz').classList.add('hidden');
@@ -300,7 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(psychMenuView) psychMenuView.classList.remove('hidden');
   };
 
-  // ========== ГЕОМЕТРИЧЕСКИЕ ЦВЕТЫ ==========
   function createGeoFlowers() {
     const c = document.getElementById('geo-flowers'); if(c.children.length>0) return;
     for(let i=0; i<12; i++) {
@@ -310,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Инициализация
   initPetals();
   petalsContainer.classList.add('active');
 });
