@@ -1,162 +1,115 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f0a1a">
-<title>Лисий Сад</title>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лисий Сад — Тесты и Психология</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="app">
-<!-- Фон и лепестки -->
-<div class="bg-layer"></div>
-<div class="petals-container" id="petals-container"></div>
+    <div id="app">
+        <!-- Фон основного сайта -->
+        <div class="main-bg"></div>
+        <div class="petals-container" id="petals-container"></div>
 
-<!-- Кнопка темы -->
-<button class="theme-toggle" id="theme-toggle" title="Сменить тему">🌓</button>
+        <!-- Шапка -->
+        <header class="main-header">
+            <div class="logo-area">
+                <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
+                <h1>Лисий Сад</h1>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn active" data-tab="home">🏠 Главная</button>
+                <button class="nav-btn" data-tab="history-tests">📜 Тесты (История)</button>
+                <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
+            </nav>
+        </header>
 
-<!-- Шапка -->
-<header class="site-header">
-    <div class="character-wrapper">
-        <div class="fox-rings">
-            <span class="ring"></span>
-            <span class="ring"></span>
-            <span class="ring"></span>
-        </div>
-        <img src="persi_fox.png" alt="Шалфей" class="logo">
-    </div>
-    <h1 class="site-title">Лисий Сад</h1>
-    <p class="subtitle">хранилище знаний Шалфея</p>
-</header>
-
-<!-- Навигация (десктоп) -->
-<nav class="nav-tabs desktop-nav">
-    <button class="nav-btn active" data-tab="home">🏠 Главная</button>
-    <button class="nav-btn" data-tab="tests">📜 Тесты</button>
-    <button class="nav-btn" data-tab="about">🦊 О Шалфее</button>
-</nav>
-
-<!-- Контент -->
-<main class="content">
-    <!-- Главная -->
-    <section id="home" class="tab active">
-        <div class="card">
-            <h2>Добро пожаловать</h2>
-            <p>Я Шалфей, хранитель древних знаний. Здесь ты можешь проверить свои силы в увлекательных испытаниях по истории России. Выбирай тест и отправляйся в путь!</p>
-            <button class="btn-primary" onclick="switchTab('tests')">📜 Перейти к тестам</button>
-        </div>
-    </section>
-
-    <!-- Тесты -->
-    <section id="tests" class="tab">
-        <div id="test-list-view">
-            <h2 class="section-title">📜 Доступные испытания</h2>
-            <div class="tests-grid" id="tests-grid"></div>
-            <button class="btn-secondary" id="reset-btn">🗑️ Сбросить прогресс</button>
-        </div>
-        <div id="test-active-view" class="hidden">
-            <button class="btn-back" onclick="exitTest()">← Назад к списку</button>
-            <div class="quiz-box" id="quiz-box"></div>
-        </div>
-    </section>
-
-    <!-- О Шалфее -->
-    <section id="about" class="tab">
-        <h2 class="section-title">🦊 О Шалфее</h2>
-        <div class="card">
-            <p>Шалфей — это не просто лиса. Это дух-хранитель, собирающий знания веков. Он появляется в цветущем саду, когда кто-то готов учиться.</p>
-            <p>Каждый тест — это небольшое путешествие во времени. Отвечай честно, думай внимательно, и Шалфей откроет тебе новые грани истории.</p>
-        </div>
-    </section>
-
-<!-- Психологический тест КОС -->
-<div id="psych-test-tab" class="tab-content psych-tab-content">
-    <div class="psych-container">
-        <!-- Геометрические цветы на фоне -->
-        <div class="geometric-flowers" id="geo-flowers"></div>
-        
-        <!-- Шапка как у Шалфея -->
-        <div class="asya-header">
-            <div class="asya-character-wrapper">
-                <div class="asya-rings">
-                    <span class="asya-ring"></span>
-                    <span class="asya-ring"></span>
-                    <span class="asya-ring"></span>
+        <!-- Основной контент -->
+        <main class="content">
+            <!-- Главная -->
+            <section id="home" class="tab active">
+                <div class="card">
+                    <h2>Добро пожаловать</h2>
+                    <p>Я Шалфей, хранитель знаний. Здесь ты найдешь тесты по истории и психологические опросники с Асей. Выбирай раздел и начинай путь!</p>
+                    <button class="btn-primary" onclick="switchTab('history-tests')">📜 Перейти к тестам</button>
                 </div>
-                <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
-            </div>
-            <h1 class="asya-title">Лисий Сад</h1>
-            <p class="asya-subtitle">психолог и твоё самочувствие</p>
-        </div>
-        
-        <div id="psych-test-start">
-            <div class="test-description">
-                <h3>🧠 Тест КОС</h3>
-                <p>Коммуникативные и организаторские склонности</p>
-                <p>Этот тест поможет определить твой уровень коммуникативных и организаторских способностей.</p>
-                <p><strong>40 вопросов</strong> • Займёт около 10-15 минут</p>
-            </div>
-            <button class="btn-start-psych" onclick="startPsychTest()">Начать тестирование 🌸</button>
-            <button class="btn-back-main" onclick="backToMainTests()">← Вернуться к другим тестам</button>
-        </div>
-        
-        <div id="psych-test-questions" class="hidden">
-            <div class="progress-bar">
-                <div class="progress-fill" id="psych-progress"></div>
-            </div>
-            <div class="question-counter">Вопрос <span id="current-q">1</span> из <span id="total-q">40</span></div>
-            
-            <div class="question-block" id="question-block">
-                <p class="question-text" id="psych-question-text"></p>
-                <div class="answer-options">
-                    <button class="btn-answer" onclick="answerPsychQuestion('yes')">Да</button>
-                    <button class="btn-answer" onclick="answerPsychQuestion('no')">Нет</button>
+            </section>
+
+            <!-- Тесты по истории -->
+            <section id="history-tests" class="tab">
+                <h2>📜 Тесты по истории России (6 класс)</h2>
+                <div class="test-grid" id="history-tests-grid"></div>
+            </section>
+
+            <!-- Психология (полноэкранный интерфейс) -->
+            <section id="psychology" class="psych-overlay hidden">
+                <div class="psych-container">
+                    <div class="geometric-flowers" id="geo-flowers"></div>
+                    
+                    <div class="asya-header">
+                        <div class="asya-avatar">
+                            <div class="asya-rings">
+                                <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+                            </div>
+                            <img src="red_panda_asya.png" alt="Ася" class="asya-img">
+                        </div>
+                        <h2>Психология с Асей</h2>
+                        <p id="asya-greeting">Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
+                    </div>
+
+                    <!-- Меню выбора теста -->
+                    <div id="psych-menu" class="psych-menu">
+                        <div class="psych-card" onclick="openFioModal('kos')">
+                            <h3>🧠 Тест КОС</h3>
+                            <p>Коммуникативные и организаторские склонности (40 вопросов)</p>
+                        </div>
+                        <div class="psych-card" onclick="openFioModal('ryakhovsky')">
+                            <h3>🗣️ Тест Ряховского</h3>
+                            <p>Оценка уровня общительности (16 вопросов)</p>
+                        </div>
+                        <button class="btn-back" onclick="switchTab('home')">← Вернуться на главную</button>
+                    </div>
+
+                    <!-- Экран прохождения теста -->
+                    <div id="psych-quiz" class="psych-quiz hidden">
+                        <div class="progress-bar"><div class="progress-fill" id="psych-progress"></div></div>
+                        <div class="question-counter">Вопрос <span id="psych-current">1</span> из <span id="psych-total">40</span></div>
+                        <div class="question-box">
+                            <p id="psych-question-text"></p>
+                            <div id="psych-options"></div>
+                        </div>
+                        <div class="asya-message hidden" id="asya-message"></div>
+                    </div>
+
+                    <!-- Экран результатов -->
+                    <div id="psych-results" class="psych-results hidden">
+                        <div class="results-card">
+                            <h3>🎉 Тест завершён!</h3>
+                            <div id="psych-results-content"></div>
+                            <div class="email-status" id="email-status">📤 Отправка результатов Асе...</div>
+                            <button class="btn-back" onclick="backToPsychMenu()">← Вернуться к тестам</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="asya-message" id="asya-message"></div>
-        </div>
-        
-        <div id="psych-test-results" class="hidden">
-            <div class="results-card">
-                <h3>🎉 Тест завершён!</h3>
-                <div class="results-content" id="psych-results-content"></div>
-                <div class="email-section">
-                    <p>📧 Отправить результаты на почту?</p>
-                    <input type="email" id="psych-email" class="input-email" placeholder="Email (необязательно)">
-                    <button class="btn-send-email" onclick="sendPsychResults()">Отправить результаты</button>
+            </section>
+        </main>
+
+        <!-- Модальное окно ФИО -->
+        <div class="modal-overlay" id="fio-modal">
+            <div class="modal-box">
+                <h3>🐾 Перед началом теста</h3>
+                <p>Представься, чтобы Ася могла отправить результаты.</p>
+                <input type="text" id="fio-input" placeholder="ФИО *" class="input">
+                <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
+                <div class="modal-actions">
+                    <button class="btn-primary" id="start-psych-btn">Начать тест</button>
+                    <button class="btn-secondary" id="cancel-psych-btn">Отмена</button>
                 </div>
-                <button class="btn-back-main" onclick="backToPsychStart()">← Вернуться к началу теста</button>
-                <button class="btn-back-main" onclick="backToMainTests()">📋 К списку всех тестов</button>
             </div>
         </div>
     </div>
-</div>
-</main>
-
-<!-- Мобильная навигация -->
-<nav class="mobile-nav">
-    <button class="mob-btn active" data-tab="home"><span>🏠</span>Главная</button>
-    <button class="mob-btn" data-tab="tests"><span>📜</span>Тесты</button>
-    <button class="mob-btn" data-tab="about"><span>🦊</span>О Шалфее</button>
-</nav>
-
-<!-- Модальное окно ФИО -->
-<div class="modal-overlay" id="fio-modal">
-    <div class="modal-box">
-        <h3>🦊 Перед началом теста</h3>
-        <p>Представься, чтобы Шалфей мог отправить твои результаты.</p>
-        <input type="text" id="fio-input" placeholder="Твоё ФИО *" class="input">
-        <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
-        <div class="modal-actions">
-            <button class="btn-primary" id="start-test-btn">Начать тест</button>
-            <button class="btn-secondary" id="cancel-test-btn">Отмена</button>
-        </div>
-    </div>
-</div>
-</div>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
