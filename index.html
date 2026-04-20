@@ -19,19 +19,14 @@
 
     <header class="main-header">
       <div class="logo-area">
-        <div class="fox-wrapper">
-          <div class="fox-rings">
-            <span class="ring"></span><span class="ring"></span><span class="ring"></span>
-          </div>
-          <img src="persi_fox.png" alt="Лиса Шалфей" class="main-logo">
-        </div>
+        <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
         <h1>Лисий Сад</h1>
       </div>
       <nav class="main-nav">
         <button class="nav-btn active" data-tab="home">🏠 Главная</button>
-        <button class="nav-btn" data-tab="about">📖 О нас</button>
         <button class="nav-btn" data-tab="history">📜 Тесты</button>
         <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
+        <button class="nav-btn nav-right" data-tab="about">📖 О нас</button>
       </nav>
     </header>
 
@@ -39,25 +34,8 @@
       <section id="home" class="tab active">
         <div class="card welcome-card">
           <h2>Добро пожаловать</h2>
-          <p class="quote">🌿 «Привет! Я Шалфей, твой помощник по учёбе и проводник по истории! В этом саду каждое дерево хранит память, а каждый камень — урок прошлого. Выбирай путь, и я помогу тебе раскрыть знания!»</p>
+          <p class="quote">🌿 «Привет! Я Шалфей, твой помощник по учёбе и проводник по истории! В этом саду каждое дерево хранит память, а каждый камень — урок прошлого.»</p>
           <button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
-        </div>
-      </section>
-
-      <section id="about" class="tab">
-        <div class="lore-container">
-          <div class="lore-card sage-card">
-            <h3>🦊 Шалфей — Хранитель Знаний</h3>
-            <p>Говорят, что Лисий Сад существует столько же, сколько и первые книги. Когда люди только начали записывать летописи, в самой чаще леса поселился мудрый лис по имени <b>Шалфей</b>. Он собирал оброненные слова, забытые даты и мудрость старейшин. Со временем Сад стал местом, где история оживает. Шалфей не просто читает книги — он чувствует дыхание прошлого и готов провести тебя сквозь века без ошибок и скуки.</p>
-          </div>
-          <div class="lore-card asya-card">
-            <h3>🐾 Ася — Душа Гармонии</h3>
-            <p>Если Шалфей следит за временем, то Ася хранит внутренний мир тех, кто приходит в Сад. Маленькая красная панда, чьё имя переводится как «утешение», появилась у древнего ручья. Она научилась слушать не только слова, но и тишину между ними. Ася ведёт психологические опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс. Вместе с ней ты узнаешь, как мыслить яснее и чувствовать глубже.</p>
-          </div>
-          <div class="lore-card lore-philosophy">
-            <h3>✨ Философия Сада</h3>
-            <p>Лисий Сад — это место, где знания и душа переплетаются. Здесь нет скучных лекций, только живые диалоги. Падающие лепестки напоминают: каждый ответ — это шаг вперёд, а каждая ошибка — урок, который делает тебя сильнее. Входи с открытым сердцем, и Сад откроет тебе свои тайны.</p>
-          </div>
         </div>
       </section>
 
@@ -70,23 +48,37 @@
 
       <section id="psychology" class="psych-overlay">
         <div class="psych-container">
-          <button class="btn-exit-psych" onclick="backToPsychMenu()" title="Вернуться в меню">✕ Выход</button>
           <div class="geometric-flowers" id="geo-flowers"></div>
           <div class="asya-header">
             <div class="asya-logo-wrap">
-              <div class="asya-pulse"></div>
+              <div class="asya-rings">
+                <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+              </div>
               <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
             </div>
             <h2>Психология с Асей</h2>
             <p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
           </div>
-          <div class="psych-menu" id="psych-menu">
-            <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
-            <div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
+          
+          <div id="psych-menu-view">
+            <div class="psych-menu" id="psych-menu">
+              <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
+              <div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
+            </div>
+            <button class="btn-exit-psych" id="btn-exit-psych" onclick="closePsychOverlay()">✕ Выйти на главную</button>
           </div>
+
           <div id="psych-quiz" class="hidden"></div>
           <div id="psych-results" class="hidden"></div>
           <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← В меню</button>
+        </div>
+      </section>
+
+      <section id="about" class="tab">
+        <div class="card lore-single">
+          <h2>🦊 О Шалфее и Асе</h2>
+          <p>Говорят, что <b>Лисий Сад</b> существует столько же, сколько и первые рукописи. В самой чаще древнего леса поселился мудрый лис по имени <b>Шалфей</b>. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой рассказ. Шалфей не просто хранит знания — он помогает тебе пройти сквозь века без ошибок и скуки.</p>
+          <p style="margin-top:15px;">Если Шалфей следит за временем, то <b>Ася</b> — маленькая красная панда — хранит внутренний мир тех, кто приходит в Сад. Она появилась у тихого ручья и научилась слышать не только слова, но и тишину между ними. Ася проводит психологические опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс. Вместе они создают пространство, где знания и душа идут рука об руку.</p>
         </div>
       </section>
     </main>
