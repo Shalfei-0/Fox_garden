@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const commYes=[1,5,9,13,17,21,25,29,33,37], commNo=[3,7,11,15,19,23,27,31,35,39];
   const orgYes=[2,6,10,14,18,22,26,30,34,38], orgNo=[4,8,12,16,20,24,28,32,36,40];
 
+  // Тест Михельсона (27 вопросов)
   const michelsonQuestions = [
     {q:'Кто-либо говорит Вам: "Мне кажется, что Вы замечательный человек". Вы обычно:', opts:['"Нет, что Вы! Я таким не являюсь"','"Спасибо, я действительно человек выдающийся"','"Спасибо"','Ничего не говорите и краснеете','"Да, я отличаюсь от других в лучшую сторону"']},
     {q:'Кто-либо совершает замечательный поступок. Вы обычно:', opts:['"Нормально!"','"Отлично, но я видел получше"','Ничего не говорите','"Я могу сделать гораздо лучше"','"Это действительно замечательно!"']},
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {q:'Вы видите кого-то, с кем хотели бы познакомиться. Вы:', opts:['Радостно окликаете и идёте навстречу','Подходите, представляетесь и начинаете разговор','Подходите и ждёте, когда заговорят с Вами','Подходите и рассказываете о крупных делах','Ничего не говорите']},
     {q:'Незнакомец окликает Вас: "Привет!". Вы:', opts:['"Что Вам угодно?"','Ничего не говорите','"Оставьте меня в покое"','"Привет!", представляетесь и просите представиться','Киваете, "Привет!" и проходите мимо']}
   ];
+  // Ключ: а=0, б=1, в=2, г=3, д=4
   const michelsonKey = [2,4,1,3,0,2,0,2,2,3,3,0,2,4,1,3,0,2,4,1,3,2,4,0,4,1,3];
   const michelsonBlocks = {
     '🎁 Комплименты': [1,2,11,12], '🗣️ Справедливая критика': [4,13], '⚠️ Несправедливая критика': [3,9],
@@ -61,11 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ========== СОСТОЯНИЕ ==========
-  let userFIO='', userEmail='', pendingTestId=null;
-  let currentTest=null, qIdx=0, score=0, answered=false, historyUserInfo=null;
-  let psychIndex=0, psychAnswers=[], michelsonScores={};
+  let userFIO = '', userEmail = '', pendingTestId = null;
+  let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
+  let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
-  // ========== ТЕМА ==========
+  // ========== ТЕМА (по умолчанию тёмная) ==========
   const themeBtn = document.getElementById('theme-toggle');
   document.body.classList.remove('light-theme');
   themeBtn.textContent = '🌓';
@@ -74,19 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
     themeBtn.textContent = document.body.classList.contains('light-theme') ? '🌙' : '🌓';
   };
 
-  // ✅ НАВИГАЦИЯ & ЛЕПЕСТКИ
+  // ========== НАВИГАЦИЯ & ЛЕПЕСТКИ ==========
   const petalsContainer = document.getElementById('petals-container');
   let petalsInitialized = false;
 
   function initPetals() {
     if(petalsInitialized) return;
     petalsContainer.innerHTML = '';
-    for(let i=0; i<25; i++) {
+    for(let i=0; i<22; i++) {
       const p = document.createElement('div'); p.className = 'petal';
-      p.style.left = (Math.random() * 90 + 5) + '%';
-      p.style.top = (Math.random() * -30) + '%';
+      p.style.left = (Math.random() * 100 + 15) + '%';
+      p.style.top = (Math.random() * -20) + '%';
       p.style.animationDuration = (Math.random() * 5 + 10) + 's';
       p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.transform = `scale(${0.8 + Math.random()*0.5})`;
       petalsContainer.appendChild(p);
     }
     petalsInitialized = true;
@@ -96,20 +99,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     
-    // Исправлен баг с ID
+    // ✅ Исправлено: ищем по точному ID, без "-tab"
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
     document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
     
     const psych = document.getElementById('psychology');
-    
     if(id === 'psychology') { 
       psych.classList.add('active'); 
       createGeoFlowers();
       petalsContainer.classList.remove('active'); // Скрываем лепестки в психологии
     } else {
       psych.classList.remove('active');
-      petalsContainer.classList.add('active'); // Показываем лепестки везде кроме психологии
+      petalsContainer.classList.add('active'); // Показываем везде кроме психологии
       if(!petalsInitialized) initPetals();
     }
   };
@@ -128,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1500);
 
-  // ========== ИСТОРИЯ ==========
+  // ========== ИСТОРИЯ (МОДАЛКА + ТЕСТ) ==========
   const hList = document.getElementById('history-test-list');
   historyTests.forEach(t => {
     const card = document.createElement('div');
@@ -154,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-back-btn').classList.remove('hidden');
     showHistoryQuestion();
   }
+
   function showHistoryQuestion() {
     const q = currentTest.questions[qIdx];
     document.getElementById('history-quiz').innerHTML = `
@@ -164,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
     });
   }
+
   function checkHistoryAnswer(idx) {
     if(answered) return; answered=true;
     const correct = currentTest.questions[qIdx].correct;
@@ -177,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest();
     }, 1200);
   }
+
   async function finishHistoryTest() {
     const pct = Math.round((score/currentTest.questions.length)*100);
     document.getElementById('history-quiz').innerHTML = `
@@ -188,14 +193,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('h-mail-status').textContent='✅ Отправлено!';
     } catch(e) { document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети'; }
   }
+
   window.exitHistoryTest = () => {
     document.getElementById('history-quiz').classList.add('hidden');
     document.getElementById('history-test-list').classList.remove('hidden');
     document.getElementById('history-back-btn').classList.add('hidden');
   };
 
-  // ========== ПСИХОЛОГИЯ & КНОПКА ВЫХОДА ==========
-  const psychExitBtn = document.getElementById('btn-exit-psych');
+  // ========== ПСИХОЛОГИЯ (ФИКС СБРОСА + ВЫХОД) ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
 
@@ -209,24 +214,34 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   };
-  document.getElementById('cancel-test-btn').onclick = () => { document.getElementById('fio-modal').style.display='none'; pendingTestId=null; historyUserInfo=null; };
-  document.getElementById('start-test-btn').onclick = () => {
+
+  document.getElementById('cancel-psych-btn').onclick = () => { 
+    document.getElementById('fio-modal').style.display='none'; 
+    pendingTestId=null; historyUserInfo=null; 
+  };
+
+  document.getElementById('start-psych-btn').onclick = () => {
     const fio = document.getElementById('fio-input').value.trim();
     if(!fio) return alert('Введи ФИО!');
-    if(pendingTestId==='history') { historyUserInfo.fio=fio; historyUserInfo.email=document.getElementById('email-input').value.trim(); startHistoryTest(); }
-    else { userFIO=fio; userEmail=document.getElementById('email-input').value.trim(); document.getElementById('fio-modal').style.display='none'; startPsychTest(pendingTestId); }
+    if(pendingTestId==='history') { 
+      historyUserInfo.fio=fio; historyUserInfo.email=document.getElementById('email-input').value.trim(); 
+      startHistoryTest(); 
+    } else { 
+      userFIO=fio; userEmail=document.getElementById('email-input').value.trim(); 
+      document.getElementById('fio-modal').style.display='none'; 
+      startPsychTest(pendingTestId); 
+    }
   };
 
   function startPsychTest(id) {
     currentTest = id==='kos' ? {questions:kosQuestions, type:'kos'} : {questions:michelsonQuestions, type:'michelson'};
     psychIndex=0; psychAnswers=[]; michelsonScores={};
     
-    // Скрываем меню и кнопку выхода, показываем тест
-    psychMenuView.classList.add('hidden');
+    // Скрываем меню, показываем тест
+    if(psychMenuView) psychMenuView.classList.add('hidden');
     psychBackBtn.classList.add('hidden');
     document.getElementById('psych-quiz').classList.remove('hidden'); document.getElementById('psych-quiz').innerHTML='';
     document.getElementById('psych-results').classList.add('hidden'); document.getElementById('psych-results').innerHTML='';
-    
     showPsychQuestion();
   }
 
@@ -246,7 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
     else if(progress>=0.64&&progress<0.67) document.getElementById('psych-quiz').insertAdjacentHTML('beforeend', `<div class="asya-message">✨ Две трети позади!</div>`);
   }
 
-  function answerPsych(ans) { psychAnswers.push(ans); psychIndex++; if(psychIndex<currentTest.questions.length) showPsychQuestion(); else calculatePsychResults(); }
+  function answerPsych(ans) { 
+    psychAnswers.push(ans); psychIndex++; 
+    if(psychIndex<currentTest.questions.length) showPsychQuestion(); 
+    else calculatePsychResults(); 
+  }
   
   function calculatePsychResults() {
     let html='', text='';
@@ -272,16 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.backToPsychMenu = () => {
+    // ✅ Полный сброс состояния
     psychIndex=0; psychAnswers=[]; michelsonScores={}; currentTest=null;
     document.getElementById('psych-quiz').innerHTML=''; document.getElementById('psych-results').innerHTML='';
     document.getElementById('psych-quiz').classList.add('hidden');
     document.getElementById('psych-results').classList.add('hidden');
-    document.getElementById('psych-back-btn').classList.add('hidden');
-    
-    // Возвращаем меню и кнопку выхода
-    psychMenuView.classList.remove('hidden');
+    psychBackBtn.classList.add('hidden');
+    if(psychMenuView) psychMenuView.classList.remove('hidden');
   };
 
+  // ========== ГЕОМЕТРИЧЕСКИЕ ЦВЕТЫ ==========
   function createGeoFlowers() {
     const c = document.getElementById('geo-flowers'); if(c.children.length>0) return;
     for(let i=0; i<12; i++) {
@@ -291,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Инициализация
   initPetals();
-  petalsContainer.classList.add('active'); // По умолчанию видны на главной
+  petalsContainer.classList.add('active');
 });
