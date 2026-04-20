@@ -48,39 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== НАВИГАЦИЯ ==========
     window.switchTab = (id) => {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`${id}-tab`).classList.add('active');
-        document.querySelector(`.tab-btn[data-tab="${id}"]`).classList.add('active');
+        document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
+        const psych = document.getElementById('psychology');
+        if(id === 'psychology') { psych.classList.add('active'); createGeoFlowers(); }
+        else psych.classList.remove('active');
     };
-    document.querySelectorAll('.tab-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+    document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
 
-    // ========== ЧАТ ==========
+    // ========== ЧАТ / ПРИВЕТСТВИЕ ==========
     async function showMessage(text, speaker = 'Шалфей', emotion = '😊') {
-        document.getElementById('speaker').textContent = speaker;
-        document.getElementById('emotion').textContent = emotion;
-        const msg = document.getElementById('message');
-        msg.textContent = '';
-        for(let i=0; i<text.length; i++) { msg.textContent += text[i]; await new Promise(r => setTimeout(r, 20)); }
-        document.getElementById('character').style.transform = 'scale(1.05)';
-        setTimeout(() => document.getElementById('character').style.transform = 'scale(1)', 200);
+        // Заглушка для демо, если понадобится чат позже
+        console.log(`${speaker}: ${text}`);
     }
-    async function sendCommand() {
-        const cmd = document.getElementById('command-input').value.trim();
-        if(!cmd) return;
-        document.getElementById('command-input').value = '';
-        await showMessage(cmd, 'Вы', '📝');
-        setTimeout(async() => {
-            const replies = {
-                'привет': 'Привет! Чем могу помочь? 😊', 'как дела': 'Всё отлично, а у тебя? 😌',
-                'помоги': '📜 Тесты — в разделе "Тесты". 🧠 Психология — в разделе "Психология". Напиши "привет" или "как дела"!',
-                'время': `Сейчас ${new Date().toLocaleTimeString()}`, 'дата': `Сегодня ${new Date().toLocaleDateString()}`
-            };
-            await showMessage(replies[cmd.toLowerCase()] || 'Не понял команду. Напиши "помоги".', 'Шалфей', '🤔');
-        }, 500);
-    }
-    document.getElementById('send-btn').onclick = sendCommand;
-    document.getElementById('command-input').onkeypress = e => { if(e.key === 'Enter') sendCommand(); };
     setTimeout(() => showMessage('Привет! Я Шалфей. Выбирай раздел вверху 👆', 'Шалфей', '✨'), 1000);
 
     // ========== ЭФФЕКТЫ (ЛУЧИ/ПЫЛЬ) ==========
@@ -152,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <p style="text-align:center">${score} из ${currentTest.questions.length}</p>
             <div id="h-mail-status" style="text-align:center;padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin:15px 0">📤 Отправка на aniruf14.02@gmail.com...</div>`;
         
-        // Отправка на почту истории
         try {
             await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', {
                 method: 'POST', headers: {'Content-Type':'application/json'},
@@ -202,22 +183,36 @@ document.addEventListener('DOMContentLoaded', () => {
     function showPsychQuestion() {
         const q = currentTest.questions[psychIndex];
         document.getElementById('psych-quiz').innerHTML = `
-            <p style="font-size:1.1rem;margin-bottom:20px">${q.q}</p>
-            <div id="p-opts"></div>`;
+            <div class="question-box">
+                <p>${q.q}</p>
+                <div id="p-opts"></div>
+            </div>`;
         const opts = document.getElementById('p-opts');
         if(currentTest.type === 'kos') {
             ['Да', 'Нет'].forEach(a => {
-                const btn = document.createElement('button'); btn.className='test-card'; btn.style.margin='8px 0'; btn.textContent=a;
+                const btn = document.createElement('button'); btn.className='btn-answer'; btn.textContent=a;
                 btn.onclick = () => answerPsych(a === 'Да' ? 'yes' : 'no');
                 opts.appendChild(btn);
             });
         } else {
             ['Да', 'Иногда', 'Нет'].forEach(a => {
-                const btn = document.createElement('button'); btn.className='test-card'; btn.style.margin='8px 0'; btn.textContent=a;
+                const btn = document.createElement('button'); btn.className='btn-answer'; btn.textContent=a;
                 btn.onclick = () => answerPsych(a);
                 opts.appendChild(btn);
             });
         }
+        
+        // Прогресс
+        document.getElementById('psych-quiz').insertAdjacentHTML('afterbegin', 
+            `<div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>`);
+        
+        // Мотивация Аси
+        const msgDiv = document.createElement('div'); msgDiv.className='asya-message';
+        const progress = (psychIndex + 1) / currentTest.questions.length;
+        if(progress >= 0.32 && progress < 0.35) msgDiv.textContent = "🌸 Молодец! Треть уже пройдена, осталось чуть-чуть!";
+        else if(progress >= 0.64 && progress < 0.67) msgDiv.textContent = "✨ Отлично! Уже две трети позади! Ты справляешься!";
+        else msgDiv.style.display = 'none';
+        document.getElementById('psych-quiz').appendChild(msgDiv);
     }
 
     function answerPsych(ans) {
@@ -236,21 +231,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(orgYes.includes(n)&&a==='yes')o++; if(orgNo.includes(n)&&a==='no')o++;
             });
             const kc=(c/20).toFixed(2), oc=(o/20).toFixed(2);
-            html = `<div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:10px;margin:10px 0"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${kc}</p></div>
-                    <div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:10px;margin:10px 0"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${oc}</p></div>`;
+            html = `<div class="result-item"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${kc}</p></div>
+                    <div class="result-item"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${oc}</p></div>`;
             text = `КОС:\nКоммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
         } else {
             let pts = psychAnswers.reduce((s,a) => s + (a==='Да'?2 : a==='Иногда'?1 : 0), 0);
             let interp = pts>=30?'Некоммуникабельны':pts>=25?'Замкнуты':pts>=19?'Общительны с оглядкой':pts>=14?'Норма':pts>=9?'Весьма общительны':'Рубаха-парень';
-            html = `<div style="background:rgba(255,255,255,0.1);padding:15px;border-radius:10px;margin:10px 0"><h4>🗣️ Общительность</h4><p>${pts}/32 — ${interp}</p></div>`;
+            html = `<div class="result-item"><h4>🗣️ Общительность</h4><p>${pts}/32 — ${interp}</p></div>`;
             text = `Ряховский: ${pts}/32 (${interp})`;
         }
 
         document.getElementById('psych-quiz').classList.add('hidden');
         document.getElementById('psych-results').classList.remove('hidden');
-        document.getElementById('psych-results').innerHTML = `<h3>✅ Готово!</h3>${html}<div id="p-mail-status" style="padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin:15px 0">📤 Отправка...</div>`;
+        document.getElementById('psych-results').innerHTML = `<div class="results-card"><h3 style="text-align:center;margin-bottom:20px">✅ Тест завершён!</h3>${html}<div id="p-mail-status" style="padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin:15px 0;text-align:center">📤 Отправка...</div></div>`;
 
-        // Отправка на почту психологии
         fetch('https://formsubmit.co/ajax/9266031377@bk.ru', {
             method: 'POST', headers: {'Content-Type':'application/json'},
             body: JSON.stringify({_subject:`🧠 Психотест — ${userFIO}`, ФИО:userFIO, Email:userEmail||'Не указан', Результаты:text, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false'})
@@ -264,4 +258,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('psych-menu').classList.remove('hidden');
         document.getElementById('psych-back-btn').classList.add('hidden');
     };
+
+    // ========== ГЕОМЕТРИЧЕСКИЕ ЦВЕТЫ ==========
+    function createGeoFlowers() {
+        const container = document.getElementById('geo-flowers');
+        container.innerHTML = '';
+        for (let i = 0; i < 12; i++) {
+            const f = document.createElement('div');
+            f.className = 'geo-flower';
+            f.style.left = Math.random() * 100 + '%';
+            f.style.top = Math.random() * 100 + '%';
+            f.style.animationDelay = Math.random() * 15 + 's';
+            f.style.width = (Math.random() * 60 + 40) + 'px';
+            f.style.height = f.style.width;
+            container.appendChild(f);
+        }
+    }
 });
