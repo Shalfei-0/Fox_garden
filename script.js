@@ -192,3 +192,272 @@ document.addEventListener('DOMContentLoaded', () => {
         pc.appendChild(p);
     }
 });
+
+// ========== ПСИХОЛОГИЧЕСКИЙ ТЕСТ КОС ==========
+const psychTestTab = document.getElementById('psych-test-tab');
+const psychTestStart = document.getElementById('psych-test-start');
+const psychTestQuestions = document.getElementById('psych-test-questions');
+const psychTestResults = document.getElementById('psych-test-results');
+const psychQuestionText = document.getElementById('psych-question-text');
+const psychProgress = document.getElementById('psych-progress');
+const currentQSpan = document.getElementById('current-q');
+const totalQSpan = document.getElementById('total-q');
+const asyaMessageDiv = document.getElementById('asya-message');
+
+// Вопросы теста КОС (40 вопросов из документа)
+const kosQuestions = [
+    "Много ли у Вас друзей, с которыми Вы постоянно общаетесь?",
+    "Часто ли Вам удается склонить большинство своих товарищей к принятию ими Вашего мнения?",
+    "Долго ли Вас беспокоит чувство обиды, причиненное Вам кем-то из Ваших товарищей?",
+    "Всегда ли Вам трудно ориентироваться в создавшейся критической ситуации?",
+    "Есть ли у Вас стремление к установлению новых знакомств с разными людьми?",
+    "Нравится ли Вам заниматься общественной работой?",
+    "Верно ли, что Вам приятнее и проще проводить время с книгами или за каким-либо другим занятием, чем с людьми?",
+    "Если возникли какие-либо помехи в осуществлении Ваших намерений, то легко ли Вы отступаете от них?",
+    "Легко ли Вы устанавливаете контакты с людьми, которые значительно старше Вас по возрасту?",
+    "Любите ли Вы придумывать и организовывать со своими товарищами различные игры и развлечения?",
+    "Трудно ли Вы включаетесь в новую для Вас компанию?",
+    "Часто ли Вы откладываете на другие дни те дела, которые нужно было бы выполнить сегодня?",
+    "Легко ли Вам удается устанавливать контакты с незнакомыми людьми?",
+    "Стремитесь ли Вы добиваться, чтобы Ваши товарищи действовали в соответствии с Вашим мнением?",
+    "Трудно ли Вы осваиваетесь в новом коллективе?",
+    "Верно ли, что у Вас не бывает конфликтов с товарищами из-за невыполнения ими своих обязанностей, обязательств?",
+    "Стремитесь ли Вы при удобном случае познакомиться и побеседовать с новым человеком?",
+    "Часто ли Вы в решении важных дел принимаете инициативу на себя?",
+    "Раздражают ли Вас окружающие люди и хочется ли Вам побыть одному?",
+    "Правда ли, что Вы обычно плохо ориентируетесь в незнакомой для Вас обстановке?",
+    "Нравится ли Вам постоянно находиться среди людей?",
+    "Возникает ли у Вас раздражение, если Вам не удается закончить начатое дело?",
+    "Испытываете ли Вы чувство затруднения, неудобства или стеснения, если приходится проявить инициативу, чтобы познакомиться с новым человеком?",
+    "Правда ли, что Вы утомляетесь от частого общения с товарищами?",
+    "Любите ли Вы участвовать в коллективных играх?",
+    "Часто ли Вы проявляете инициативу при решении вопросов, затрагивающих интересы Ваших товарищей?",
+    "Правда ли, что Вы чувствуете себя неуверенно среди малознакомых Вам людей?",
+    "Верно ли, что Вы редко стремитесь к доказательству своей правоты?",
+    "Полагаете ли Вы, что Вам не доставляет особого труда внести оживление в малознакомую Вам компанию?",
+    "Принимаете ли Вы участие в общественной работе в школе?",
+    "Стремитесь ли Вы ограничить круг своих знакомых небольшим количеством людей?",
+    "Верно ли, что Вы не стремитесь отстаивать свое мнение или решение, если оно не было сразу принято Вашими товарищами?",
+    "Чувствуете ли Вы себя непринужденно, попав в незнакомую Вам компанию?",
+    "Охотно ли Вы приступаете к организации различных мероприятий для своих товарищей?",
+    "Правда ли, что Вы не чувствуете себя достаточно уверенным и спокойным, когда приходится говорить что-либо большой группе людей?",
+    "Часто ли Вы опаздываете на деловые встречи, свидания?",
+    "Верно ли, что у Вас много друзей?",
+    "Часто ли Вы смущаетесь, чувствуете неловкость при общении с малознакомыми людьми?",
+    "Правда ли, что Вас пугает перспектива оказаться в новом коллективе?",
+    "Правда ли, что Вы не очень уверенно чувствуете себя в окружении большой группы своих товарищей?"
+];
+
+// Ключи для подсчёта (из документа)
+// Коммуникативные: ДА на 1,5,9,13,17,21,25,29,33,37 и НЕТ на 3,7,11,15,19,23,27,31,35,39
+// Организаторские: ДА на 2,6,10,14,18,22,26,30,34,38 и НЕТ на 4,8,12,16,20,24,28,32,36,40
+
+const communicativeYes = [1, 5, 9, 13, 17, 21, 25, 29, 33, 37];
+const communicativeNo = [3, 7, 11, 15, 19, 23, 27, 31, 35, 39];
+const organizerYes = [2, 6, 10, 14, 18, 22, 26, 30, 34, 38];
+const organizerNo = [4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
+
+let currentPsychQuestion = 0;
+let psychAnswers = [];
+let psychResults = {};
+
+// Мотивационные сообщения от Аси
+const asyaMessages = {
+    13: "🌸 Молодец! Треть уже пройдена, осталось чуть-чуть!",
+    26: "✨ Отлично! Уже две трети позади! Ты справляешься!",
+    35: "🎉 Почти финиш! Ещё несколько вопросов!"
+};
+
+function startPsychTest() {
+    currentPsychQuestion = 0;
+    psychAnswers = [];
+    psychTestStart.classList.add('hidden');
+    psychTestResults.classList.add('hidden');
+    psychTestQuestions.classList.remove('hidden');
+    totalQSpan.textContent = kosQuestions.length;
+    showPsychQuestion();
+}
+
+function showPsychQuestion() {
+    currentQSpan.textContent = currentPsychQuestion + 1;
+    psychQuestionText.textContent = `${currentPsychQuestion + 1}. ${kosQuestions[currentPsychQuestion]}`;
+    
+    // Обновляем прогресс
+    const progress = ((currentPsychQuestion) / kosQuestions.length) * 100;
+    psychProgress.style.width = progress + '%';
+    
+    // Проверяем мотивационные сообщения
+    if (asyaMessages[currentPsychQuestion]) {
+        asyaMessageDiv.textContent = asyaMessages[currentPsychQuestion];
+        asyaMessageDiv.style.display = 'block';
+    } else {
+        asyaMessageDiv.style.display = 'none';
+    }
+}
+
+function answerPsychQuestion(answer) {
+    psychAnswers.push(answer);
+    currentPsychQuestion++;
+    
+    if (currentPsychQuestion < kosQuestions.length) {
+        showPsychQuestion();
+    } else {
+        calculatePsychResults();
+    }
+}
+
+function calculatePsychResults() {
+    let communicativeScore = 0;
+    let organizerScore = 0;
+    
+    // Подсчёт коммуникативных
+    psychAnswers.forEach((answer, index) => {
+        const qNum = index + 1;
+        
+        // ДА на коммуникативные
+        if (communicativeYes.includes(qNum) && answer === 'yes') communicativeScore++;
+        // НЕТ на коммуникативные
+        if (communicativeNo.includes(qNum) && answer === 'no') communicativeScore++;
+        
+        // ДА на организаторские
+        if (organizerYes.includes(qNum) && answer === 'yes') organizerScore++;
+        // НЕТ на организаторские
+        if (organizerNo.includes(qNum) && answer === 'no') organizerScore++;
+    });
+    
+    // Вычисляем коэффициенты (0-1)
+    const kCoefficient = (communicativeScore / 20).toFixed(2);
+    const oCoefficient = (organizerScore / 20).toFixed(2);
+    
+    // Определяем уровень (1-5)
+    const kLevel = getLevelFromCoefficient(kCoefficient);
+    const oLevel = getLevelFromCoefficient(oCoefficient);
+    
+    psychResults = {
+        communicative: {
+            score: communicativeScore,
+            coefficient: kCoefficient,
+            level: kLevel,
+            description: getLevelDescription(kLevel, 'коммуникативных')
+        },
+        organizer: {
+            score: organizerScore,
+            coefficient: oCoefficient,
+            level: oLevel,
+            description: getLevelDescription(oLevel, 'организаторских')
+        }
+    };
+    
+    showPsychResults();
+}
+
+function getLevelFromCoefficient(coef) {
+    const c = parseFloat(coef);
+    if (c < 0.2) return 1;
+    if (c < 0.4) return 2;
+    if (c < 0.6) return 3;
+    if (c < 0.8) return 4;
+    return 5;
+}
+
+function getLevelDescription(level, type) {
+    const descriptions = {
+        1: `Низкий уровень проявления ${type}. Вы не стремитесь к общению, чувствуете себя скованно в новой компании.`,
+        2: `Уровень ниже среднего. Вы предпочитаете проводить время наедине с собой, ограничиваете свои знакомства.`,
+        3: `Средний уровень. Вы стремитесь к контактам с людьми, но потенциал нуждается в развитии.`,
+        4: `Высокий уровень! Вы не теряетесь в новой обстановке, быстро находите друзей, проявляете инициативу.`,
+        5: `Очень высокий уровень! Вы испытываете потребность в ${type} и активно стремитесь к ним!`
+    };
+    return descriptions[level];
+}
+
+function showPsychResults() {
+    psychTestQuestions.classList.add('hidden');
+    psychTestResults.classList.remove('hidden');
+    
+    const content = document.getElementById('psych-results-content');
+    content.innerHTML = `
+        <div class="result-item">
+            <h4>🗣️ Коммуникативные способности</h4>
+            <p><strong>Баллы:</strong> ${psychResults.communicative.score} из 20</p>
+            <p><strong>Коэффициент:</strong> ${psychResults.communicative.coefficient}</p>
+            <p><strong>Уровень:</strong> ${psychResults.communicative.level} из 5</p>
+            <p>${psychResults.communicative.description}</p>
+        </div>
+        <div class="result-item">
+            <h4>📋 Организаторские способности</h4>
+            <p><strong>Баллы:</strong> ${psychResults.organizer.score} из 20</p>
+            <p><strong>Коэффициент:</strong> ${psychResults.organizer.coefficient}</p>
+            <p><strong>Уровень:</strong> ${psychResults.organizer.level} из 5</p>
+            <p>${psychResults.organizer.description}</p>
+        </div>
+    `;
+}
+
+async function sendPsychResults() {
+    const email = document.getElementById('psych-email').value;
+    const statusDiv = document.createElement('div');
+    statusDiv.className = 'status-message';
+    
+    const resultsText = `
+Тест КОС - Результаты
+═══════════════════════
+
+️ КОММУНИКАТИВНЫЕ СПОСОБНОСТИ:
+Баллы: ${psychResults.communicative.score} из 20
+Коэффициент: ${psychResults.communicative.coefficient}
+Уровень: ${psychResults.communicative.level} из 5
+${psychResults.communicative.description}
+
+📋 ОРГАНИЗАТОРСКИЕ СПОСОБНОСТИ:
+Баллы: ${psychResults.organizer.score} из 20
+Коэффициент: ${psychResults.organizer.coefficient}
+Уровень: ${psychResults.organizer.level} из 5
+${psychResults.organizer.description}
+
+Email пользователя: ${email || 'Не указан'}
+Дата: ${new Date().toLocaleString('ru-RU')}
+    `.trim();
+    
+    const formData = {
+        _subject: `🧠 Тест КОС - Результаты`,
+        'Тест': 'Коммуникативные и организаторские склонности (КОС)',
+        'Email_пользователя': email || 'Не указан',
+        'Коммуникативные_баллы': psychResults.communicative.score,
+        'Коммуникативные_коэффициент': psychResults.communicative.coefficient,
+        'Коммуникативные_уровень': psychResults.communicative.level,
+        'Организаторские_баллы': psychResults.organizer.score,
+        'Организаторские_коэффициент': psychResults.organizer.coefficient,
+        'Организаторские_уровень': psychResults.organizer.level,
+        'Дата': new Date().toLocaleString('ru-RU'),
+        'Подробные_результаты': resultsText,
+        _captcha: 'false'
+    };
+    
+    try {
+        const response = await fetch('https://formsubmit.co/ajax/9266031377@bk.ru', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+            alert('✅ Результаты успешно отправлены на почту 9266031377@bk.ru!');
+        } else {
+            throw new Error('Ошибка сети');
+        }
+    } catch (e) {
+        // Fallback: mailto
+        const subject = encodeURIComponent('🧠 Тест КОС - Результаты');
+        const body = encodeURIComponent(resultsText);
+        window.location.href = `mailto:9266031377@bk.ru?subject=${subject}&body=${body}`;
+    }
+}
+
+function backToPsychStart() {
+    psychTestResults.classList.add('hidden');
+    psychTestStart.classList.remove('hidden');
+}
+
+// Добавляем кнопку для перехода к психологическому тесту в главном меню
+// (добавьте это в существующую секцию тестов)
