@@ -93,6 +93,59 @@
         </div>
     </div>
 </div>
+    <!-- Добавьтe это после существующих секций, перед закрывающим </div> перед <script> -->
+
+<!-- Психологический тест КОС -->
+<div id="psych-test-tab" class="tab-content">
+    <div class="psych-container">
+        <div class="psych-header">
+            <img src="red_panda_asya.png" alt="Ася" class="asya-character">
+            <div class="psych-intro">
+                <h2>🧠 Тест КОС</h2>
+                <p id="asya-greeting">Привет! Я Ася, отвечаю за психологию и твоё самочувствие</p>
+            </div>
+        </div>
+        
+        <div id="psych-test-start">
+            <div class="test-description">
+                <h3>Коммуникативные и организаторские склонности</h3>
+                <p>Этот тест поможет определить твой уровень коммуникативных и организаторских способностей.</p>
+                <p><strong>40 вопросов</strong> • Займёт около 10-15 минут</p>
+            </div>
+            <button class="btn-start-psych" onclick="startPsychTest()">Начать тестирование 🌸</button>
+        </div>
+        
+        <div id="psych-test-questions" class="hidden">
+            <div class="progress-bar">
+                <div class="progress-fill" id="psych-progress"></div>
+            </div>
+            <div class="question-counter">Вопрос <span id="current-q">1</span> из <span id="total-q">40</span></div>
+            
+            <div class="question-block" id="question-block">
+                <p class="question-text" id="psych-question-text"></p>
+                <div class="answer-options">
+                    <button class="btn-answer" onclick="answerPsychQuestion('yes')">Да</button>
+                    <button class="btn-answer" onclick="answerPsychQuestion('no')">Нет</button>
+                </div>
+            </div>
+            
+            <div class="asya-message" id="asya-message"></div>
+        </div>
+        
+        <div id="psych-test-results" class="hidden">
+            <div class="results-card">
+                <h3>🎉 Тест завершён!</h3>
+                <div class="results-content" id="psych-results-content"></div>
+                <div class="email-section">
+                    <p>📧 Отправить результаты на почту?</p>
+                    <input type="email" id="psych-email" class="input-email" placeholder="Email (необязательно)">
+                    <button class="btn-send-email" onclick="sendPsychResults()">Отправить результаты</button>
+                </div>
+                <button class="btn-back-tests" onclick="backToPsychStart()">← Вернуться к тестам</button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <script src="script.js"></script>
 </body>
