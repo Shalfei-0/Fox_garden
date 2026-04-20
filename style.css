@@ -1,33 +1,31 @@
 :root {
   --bg: #0f0a1a;
-  --card: rgba(20, 15, 30, 0.85);
+  --card: rgba(20, 15, 30, 0.88);
   --border: rgba(255, 170, 102, 0.25);
   --text: #e8e0f0;
   --text-muted: #a89bc2;
   --accent: #ffaa66;
+  --glow: 0 0 15px rgba(255, 170, 102, 0.4), 0 0 30px rgba(255, 170, 102, 0.15);
   --shadow: 0 8px 32px rgba(0,0,0,0.4);
-  --petal-base: #ffb3a7;
-  --petal-shadow: #ff8a80;
-  --asya-pulse: rgba(180, 220, 255, 0.25);
+  --asya-pulse: rgba(180, 220, 255, 0.22);
 }
-
 body.light-theme {
-  --bg: #fff5e6;
+  --bg: #fff6ed;
   --card: rgba(255,255,255,0.92);
   --border: rgba(211, 84, 0, 0.25);
   --text: #3e2723;
   --text-muted: #6d4c41;
   --accent: #e65100;
-  --shadow: 0 8px 20px rgba(0,0,0,0.12);
-  --petal-base: #ff8a80;
-  --petal-shadow: #c62828;
-  --asya-pulse: rgba(100, 181, 246, 0.35);
+  --glow: 0 0 10px rgba(230, 81, 0, 0.3);
+  --shadow: 0 8px 20px rgba(0,0,0,0.1);
+  --asya-pulse: rgba(100, 181, 246, 0.3);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Comfortaa',cursive; }
 body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; transition:background 0.4s, color 0.3s; }
 #app { max-width:950px; margin:0 auto; padding:20px; position:relative; }
 
+/* Кнопка темы */
 .theme-toggle {
   position:fixed; top:15px; right:15px; width:44px; height:44px; border-radius:50%;
   border:1px solid var(--border); background:var(--card); color:var(--text);
@@ -35,71 +33,85 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 }
 .theme-toggle:hover { transform:scale(1.1); background:var(--accent); color:#fff; }
 
+/* Фоновые эффекты */
 .effects-container { position:fixed; inset:0; pointer-events:none; z-index:0; }
-.sun-rays { position:absolute; top:50%; left:50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,200,100,0.15) 0%, transparent 70%); animation:rotate 20s linear infinite; opacity:0; transition:0.5s; }
+.sun-rays { position:absolute; top:50%; left:50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,200,100,0.12) 0%, transparent 70%); animation:rotate 20s linear infinite; opacity:0; transition:0.5s; }
 .sun-rays.active { opacity:1; }
 @keyframes rotate { from{transform:translate(-50%,-50%) rotate(0)} to{transform:translate(-50%,-50%) rotate(360deg)} }
-.moon-light { position:absolute; inset:0; background:radial-gradient(ellipse at 20% 20%, rgba(100,150,200,0.25) 0%, transparent 70%); opacity:0; transition:0.5s; }
-.moon-light.active { opacity:1; }
 .dust-particles { position:absolute; inset:0; }
 .particle { position:absolute; background:radial-gradient(circle, rgba(255,255,200,0.5) 0%, transparent 70%); border-radius:50%; animation:float 8s infinite ease-in-out; }
 @keyframes float { 0%,100%{transform:translateY(0);opacity:0} 50%{transform:translateY(-30px);opacity:0.6} }
 
+/* 🌸 ЛЕПЕСТКИ: реалистичная форма + ветер + покачивание */
 #petals-container { position:fixed; inset:0; pointer-events:none; z-index:1; display:none; }
 #petals-container.active { display:block; }
-.petal { 
-  position:absolute; width:14px; height:22px; 
-  background: linear-gradient(135deg, var(--petal-base) 0%, var(--petal-shadow) 60%, transparent 100%);
-  border-radius: 60% 60% 60% 60% / 80% 80% 40% 40%;
-  opacity: 0.85; filter: blur(0.3px);
-  animation: petalFall linear infinite, petalSway ease-in-out infinite alternate;
-  transform-origin: center bottom;
+.petal {
+  position:absolute;
+  width:18px; height:26px;
+  background: linear-gradient(160deg, #ffcdd2 0%, #ef9a9a 50%, #ef5350 85%, transparent 100%);
+  /* Настоящая форма лепестка сакуры */
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  filter: blur(0.4px);
+  opacity: 0.85;
+  animation: petalDrift linear infinite, petalSway ease-in-out infinite alternate;
+  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.1);
 }
-@keyframes petalFall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.9; }
-  90% { opacity: 0.9; }
-  100% { transform: translateY(110vh) rotate(20deg); opacity: 0; }
+/* Диагональное падение (ветер уносит влево-вниз) */
+@keyframes petalDrift {
+  0%   { transform: translate(-10vw, -5vh) rotate(0deg); opacity:0; }
+  5%   { opacity:0.9; }
+  50%  { transform: translate(-30vw, 50vh) rotate(180deg); }
+  95%  { opacity:0.7; }
+  100% { transform: translate(-60vw, 105vh) rotate(360deg); opacity:0; }
 }
+/* Покачивание из стороны в сторону */
 @keyframes petalSway {
-  0% { margin-left: 0; }
-  25% { margin-left: -8px; }
-  50% { margin-left: 3px; }
-  75% { margin-left: -5px; }
-  100% { margin-left: 0; }
+  0%   { margin-left: 0px; margin-top: 0px; }
+  30%  { margin-left: -12px; margin-top: 6px; }
+  60%  { margin-left: 8px; margin-top: -4px; }
+  100% { margin-left: -5px; margin-top: 2px; }
 }
 
+/* Шапка */
 .main-header { display:flex; flex-direction:column; align-items:center; padding:25px 0 15px; position:relative; z-index:2; }
-.logo-area { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.logo-area { display:flex; flex-direction:column; align-items:center; gap:10px; }
 
-/* ✅ ИСПРАВЛЕНИЕ КРУГОВ: используем transform вместо width/height для плавности */
-.fox-wrapper { position: relative; display: inline-block; }
-.fox-rings {
-  position: absolute; top: 50%; left: 50%;
-  width: 0; height: 0; pointer-events: none; z-index: 0;
-}
+/* ✅ Лиса увеличена в 3 раза + плавные кольца */
+.fox-wrapper { position:relative; display:inline-block; }
+.main-logo { width:180px; filter:drop-shadow(0 0 18px var(--accent)); position:relative; z-index:2; }
+.fox-rings { position:absolute; top:50%; left:50%; width:0; height:0; pointer-events:none; z-index:1; }
 .fox-rings .ring {
-  position: absolute; top: 50%; left: 50%;
-  width: 80px; height: 80px; margin-top: -40px; margin-left: -40px;
-  border: 2px solid var(--accent); border-radius: 50%;
-  opacity: 0; transform: scale(0.8);
+  position:absolute; top:50%; left:50%;
+  width:60px; height:60px; margin:-30px 0 0 -30px;
+  border:2px solid var(--accent); border-radius:50%;
+  opacity:0; transform:scale(0.8);
   will-change: transform, opacity;
-  animation: ringExpand 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  animation:ringExpand 7s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
 }
-.fox-rings .ring:nth-child(1) { animation-delay: 0s; }
-.fox-rings .ring:nth-child(2) { animation-delay: 2s; }
-.fox-rings .ring:nth-child(3) { animation-delay: 4s; }
+.fox-rings .ring:nth-child(1) { animation-delay:0s; }
+.fox-rings .ring:nth-child(2) { animation-delay:2.3s; }
+.fox-rings .ring:nth-child(3) { animation-delay:4.6s; }
 @keyframes ringExpand {
-  0% { opacity: 0.8; transform: scale(0.8); }
-  100% { opacity: 0; transform: scale(3.5); }
+  0% { opacity:0.6; transform:scale(0.8); }
+  100% { opacity:0; transform:scale(4.5); }
 }
 
-.main-logo { width:70px; filter:drop-shadow(0 0 12px var(--accent)); position:relative; z-index:1; }
-.main-header h1 { font-size:1.9rem; color:var(--accent); text-align:center; }
+/* ✨ Подсветка заголовков */
+.main-header h1 {
+  font-size:2.1rem; color:var(--accent); text-align:center;
+  text-shadow: var(--glow);
+  animation: glowPulse 4s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+  0% { text-shadow: 0 0 12px rgba(255,170,102,0.3), 0 0 25px rgba(255,170,102,0.1); }
+  100% { text-shadow: 0 0 20px rgba(255,170,102,0.6), 0 0 45px rgba(255,170,102,0.25), 0 0 70px rgba(255,170,102,0.1); }
+}
+
 .main-nav { display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; justify-content:center; }
 .nav-btn { padding:10px 20px; background:transparent; border:1px solid var(--border); border-radius:14px; color:var(--text); cursor:pointer; transition:0.25s; font-weight:500; }
 .nav-btn:hover, .nav-btn.active { background:var(--accent); color:#0f0a1a; border-color:var(--accent); transform:translateY(-2px); }
 
+/* Контент */
 .content { padding:15px 0 30px; position:relative; z-index:2; }
 .tab { display:none; animation:fadeIn 0.4s ease-out; }
 .tab.active { display:block; }
@@ -131,6 +143,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .btn-back:hover { background:rgba(255,255,255,0.1); }
 .hidden { display:none !important; }
 
+/* Психология */
 #psychology { position:fixed; inset:0; z-index:100; background:transparent; display:none; overflow-y:auto; }
 #psychology.active { display:block; }
 .psych-container { 
@@ -159,7 +172,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
   50% { transform:scale(1.2); opacity:0.25; } 
   100% { transform:scale(1.6); opacity:0; } 
 }
-.asya-header h2 { color:#64b5f6; margin:10px 0 5px; font-size:2rem; }
+.asya-header h2 { color:#64b5f6; margin:10px 0 5px; font-size:2rem; text-shadow: 0 0 15px rgba(100,181,246,0.5); }
 .asya-header p { color:#81d4fa; font-style:italic; }
 
 .psych-menu { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; position:relative; z-index:1; max-width:600px; margin:0 auto 30px; }
@@ -168,15 +181,12 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 
 .progress-bar { width:100%; max-width:600px; height:10px; background:rgba(255,255,255,0.2); border-radius:5px; margin:0 auto 20px; overflow:hidden; }
 .progress-fill { height:100%; background:#64b5f6; width:0%; transition:0.3s ease; }
-
 .question-box { background:rgba(10,22,40,0.88); padding:30px; border-radius:18px; margin:0 auto 20px; max-width:700px; border:1px solid rgba(100,181,246,0.35); text-align:left; }
 .question-box p { font-size:1.1rem; margin-bottom:20px; line-height:1.65; }
 .btn-answer { display:block; width:100%; max-width:300px; margin:10px auto; padding:15px; background:rgba(255,255,255,0.1); border:1px solid rgba(100,181,246,0.4); color:white; border-radius:12px; cursor:pointer; transition:0.25s; text-align:center; }
 .btn-answer:hover { background:#64b5f6; color:#0a1628; border-color:transparent; }
-
 .asya-message { background:rgba(255,170,102,0.22); padding:15px; border-radius:12px; margin:20px auto; max-width:500px; color:#ffd699; font-style:italic; animation:slideUp 0.4s ease; text-align:center; }
 @keyframes slideUp { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
-
 .results-card { background:rgba(10,22,40,0.92); padding:30px; border-radius:18px; max-width:600px; margin:0 auto; border:1px solid #64b5f6; text-align:left; }
 .result-item { background:rgba(255,255,255,0.08); padding:15px; border-radius:10px; margin:10px 0; border-left:3px solid #64b5f6; }
 
@@ -194,5 +204,5 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
   .psych-menu { grid-template-columns:1fr; }
   .question-box { padding:22px; }
   .asya-logo-wrap { width:95px; height:95px; }
-  .test-card, .question-frame { padding:18px; }
+  .main-logo { width:130px; }
 }
