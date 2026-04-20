@@ -13,7 +13,6 @@
 
     <div class="effects-container">
       <div id="sunRays" class="sun-rays"></div>
-      <!-- 🚫 moonLight убран по запросу -->
       <div id="dustParticles" class="dust-particles"></div>
       <div id="petals-container" class="petals-container"></div>
     </div>
@@ -22,9 +21,7 @@
       <div class="logo-area">
         <div class="fox-wrapper">
           <div class="fox-rings">
-            <span class="ring"></span>
-            <span class="ring"></span>
-            <span class="ring"></span>
+            <span class="ring"></span><span class="ring"></span><span class="ring"></span>
           </div>
           <img src="persi_fox.png" alt="Лиса Шалфей" class="main-logo">
         </div>
@@ -32,6 +29,7 @@
       </div>
       <nav class="main-nav">
         <button class="nav-btn active" data-tab="home">🏠 Главная</button>
+        <button class="nav-btn" data-tab="about">📖 О нас</button>
         <button class="nav-btn" data-tab="history">📜 Тесты</button>
         <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
       </nav>
@@ -39,10 +37,27 @@
 
     <main class="content">
       <section id="home" class="tab active">
-        <div class="card">
+        <div class="card welcome-card">
           <h2>Добро пожаловать</h2>
-          <p>Я Шалфей, хранитель знаний. Здесь ты найдешь тесты по истории и психологические опросники с Асей. Выбирай раздел и начинай путь!</p>
+          <p class="quote">🌿 «Привет! Я Шалфей, твой помощник по учёбе и проводник по истории! В этом саду каждое дерево хранит память, а каждый камень — урок прошлого. Выбирай путь, и я помогу тебе раскрыть знания!»</p>
           <button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
+        </div>
+      </section>
+
+      <section id="about" class="tab">
+        <div class="lore-container">
+          <div class="lore-card sage-card">
+            <h3>🦊 Шалфей — Хранитель Знаний</h3>
+            <p>Говорят, что Лисий Сад существует столько же, сколько и первые книги. Когда люди только начали записывать летописи, в самой чаще леса поселился мудрый лис по имени <b>Шалфей</b>. Он собирал оброненные слова, забытые даты и мудрость старейшин. Со временем Сад стал местом, где история оживает. Шалфей не просто читает книги — он чувствует дыхание прошлого и готов провести тебя сквозь века без ошибок и скуки.</p>
+          </div>
+          <div class="lore-card asya-card">
+            <h3>🐾 Ася — Душа Гармонии</h3>
+            <p>Если Шалфей следит за временем, то Ася хранит внутренний мир тех, кто приходит в Сад. Маленькая красная панда, чьё имя переводится как «утешение», появилась у древнего ручья. Она научилась слушать не только слова, но и тишину между ними. Ася ведёт психологические опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс. Вместе с ней ты узнаешь, как мыслить яснее и чувствовать глубже.</p>
+          </div>
+          <div class="lore-card lore-philosophy">
+            <h3>✨ Философия Сада</h3>
+            <p>Лисий Сад — это место, где знания и душа переплетаются. Здесь нет скучных лекций, только живые диалоги. Падающие лепестки напоминают: каждый ответ — это шаг вперёд, а каждая ошибка — урок, который делает тебя сильнее. Входи с открытым сердцем, и Сад откроет тебе свои тайны.</p>
+          </div>
         </div>
       </section>
 
@@ -55,6 +70,7 @@
 
       <section id="psychology" class="psych-overlay">
         <div class="psych-container">
+          <button class="btn-exit-psych" onclick="backToPsychMenu()" title="Вернуться в меню">✕ Выход</button>
           <div class="geometric-flowers" id="geo-flowers"></div>
           <div class="asya-header">
             <div class="asya-logo-wrap">
@@ -66,11 +82,11 @@
           </div>
           <div class="psych-menu" id="psych-menu">
             <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
-            <div class="psych-card" onclick="openFioModal('ryakhovsky')">🗣️ Тест Ряховского (16 вопросов)</div>
+            <div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
           </div>
           <div id="psych-quiz" class="hidden"></div>
           <div id="psych-results" class="hidden"></div>
-          <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← Назад</button>
+          <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← В меню</button>
         </div>
       </section>
     </main>
