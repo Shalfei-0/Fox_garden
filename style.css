@@ -1,30 +1,34 @@
 :root {
-    --bg: #0f0a1a;
-    --card: rgba(20, 15, 30, 0.85);
-    --border: rgba(255, 170, 102, 0.25);
-    --text: #e8e0f0;
-    --text-muted: #a89bc2;
-    --accent: #ffaa66;
-    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --bg: #0f0a1a;
+  --card: rgba(20, 15, 30, 0.85);
+  --border: rgba(255, 170, 102, 0.25);
+  --text: #e8e0f0;
+  --text-muted: #a89bc2;
+  --accent: #ffaa66;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --petal-color: #ff8a80; /* Soft red for dark theme */
 }
+
 body.light-theme {
-    --bg: #ffecd2;
-    --card: rgba(255,255,255,0.85);
-    --border: rgba(211, 84, 0, 0.2);
-    --text: #4a3b32;
-    --text-muted: #7a6659;
-    --accent: #d35400;
-    --shadow: 0 8px 20px rgba(0,0,0,0.1);
+  --bg: #ffecd2;
+  --card: rgba(255,255,255,0.85);
+  --border: rgba(211, 84, 0, 0.2);
+  --text: #4a3b32;
+  --text-muted: #7a6659;
+  --accent: #d35400; /* Darker peach for contrast */
+  --shadow: 0 8px 20px rgba(0,0,0,0.1);
+  --petal-color: #c62828; /* Stronger red for light theme contrast */
 }
+
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Comfortaa',cursive; }
 body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; transition:background 0.4s; }
 #app { max-width:950px; margin:0 auto; padding:20px; position:relative; }
 
 /* Кнопка темы */
 .theme-toggle {
-    position:fixed; top:15px; right:15px; width:44px; height:44px; border-radius:50%;
-    border:1px solid var(--border); background:var(--card); color:var(--text);
-    font-size:1.4rem; cursor:pointer; z-index:100; display:flex; align-items:center; justify-content:center; transition:0.2s;
+  position:fixed; top:15px; right:15px; width:44px; height:44px; border-radius:50%;
+  border:1px solid var(--border); background:var(--card); color:var(--text);
+  font-size:1.4rem; cursor:pointer; z-index:100; display:flex; align-items:center; justify-content:center; transition:0.2s;
 }
 .theme-toggle:hover { transform:scale(1.1); background:var(--accent); color:#fff; }
 
@@ -39,12 +43,49 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .particle { position:absolute; background:radial-gradient(circle, rgba(255,255,200,0.6) 0%, transparent 70%); border-radius:50%; animation:float 8s infinite ease-in-out; }
 @keyframes float { 0%,100%{transform:translateY(0);opacity:0} 50%{transform:translateY(-30px);opacity:0.6} }
 
+/* Лепестки */
+.petals-container { position:absolute; inset:0; pointer-events:none; z-index:1; display: none; }
+.petals-container.active { display: block; }
+.petal { 
+  position:absolute; 
+  width:12px; height:12px; 
+  background: radial-gradient(circle, var(--petal-color) 60%, transparent 70%);
+  border-radius: 50% 0 50% 50%; /* Leaf shape */
+  opacity: 0.7; 
+  animation: petalFall linear infinite; 
+  box-shadow: 0 0 4px var(--petal-color);
+}
+@keyframes petalFall {
+  0% { transform: translateY(-5vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+
 /* Шапка */
-.main-header { display:flex; justify-content:space-between; align-items:center; padding:20px 0; flex-wrap:wrap; gap:15px; position:relative; z-index:2; }
-.logo-area { display:flex; align-items:center; gap:15px; }
-.main-logo { width:60px; filter:drop-shadow(0 0 10px var(--accent)); }
-.main-header h1 { font-size:1.8rem; color:var(--accent); }
-.main-nav { display:flex; gap:10px; }
+.main-header { display:flex; flex-direction: column; align-items:center; padding:20px 0; position:relative; z-index:2; }
+.logo-area { display:flex; flex-direction: column; align-items:center; gap:10px; width:100%; }
+.fox-wrapper { position:relative; display:inline-block; }
+
+/* Круги лисы */
+.fox-rings { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:-1; }
+.fox-rings .ring { 
+  position:absolute; top:50%; left:50%; 
+  border:2px solid var(--accent); border-radius:50%; 
+  animation:ringExpand 3s ease-out infinite; 
+}
+.fox-rings .ring:nth-child(1) { animation-delay:0s; width:60px; height:60px; }
+.fox-rings .ring:nth-child(2) { animation-delay:1s; width:60px; height:60px; }
+.fox-rings .ring:nth-child(3) { animation-delay:2s; width:60px; height:60px; }
+@keyframes ringExpand { 
+  0%{width:60px;height:60px;opacity:0.8;transform:translate(-50%,-50%) scale(1)} 
+  100%{width:200px;height:200px;opacity:0;transform:translate(-50%,-50%) scale(1.5)} 
+}
+
+.main-logo { width:80px; height:auto; filter:drop-shadow(0 0 15px var(--accent)); position:relative; z-index:2; }
+.main-header h1 { font-size:1.8rem; color:var(--accent); text-align:center; }
+
+.main-nav { display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; justify-content:center; }
 .nav-btn { padding:10px 18px; background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--text); cursor:pointer; transition:0.2s; }
 .nav-btn:hover, .nav-btn.active { background:var(--accent); color:#0f0a1a; border-color:var(--accent); }
 
@@ -53,6 +94,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .tab { display:none; animation:fadeIn 0.4s; }
 .tab.active { display:block; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
 .card, .test-card { background:var(--card); border:1px solid var(--border); padding:25px; border-radius:18px; margin-bottom:20px; line-height: 1.6; }
 .test-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
 .test-card { cursor:pointer; transition:0.2s; }
@@ -76,10 +118,8 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .asya-logo-wrap { position:relative; width:120px; height:120px; margin:0 auto 15px; }
 .asya-logo { width:100%; height:auto; position:relative; z-index:2; filter:drop-shadow(0 4px 12px rgba(180,100,50,0.5)); }
 .asya-rings { position:absolute; inset:0; z-index:1; pointer-events:none; }
-.ring { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); border:2px solid rgba(255,170,102,0.5); border-radius:50%; animation:ringExpand 3s ease-out infinite; }
-.ring:nth-child(2){animation-delay:1s} .ring:nth-child(3){animation-delay:2s}
-@keyframes ringExpand { 0%{width:90px;height:90px;opacity:0.8} 100%{width:250px;height:250px;opacity:0} }
-
+.asya-rings .ring { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); border:2px solid rgba(255,170,102,0.5); border-radius:50%; animation:ringExpand 3s ease-out infinite; }
+.asya-rings .ring:nth-child(2){animation-delay:1s} .asya-rings .ring:nth-child(3){animation-delay:2s}
 .asya-header h2 { color:#64b5f6; margin:10px 0 5px; font-size:2rem; }
 .asya-header p { color:#81d4fa; font-style:italic; }
 .psych-menu { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; position:relative; z-index:1; max-width:600px; margin:0 auto 30px; }
@@ -94,7 +134,6 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .btn-answer:hover { background:#64b5f6; color:#0a1628; border-color:transparent; }
 .asya-message { background:rgba(255,170,102,0.2); padding:15px; border-radius:12px; margin:20px auto; max-width:500px; color:#ffd699; font-style:italic; animation:slideUp 0.4s; text-align:center; }
 @keyframes slideUp { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
-
 .results-card { background:rgba(10,22,40,0.9); padding:30px; border-radius:18px; max-width:600px; margin:0 auto; border:1px solid #64b5f6; text-align:left; }
 .result-item { background:rgba(255,255,255,0.08); padding:15px; border-radius:10px; margin:10px 0; border-left:3px solid #64b5f6; }
 
@@ -108,9 +147,9 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 
 /* Адаптив */
 @media(max-width:600px) {
-    .main-header { flex-direction:column; text-align:center; }
-    .main-nav { width:100%; justify-content:center; }
-    .psych-menu { grid-template-columns:1fr; }
-    .question-box { padding:20px; }
-    .asya-logo-wrap { width:90px; height:90px; }
+  .main-header { flex-direction:column; text-align:center; }
+  .main-nav { width:100%; justify-content:center; }
+  .psych-menu { grid-template-columns:1fr; }
+  .question-box { padding:20px; }
+  .asya-logo-wrap { width:90px; height:90px; }
 }
