@@ -1,301 +1,378 @@
 document.addEventListener('DOMContentLoaded', () => {
-// ========== ДАННЫЕ ==========
-const historyTests = [{
-id: 'knyazya', title: 'Древняя Русь: первые князья',
-questions: [
-{ q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
-{ q: 'Кто захватил Киев в 882 году?', options: ['Рюрик','Олег','Игорь','Святослав'], correct: 1 },
-{ q: 'Какое племя убило Игоря?', options: ['Поляне','Древляне','Вятичи','Кривичи'], correct: 1 },
-{ q: 'Что ввела Ольга вместо полюдья?', options: ['Серебро','Уроки и погосты','Торговлю','Дань'], correct: 1 },
-{ q: 'Кто стал первым киевским князем Рюриковичей?', options: ['Рюрик','Олег','Игорь','Владимир'], correct: 2 }
-]
-}];
-const kosQuestions = [
-{q:"Много ли у Вас друзей?"},{q:"Часто ли Вам удается склонить товарищей?"},{q:"Долго ли беспокоит обида?"},{q:"Трудно ли ориентироваться в критической ситуации?"},{q:"Стремитесь ли к новым знакомствам?"},
-{q:"Нравится ли общественная работа?"},{q:"Приятнее ли проводить время с книгами?"},{q:"Легко ли отступаете от намерений?"},{q:"Легко ли устанавливаете контакты со старшими?"},{q:"Любите ли организовывать игры?"},
-{q:"Трудно ли включать в новую компанию?"},{q:"Откладываете ли дела?"},{q:"Легко ли контактировать с незнакомыми?"},{q:"Стремитесь ли, чтобы товарищи действовали по Вашему мнению?"},{q:"Трудно ли осваиваться в новом коллективе?"},
-{q:"Нет ли конфликтов из-за невыполнения обязанностей?"},{q:"Стремитесь ли знакомиться?"},{q:"Принимаете ли инициативу?"},{q:"Раздражают ли окружающие?"},{q:"Плохо ли ориентируетесь в незнакомой обстановке?"},
-{q:"Нравится ли быть среди людей?"},{q:"Раздражение из-за незавершенного дела?"},{q:"Стеснение при знакомстве?"},{q:"Утомление от общения?"},{q:"Любите ли коллективные игры?"},
-{q:"Проявляете ли инициативу в интересах товарищей?"},{q:"Неуверенность среди малознакомых?"},{q:"Редко отстаиваете правоту?"},{q:"Вносите ли оживление в компанию?"},{q:"Участие в общественной работе?"},
-{q:"Ограничиваете ли круг знакомых?"},{q:"Не отстаиваете ли мнение?"},{q:"Непринужденность в незнакомой компании?"},{q:"Охотно организуете мероприятия?"},{q:"Неуверенность перед группой?"},
-{q:"Опаздываете ли?"},{q:"Много ли друзей?"},{q:"Смущение при общении?"},{q:"Пугает ли новый коллектив?"},{q:"Неуверенность в большой группе?"}
-];
-const commYes = [1,5,9,13,17,21,25,29,33,37], commNo = [3,7,11,15,19,23,27,31,35,39];
-const orgYes = [2,6,10,14,18,22,26,30,34,38], orgNo = [4,8,12,16,20,24,28,32,36,40];
-const ryakhovskyQuestions = [
-{q:"Выбивает ли ожидание встречи из колеи?"},{q:"Смятение при выступлении с докладом?"},{q:"Откладываете визит к врачу?"},{q:"Избегаете командировок?"},{q:"Делитесь переживаниями?"},{q:"Раздражение при просьбе незнакомца?"},{q:"Верите в проблему отцов и детей?"},{q:"Постесняетесь напомнить о долге?"},{q:"Промолчите при плохом блюде?"},{q:"Не вступите в беседу с незнакомцем?"},{q:"Избегаете очередей?"},{q:"Боитесь комиссий?"},{q:"Не приемлете чужие мнения об искусстве?"},{q:"Промолчите при ошибочной точке зрения?"},{q:"Досада при просьбе помочь?"},{q:"Предпочитаете письменную форму устной?"}
-];
+  // ========== ДАННЫЕ ==========
+  const historyTests = [{
+    id: 'knyazya', title: 'Древняя Русь: первые князья',
+    questions: [
+      { q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
+      { q: 'Кто захватил Киев в 882 году?', options: ['Рюрик','Олег','Игорь','Святослав'], correct: 1 },
+      { q: 'Какое племя убило Игоря?', options: ['Поляне','Древляне','Вятичи','Кривичи'], correct: 1 },
+      { q: 'Что ввела Ольга вместо полюдья?', options: ['Серебро','Уроки и погосты','Торговлю','Дань'], correct: 1 },
+      { q: 'Кто стал первым киевским князем Рюриковичей?', options: ['Рюрик','Олег','Игорь','Владимир'], correct: 2 }
+    ]
+  }];
 
-// ========== СОСТОЯНИЕ ==========
-let userFIO = '', userEmail = '', pendingTestId = null;
-let currentTest = null, qIdx = 0, score = 0, answered = false;
-let psychIndex = 0, psychAnswers = [];
-const completed = JSON.parse(localStorage.getItem('fox_completed') || '[]');
+  const kosQuestions = [
+    {q:"Много ли у Вас друзей?"},{q:"Часто ли Вам удается склонить товарищей?"},{q:"Долго ли беспокоит обида?"},{q:"Трудно ли ориентироваться в критической ситуации?"},{q:"Стремитесь ли к новым знакомствам?"},
+    {q:"Нравится ли общественная работа?"},{q:"Приятнее ли проводить время с книгами?"},{q:"Легко ли отступаете от намерений?"},{q:"Легко ли устанавливаете контакты со старшими?"},{q:"Любите ли организовывать игры?"},
+    {q:"Трудно ли включать в новую компанию?"},{q:"Откладываете ли дела?"},{q:"Легко ли контактировать с незнакомыми?"},{q:"Стремитесь ли, чтобы товарищи действовали по Вашему мнению?"},{q:"Трудно ли осваиваться в новом коллективе?"},
+    {q:"Нет ли конфликтов из-за невыполнения обязанностей?"},{q:"Стремитесь ли знакомиться?"},{q:"Принимаете ли инициативу?"},{q:"Раздражают ли окружающие?"},{q:"Плохо ли ориентируетесь в незнакомой обстановке?"},
+    {q:"Нравится ли быть среди людей?"},{q:"Раздражение из-за незавершенного дела?"},{q:"Стеснение при знакомстве?"},{q:"Утомление от общения?"},{q:"Любите ли коллективные игры?"},
+    {q:"Проявляете ли инициативу в интересах товарищей?"},{q:"Неуверенность среди малознакомых?"},{q:"Редко отстаиваете правоту?"},{q:"Вносите ли оживление в компанию?"},{q:"Участие в общественной работе?"},
+    {q:"Ограничиваете ли круг знакомых?"},{q:"Не отстаиваете ли мнение?"},{q:"Непринужденность в незнакомой компании?"},{q:"Охотно организуете мероприятия?"},{q:"Неуверенность перед группой?"},
+    {q:"Опаздываете ли?"},{q:"Много ли друзей?"},{q:"Смущение при общении?"},{q:"Пугает ли новый коллектив?"},{q:"Неуверенность в большой группе?"}
+  ];
+  const commYes = [1,5,9,13,17,21,25,29,33,37], commNo = [3,7,11,15,19,23,27,31,35,39];
+  const orgYes = [2,6,10,14,18,22,26,30,34,38], orgNo = [4,8,12,16,20,24,28,32,36,40];
 
-// ========== ТЕМА ==========
-const themeBtn = document.getElementById('theme-toggle');
-const isLight = localStorage.getItem('fox_theme') === 'light';
-document.body.classList.toggle('light-theme', isLight);
-themeBtn.textContent = isLight ? '🌙' : '🌓';
-themeBtn.onclick = () => {
-  document.body.classList.toggle('light-theme');
-  const l = document.body.classList.contains('light-theme');
-  themeBtn.textContent = l ? '🌙' : '🌓';
-  localStorage.setItem('fox_theme', l ? 'light' : 'dark');
-};
+  // Тест Михельсона (27 вопросов)
+  const michelsonQuestions = [
+    {q:'Кто-либо говорит Вам: "Мне кажется, что Вы замечательный человек". Вы обычно:', opts:['"Нет, что Вы! Я таким не являюсь"','"Спасибо, я действительно человек выдающийся"','"Спасибо"','Ничего не говорите и краснеете','"Да, я отличаюсь от других в лучшую сторону"']},
+    {q:'Кто-либо совершает замечательный поступок. Вы обычно:', opts:['"Нормально!"','"Отлично, но я видел получше"','Ничего не говорите','"Я могу сделать гораздо лучше"','"Это действительно замечательно!"']},
+    {q:'Вы делаете дело хорошо, кто-то говорит: "Мне это не нравится!". Вы:', opts:['"Вы - болван!"','"Я думаю, это заслуживает хорошей оценки"','"Вы правы" (не согласны)','"Это выдающийся уровень. Что Вы понимаете?"','Обижаетесь и молчите']},
+    {q:'Вы забыли предмет, кто-то говорит: "Вы такой растяпа!". Вы:', opts:['"Я толковее Вас!"','"Да, иногда я веду себя как растяпа"','"Если кто растяпа, то Вы"','"У всех есть недостатки. Я не заслуживаю такой оценки"','Игнорируете']},
+    {q:'Кто-то опоздал на 30 минут без объяснений. Вы:', opts:['"Я расстроен, что заставили ждать"','"Я думал, когда Вы придёте"','"Это последний раз, когда я ждал Вас"','Ничего не говорите','"Как Вы смели так опаздывать!"']},
+    {q:'Вам нужно, чтобы кто-то сделал для Вас вещь. Вы:', opts:['Никого ни о чём не просите','"Вы должны сделать это для меня"','"Не могли бы Вы сделать одну вещь?" + объясняете','Слегка намекаете','"Я очень хочу, чтобы Вы сделали это"']},
+    {q:'Вы знаете, что кто-то расстроен. Вы:', opts:['"Вы выглядите расстроенным. Могу помочь?"','Не заводите разговор о состоянии','"У Вас неприятность?"','Ничего не говорите и оставляете одного','"Вы как большой ребенок!" (смеясь)']},
+    {q:'Вы расстроены, кто-то говорит: "Вы выглядите расстроенным". Вы:', opts:['Отрицательно качаете головой/не реагируете','"Это не Ваше дело!"','"Да, немного расстроен. Спасибо за участие"','"Пустяки"','"Оставьте меня одного"']},
+    {q:'Вас порицают за ошибку, совершённую другими. Вы:', opts:['"Вы с ума сошли!"','"Это не моя вина, ошибка другого"','"Я не думаю, что это моя вина"','"Оставьте меня, Вы не знаете, что говорите"','Принимаете вину или молчите']},
+    {q:'Кто-то просит сделать что-то, но Вы не знаете зачем. Вы:', opts:['"Это не имеет смысла, не хочу"','Выполняете и молчите','"Это глупость, не буду"','"Объясните, почему это должно быть сделано"','"Если Вы хотите..." + выполняете']},
+    {q:'Кто-то говорит, что Вы сделали великолепно. Вы:', opts:['"Да, я делаю лучше большинства"','"Нет, это не было столь здорово"','"Правильно, я делаю лучше всех"','"Спасибо"','Игнорируете']},
+    {q:'Кто-то был очень любезен с Вами. Вы:', opts:['"Вы действительно были очень любезны"','"Да, спасибо" (как будто не был любезен)','"Вы вели себя нормально, но я заслуживаю большего"','Игнорируете','"Вы вели себя недостаточно хорошо"']},
+    {q:'Вы громко разговариваете, кто-то просит говорить тише. Вы:', opts:['Немедленно прекращаете беседу','"Если не нравится — проваливайте"','"Извините, буду говорить тише" + продолжаете приглушённо','"Извините" + прекращаете','"Всё в порядке" + продолжаете громко']},
+    {q:'В очереди кто-то становится впереди Вас. Вы:', opts:['Негромко комментируете, ни к кому не обращаясь','"Становитесь в хвост очереди!"','Ничего не говорите','"Выйди из очереди, нахал!" (громко)','"Я занял очередь раньше. Пожалуйста, станьте в конец"']},
+    {q:'Кто-то делает то, что Вам не нравится и раздражает. Вы:', opts:['"Вы болван, я ненавижу Вас!" (выкрик)','"Я сердит на Вас. Мне не нравится, что Вы делаете"','Повреждаете делу, но молчите','"Я рассержен. Вы мне не нравитесь"','Игнорируете']},
+    {q:'У кого-то есть вещь, которой Вы хотели бы пользоваться. Вы:', opts:['Требуете дать вещь','Воздерживаетесь от просьб','Отбираете вещь','Говорите, что хотели бы пользоваться, и просите','Рассуждаете, но не просите']},
+    {q:'Кто-то просит одолжить новый предмет, но Вы не хотите. Вы:', opts:['"Нет, только достал, не хочу расставаться; может потом"','"Не хотел бы давать, но можете попользоваться"','"Нет, приобретайте свой!"','Одалживаете вопреки нежеланию','"Вы с ума сошли!"']},
+    {q:'Люди беседуют о хобби, которое нравится Вам, Вы хотите присоединиться. Вы:', opts:['Ничего не говорите','Прерываете и рассказываете о своих успехах','Подходите и при удобном случае вступаете в разговор','Подходите и ждёте, когда обратят внимание','Прерываете и говорите, как сильно нравится хобби']},
+    {q:'Вы занимаетесь хобби, кто-то спрашивает: "Что Вы делаете?". Вы:', opts:['"О, это пустяк" / "Ничего особенного"','"Не мешайте, разве не видите, что занят?"','Продолжаете молча работать','"Это Вас не касается"','Прекращаете и объясняете, что делаете']},
+    {q:'Вы видите споткнувшегося человека. Вы:', opts:['"Почему не смотрите под ноги?" (смеясь)','"У Вас всё в порядке? Могу помочь?"','"Что случилось?"','"Это всё колдобины в тротуаре"','Никак не реагируете']},
+    {q:'Вы ушиблись, кто-то спрашивает: "С Вами всё в порядке?". Вы:', opts:['"Я прекрасно себя чувствую. Оставьте меня!"','Ничего не говорите, игнорируете','"Почему не занимаетесь своим делом?"','"Нет, ушиб голову, спасибо за внимание"','"Пустяки, всё будет о\'кей"']},
+    {q:'Вы допустили ошибку, но вина возложена на другого. Вы:', opts:['Ничего не говорите','"Это их ошибка!"','"Эту ошибку допустил Я"','"Я не думаю, что это сделал этот человек"','"Это их горькая доля"']},
+    {q:'Вы оскорблены словами в Ваш адрес. Вы:', opts:['Уходите, не сказав, что расстроены','Заявляете, чтобы не смел больше','Ничего не говорите, хотя обижены','Оскорбляете в ответ','Заявляете, что не нравится, и что не должен делать снова']},
+    {q:'Кто-то часто перебивает, когда Вы говорите. Вы:', opts:['"Извините, но я хотел бы закончить"','"Так не делают. Могу продолжить?"','Прерываете этого человека, возобновляя рассказ','Ничего не говорите, позволяя продолжать','"Замолчите! Вы меня перебили!"']},
+    {q:'Кто-то просит сделать что-то, что помешает Вашим планам. Вы:', opts:['"Имел другие планы, но сделаю, что хотите"','"Ни в коем случае! Поищите кого-то ещё"','"Хорошо, сделаю, что хотите"','"Отойдите, оставьте меня"','"Уже приступил к другим планам. Может, потом"']},
+    {q:'Вы видите кого-то, с кем хотели бы познакомиться. Вы:', opts:['Радостно окликаете и идёте навстречу','Подходите, представляетесь и начинаете разговор','Подходите и ждёте, когда заговорят с Вами','Подходите и рассказываете о крупных делах','Ничего не говорите']},
+    {q:'Незнакомец окликает Вас: "Привет!". Вы:', opts:['"Что Вам угодно?"','Ничего не говорите','"Оставьте меня в покое"','"Привет!", представляетесь и просите представиться','Киваете, "Привет!" и проходите мимо']}
+  ];
 
-// ========== НАВИГАЦИЯ ==========
-window.switchTab = (id) => {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  
-  // FIX: Corrected selector to use the ID directly instead of appending '-tab'
-  const target = document.getElementById(id);
-  if (target) target.classList.add('active');
-  
-  document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
-  
-  const psych = document.getElementById('psychology');
-  const petalsContainer = document.getElementById('petals-container');
-  
-  if(id === 'psychology') { 
-    psych.classList.add('active'); 
-    createGeoFlowers(); 
-    petalsContainer.classList.remove('active'); // Hide petals
-  } else {
-    psych.classList.remove('active');
-    if(id === 'home') {
-       petalsContainer.classList.add('active'); // Show petals on home
-       initPetals();
+  // Ключ Михельсона (а=0, б=1, в=2, г=3, д=4)
+  const michelsonKey = [2,4,1,3,0,2,0,1,2,3,3,0,2,4,1,3,0,2,4,1,3,2,4,0,4,1,3];
+
+  const michelsonBlocks = {
+    '🎁 Комплименты': [1,2,11,12],
+    '🗣️ Справедливая критика': [4,13],
+    '⚠️ Несправедливая критика': [3,9],
+    '🔥 Провокационное поведение': [5,14,15,23,24],
+    '🙏 Просьба к другим': [6,16],
+    '❌ Отказ на просьбу': [10,17,25],
+    '💙 Эмпатия (оказать)': [7,20],
+    '🤲 Эмпатия (принять)': [8,21],
+    '🤝 Инициатива контакта': [18,26],
+    '👋 Ответ на контакт': [19,27]
+  };
+
+  // ========== СОСТОЯНИЕ ==========
+  let userFIO = '', userEmail = '', pendingTestId = null;
+  let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
+  let psychIndex = 0, psychAnswers = [], michelsonScores = {};
+
+  // ========== ТЕМА (по умолчанию тёмная) ==========
+  const themeBtn = document.getElementById('theme-toggle');
+  themeBtn.textContent = '🌓';
+  themeBtn.onclick = () => {
+    document.body.classList.toggle('light-theme');
+    const l = document.body.classList.contains('light-theme');
+    themeBtn.textContent = l ? '🌙' : '🌓';
+    localStorage.setItem('fox_theme', l ? 'light' : 'dark');
+  };
+
+  // ========== НАВИГАЦИЯ ==========
+  window.switchTab = (id) => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const target = document.getElementById(id);
+    if(target) target.classList.add('active');
+    document.querySelector(`.nav-btn[data-tab="${id}"]`)?.classList.add('active');
+    
+    const psych = document.getElementById('psychology');
+    const petals = document.getElementById('petals-container');
+    
+    if(id === 'psychology') { 
+      psych.classList.add('active'); 
+      createGeoFlowers(); 
+      petals?.classList.remove('active');
     } else {
-       petalsContainer.classList.remove('active');
+      psych.classList.remove('active');
+      if(id === 'home') { petals?.classList.add('active'); initPetals(); }
+      else petals?.classList.remove('active');
+    }
+  };
+  document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
+  // ========== ЛЕПЕСТКИ ==========
+  const petalsContainer = document.getElementById('petals-container');
+  let petalsInitialized = false;
+  function initPetals() {
+    if(petalsInitialized) return;
+    petalsContainer.innerHTML = '';
+    for(let i=0; i<18; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (Math.random() * 4 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      petalsContainer.appendChild(p);
+    }
+    petalsInitialized = true;
+  }
+
+  // ========== ГЕОМЕТРИЧЕСКИЕ ЦВЕТЫ (для психологии) ==========
+  function createGeoFlowers() {
+    const container = document.getElementById('geo-flowers');
+    if(!container || container.children.length > 0) return;
+    for (let i = 0; i < 12; i++) {
+      const f = document.createElement('div');
+      f.className = 'geo-flower';
+      f.style.left = Math.random() * 100 + '%';
+      f.style.top = Math.random() * 100 + '%';
+      f.style.animationDelay = Math.random() * 15 + 's';
+      f.style.width = (Math.random() * 60 + 40) + 'px';
+      f.style.height = f.style.width;
+      container.appendChild(f);
     }
   }
-};
-document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
 
-// ========== ЛЕПЕСТКИ ==========
-const petalsContainer = document.getElementById('petals-container');
-let petalsInitialized = false;
+  // ========== ИСТОРИЧЕСКИЕ ТЕСТЫ ==========
+  const hList = document.getElementById('history-test-list');
+  historyTests.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'test-card';
+    card.innerHTML = `<h3>${t.title}</h3><span style="font-size:0.8rem;opacity:0.7">${t.questions.length} вопросов</span>`;
+    card.onclick = () => openHistoryFioModal(t);
+    hList.appendChild(card);
+  });
 
-function initPetals() {
-  if(petalsInitialized) return;
-  petalsContainer.innerHTML = '';
-  for(let i=0; i<15; i++) {
-    const p = document.createElement('div');
-    p.className = 'petal';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (Math.random() * 5 + 8) + 's';
-    p.style.animationDelay = (Math.random() * 10) + 's';
-    petalsContainer.appendChild(p);
+  function openHistoryFioModal(test) {
+    pendingTestId = 'history';
+    historyUserInfo = { test };
+    document.getElementById('fio-modal').style.display = 'flex';
+    document.getElementById('fio-input').value = '';
+    document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').focus();
   }
-  petalsInitialized = true;
-}
 
-// ========== ЧАТ / ПРИВЕТСТВИЕ ==========
-async function showMessage(text, speaker = 'Шалфей', emotion = '😊') {
-  console.log(`${speaker}: ${text}`);
-}
-setTimeout(() => showMessage('Привет! Я Шалфей. Выбирай раздел вверху 👆', 'Шалфей', '✨'), 1000);
-
-// ========== ЭФФЕКТЫ (ЛУЧИ/ПЫЛЬ) ==========
-const hour = new Date().getHours();
-if(hour >= 6 && hour < 18) document.getElementById('sunRays').classList.add('active');
-else document.getElementById('moonLight').classList.add('active');
-const dp = document.getElementById('dustParticles');
-setInterval(() => {
-  if(dp.children.length < 15) {
-    const p = document.createElement('div'); p.className = 'particle';
-    p.style.left = Math.random()*100 + '%'; p.style.top = Math.random()*100 + '%';
-    p.style.animationDuration = (Math.random()*4+4)+'s';
-    dp.appendChild(p); setTimeout(() => p.remove(), 8000);
+  function startHistoryTest() {
+    if(!historyUserInfo) return;
+    currentTest = historyUserInfo.test;
+    qIdx = 0; score = 0; answered = false;
+    document.getElementById('fio-modal').style.display = 'none';
+    document.getElementById('history-test-list').classList.add('hidden');
+    document.getElementById('history-quiz').classList.remove('hidden');
+    document.getElementById('history-back-btn').classList.remove('hidden');
+    showHistoryQuestion();
   }
-}, 1500);
 
-// Initialize petals if starting on home
-if(document.getElementById('home').classList.contains('active')) {
+  function showHistoryQuestion() {
+    const q = currentTest.questions[qIdx];
+    document.getElementById('history-quiz').innerHTML = `
+      <div class="question-frame">
+        <h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4>
+        <p style="margin-bottom:18px;font-size:1.05rem">${q.q}</p>
+        <div id="h-opts"></div>
+      </div>`;
+    const opts = document.getElementById('h-opts');
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-option';
+      btn.textContent = opt;
+      btn.onclick = () => checkHistoryAnswer(i, btn);
+      opts.appendChild(btn);
+    });
+  }
+
+  function checkHistoryAnswer(selectedIdx, btnEl) {
+    if(answered) return;
+    answered = true;
+    const correct = currentTest.questions[qIdx].correct;
+    document.querySelectorAll('#h-opts .answer-option').forEach((el, i) => {
+      el.style.pointerEvents = 'none';
+      if(i === correct) el.classList.add('correct');
+      else if(i === selectedIdx) el.classList.add('wrong');
+    });
+    if(selectedIdx === correct) score++;
+    setTimeout(() => {
+      qIdx++;
+      if(qIdx < currentTest.questions.length) { answered = false; showHistoryQuestion(); }
+      else finishHistoryTest();
+    }, 1200);
+  }
+
+  async function finishHistoryTest() {
+    const pct = Math.round((score/currentTest.questions.length)*100);
+    document.getElementById('history-quiz').innerHTML = `
+      <div class="question-frame" style="text-align:center">
+        <h2 style="color:var(--accent);margin-bottom:10px">Результат: ${pct}%</h2>
+        <p>${score} из ${currentTest.questions.length} верных ответов</p>
+        <div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка на aniruf14.02@gmail.com...</div>
+      </div>`;
+    try {
+      await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          _subject: `📜 Тест "${currentTest.title}"`,
+          ФИО: historyUserInfo?.fio || 'Аноним',
+          Email: historyUserInfo?.email || 'Не указан',
+          Тест: currentTest.title,
+          Результат: `${score}/${currentTest.questions.length} (${pct}%)`,
+          Дата: new Date().toLocaleString('ru-RU'), _captcha: 'false'
+        })
+      });
+      document.getElementById('h-mail-status').textContent = '✅ Отправлено!';
+    } catch(e) { document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети'; }
+  }
+
+  window.exitHistoryTest = () => {
+    document.getElementById('history-quiz').classList.add('hidden');
+    document.getElementById('history-test-list').classList.remove('hidden');
+    document.getElementById('history-back-btn').classList.add('hidden');
+  };
+
+  // ========== ПСИХОЛОГИЯ ==========
+  function openPsychFioModal(id) {
+    pendingTestId = id;
+    document.getElementById('fio-modal').style.display = 'flex';
+    document.getElementById('fio-input').value = '';
+    document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').focus();
+  }
+
+  function startPsychTest(id) {
+    currentTest = id === 'kos' ? {questions: kosQuestions, type: 'kos'} : {questions: michelsonQuestions, type: 'michelson'};
+    psychIndex = 0; psychAnswers = []; michelsonScores = {};
+    document.getElementById('fio-modal').style.display = 'none';
+    document.getElementById('psych-menu').classList.add('hidden');
+    document.getElementById('psych-quiz').classList.remove('hidden');
+    document.getElementById('psych-back-btn').classList.remove('hidden');
+    showPsychQuestion();
+  }
+
+  function showPsychQuestion() {
+    const q = currentTest.questions[psychIndex];
+    const quizDiv = document.getElementById('psych-quiz');
+    quizDiv.innerHTML = `
+      <div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>
+      <div class="question-box">
+        <p>${q.q}</p>
+        <div id="p-opts"></div>
+      </div>`;
+    const opts = document.getElementById('p-opts');
+    if(currentTest.type === 'kos') {
+      ['Да', 'Нет'].forEach(a => {
+        const btn = document.createElement('button'); btn.className='btn-answer'; btn.textContent=a;
+        btn.onclick = () => answerPsych(a === 'Да' ? 'yes' : 'no');
+        opts.appendChild(btn);
+      });
+    } else {
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button'); btn.className='btn-answer'; btn.textContent = String.fromCharCode(1072+i) + ') ' + opt; // а, б, в...
+        btn.onclick = () => answerPsych(i);
+        opts.appendChild(btn);
+      });
+    }
+    // Мотивация Аси
+    const progress = (psychIndex + 1) / currentTest.questions.length;
+    let msg = '';
+    if(progress >= 0.32 && progress < 0.35) msg = "🌸 Молодец! Треть уже пройдена!";
+    else if(progress >= 0.64 && progress < 0.67) msg = "✨ Отлично! Уже две трети позади!";
+    if(msg) quizDiv.insertAdjacentHTML('beforeend', `<div class="asya-message">${msg}</div>`);
+  }
+
+  function answerPsych(ans) {
+    psychAnswers.push(ans); psychIndex++;
+    if(psychIndex < currentTest.questions.length) showPsychQuestion();
+    else calculatePsychResults();
+  }
+
+  function calculatePsychResults() {
+    let html = '', text = '';
+    if(currentTest.type === 'kos') {
+      let c=0, o=0;
+      psychAnswers.forEach((a,i) => {
+        const n=i+1;
+        if(commYes.includes(n)&&a==='yes')c++; if(commNo.includes(n)&&a==='no')c++;
+        if(orgYes.includes(n)&&a==='yes')o++; if(orgNo.includes(n)&&a==='no')o++;
+      });
+      html = `<div class="result-item"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${(c/20).toFixed(2)}</p></div>
+              <div class="result-item"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${(o/20).toFixed(2)}</p></div>`;
+      text = `КОС:\nКоммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
+    } else {
+      // Михельсон: подсчёт по ключу и блокам
+      let total = 0;
+      Object.keys(michelsonBlocks).forEach(blockName => {
+        let blockScore = 0;
+        michelsonBlocks[blockName].forEach(qNum => {
+          if(psychAnswers[qNum-1] === michelsonKey[qNum-1]) blockScore++;
+        });
+        michelsonScores[blockName] = blockScore;
+        total += blockScore;
+        html += `<div class="result-item"><h4>${blockName}</h4><p>${blockScore} из ${michelsonBlocks[blockName].length} верных ответов</p></div>`;
+      });
+      text = `Тест Михельсона:\nВсего: ${total}/27\n${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('\n')}`;
+    }
+    document.getElementById('psych-quiz').classList.add('hidden');
+    document.getElementById('psych-results').classList.remove('hidden');
+    document.getElementById('psych-results').innerHTML = `
+      <div class="results-card">
+        <h3 style="text-align:center;margin-bottom:20px">✅ Тест завершён!</h3>
+        ${html}
+        <div id="p-mail-status" style="padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin:15px 0;text-align:center">📤 Отправка Асе...</div>
+      </div>`;
+    fetch('https://formsubmit.co/ajax/9266031377@bk.ru', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({_subject:`🧠 Психотест — ${userFIO}`, ФИО:userFIO, Email:userEmail||'Не указан', Результаты:text, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false'})
+    }).then(r => document.getElementById('p-mail-status').textContent = r.ok ? '✅ Отправлено Асе!' : '⚠️ Ошибка сети').catch(() => document.getElementById('p-mail-status').textContent = '⚠️ Ошибка сети');
+  }
+
+  window.backToPsychMenu = () => {
+    document.getElementById('psych-results').classList.add('hidden');
+    document.getElementById('psych-menu').classList.remove('hidden');
+    document.getElementById('psych-back-btn').classList.add('hidden');
+  };
+
+  // ========== МОДАЛЬНОЕ ОКНО (ОБЩЕЕ) ==========
+  document.getElementById('cancel-test-btn').onclick = () => {
+    document.getElementById('fio-modal').style.display = 'none';
+    pendingTestId = null; historyUserInfo = null;
+  };
+  document.getElementById('start-test-btn').onclick = () => {
+    const fio = document.getElementById('fio-input').value.trim();
+    if(!fio) return alert('Введи ФИО!');
+    if(pendingTestId === 'history') {
+      historyUserInfo.fio = fio;
+      historyUserInfo.email = document.getElementById('email-input').value.trim();
+      startHistoryTest();
+    } else {
+      userFIO = fio;
+      userEmail = document.getElementById('email-input').value.trim();
+      startPsychTest(pendingTestId);
+    }
+  };
+
+  // ========== ПЫЛЬ И ФОН ==========
+  const hour = new Date().getHours();
+  if(hour >= 6 && hour < 18) document.getElementById('sunRays').classList.add('active');
+  else document.getElementById('moonLight').classList.add('active');
+  const dp = document.getElementById('dustParticles');
+  setInterval(() => {
+    if(dp.children.length < 15) {
+      const p = document.createElement('div'); p.className = 'particle';
+      p.style.left = Math.random()*100 + '%'; p.style.top = Math.random()*100 + '%';
+      p.style.animationDuration = (Math.random()*4+4)+'s';
+      dp.appendChild(p); setTimeout(() => p.remove(), 8000);
+    }
+  }, 1500);
+
+  // Инициализация при загрузке
   initPetals();
   petalsContainer.classList.add('active');
-}
-
-// ========== ИСТОРИЧЕСКИЕ ТЕСТЫ ==========
-const hList = document.getElementById('history-test-list');
-historyTests.forEach(t => {
-  const card = document.createElement('div');
-  card.className = 'test-card';
-  card.innerHTML = `<h3>${t.title}</h3><span style="font-size:0.8rem;opacity:0.7">${t.questions.length} вопросов</span>`;
-  card.onclick = () => startHistoryTest(t);
-  hList.appendChild(card);
-});
-function startHistoryTest(test) {
-  currentTest = test; qIdx = 0; score = 0; answered = false;
-  document.getElementById('history-test-list').classList.add('hidden');
-  document.getElementById('history-quiz').classList.remove('hidden');
-  document.getElementById('history-back-btn').classList.remove('hidden');
-  showHistoryQuestion();
-}
-function showHistoryQuestion() {
-  const q = currentTest.questions[qIdx];
-  document.getElementById('history-quiz').innerHTML = `
-    <h3 style="margin-bottom:15px;color:var(--accent)">${q.q}</h3>
-    <div id="h-opts"></div>`;
-  const opts = document.getElementById('h-opts');
-  q.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'test-card'; btn.style.margin = '8px 0'; btn.textContent = opt;
-    btn.onclick = () => checkHistoryAnswer(i);
-    opts.appendChild(btn);
-  });
-}
-function checkHistoryAnswer(idx) {
-  if(answered) return; answered = true;
-  const correct = currentTest.questions[qIdx].correct;
-  document.querySelectorAll('#h-opts .test-card').forEach((btn, i) => {
-    btn.style.pointerEvents = 'none';
-    if(i === correct) btn.style.background = 'rgba(76,175,80,0.3)';
-    else if(i === idx) btn.style.background = 'rgba(244,67,54,0.3)';
-  });
-  if(idx === correct) score++;
-  setTimeout(() => {
-    qIdx++;
-    if(qIdx < currentTest.questions.length) showHistoryQuestion();
-    else finishHistoryTest();
-  }, 1000);
-}
-async function finishHistoryTest() {
-  const pct = Math.round((score/currentTest.questions.length)*100);
-  document.getElementById('history-quiz').innerHTML = `
-    <h2 style="text-align:center">Результат: ${pct}%</h2>
-    <p style="text-align:center">${score} из ${currentTest.questions.length}</p>
-    <div id="h-mail-status" style="text-align:center;padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin:15px 0">📤 Отправка на aniruf14.02@gmail.com...</div>`;
-  try {
-    await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        _subject: `📜 Тест "${currentTest.title}"`,
-        Результат: `${score}/${currentTest.questions.length} (${pct}%)`,
-        Дата: new Date().toLocaleString('ru-RU'), _captcha: 'false'
-      })
-    });
-    document.getElementById('h-mail-status').textContent = '✅ Отправлено!';
-  } catch(e) {
-    document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети';
-  }
-}
-window.exitHistoryTest = () => {
-  document.getElementById('history-quiz').classList.add('hidden');
-  document.getElementById('history-test-list').classList.remove('hidden');
-  document.getElementById('history-back-btn').classList.add('hidden');
-};
-
-// ========== ПСИХОЛОГИЯ ==========
-window.openFioModal = (id) => {
-  pendingTestId = id;
-  document.getElementById('fio-modal').style.display = 'flex';
-  document.getElementById('fio-input').focus();
-};
-document.getElementById('cancel-psych-btn').onclick = () => document.getElementById('fio-modal').style.display = 'none';
-document.getElementById('start-psych-btn').onclick = () => {
-  const fio = document.getElementById('fio-input').value.trim();
-  if(!fio) return alert('Введи ФИО!');
-  userFIO = fio;
-  userEmail = document.getElementById('email-input').value.trim();
-  document.getElementById('fio-modal').style.display = 'none';
-  startPsychTest(pendingTestId);
-};
-function startPsychTest(id) {
-  currentTest = id === 'kos' ? {questions: kosQuestions, type: 'kos'} : {questions: ryakhovskyQuestions, type: 'ryakhovsky'};
-  psychIndex = 0; psychAnswers = [];
-  document.getElementById('psych-menu').classList.add('hidden');
-  document.getElementById('psych-quiz').classList.remove('hidden');
-  document.getElementById('psych-back-btn').classList.remove('hidden');
-  showPsychQuestion();
-}
-function showPsychQuestion() {
-  const q = currentTest.questions[psychIndex];
-  document.getElementById('psych-quiz').innerHTML = `
-    <div class="question-box">
-      <p>${q.q}</p>
-      <div id="p-opts"></div>
-    </div>`;
-  const opts = document.getElementById('p-opts');
-  if(currentTest.type === 'kos') {
-    ['Да', 'Нет'].forEach(a => {
-      const btn = document.createElement('button'); btn.className='btn-answer'; btn.textContent=a;
-      btn.onclick = () => answerPsych(a === 'Да' ? 'yes' : 'no');
-      opts.appendChild(btn);
-    });
-  } else {
-    ['Да', 'Иногда', 'Нет'].forEach(a => {
-      const btn = document.createElement('button'); btn.className='btn-answer'; btn.textContent=a;
-      btn.onclick = () => answerPsych(a);
-      opts.appendChild(btn);
-    });
-  }
-  // Прогресс
-  document.getElementById('psych-quiz').insertAdjacentHTML('afterbegin',
-    `<div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>`);
-  // Мотивация Аси
-  const msgDiv = document.createElement('div'); msgDiv.className='asya-message';
-  const progress = (psychIndex + 1) / currentTest.questions.length;
-  if(progress >= 0.32 && progress < 0.35) msgDiv.textContent = "🌸 Молодец! Треть уже пройдена, осталось чуть-чуть!";
-  else if(progress >= 0.64 && progress < 0.67) msgDiv.textContent = "✨ Отлично! Уже две трети позади! Ты справляешься!";
-  else msgDiv.style.display = 'none';
-  document.getElementById('psych-quiz').appendChild(msgDiv);
-}
-function answerPsych(ans) {
-  psychAnswers.push(ans); psychIndex++;
-  if(psychIndex < currentTest.questions.length) showPsychQuestion();
-  else calculatePsychResults();
-}
-function calculatePsychResults() {
-  let html = '', text = '';
-  if(currentTest.type === 'kos') {
-    let c=0, o=0;
-    psychAnswers.forEach((a,i) => {
-      const n=i+1;
-      if(commYes.includes(n)&&a==='yes')c++; if(commNo.includes(n)&&a==='no')c++;
-      if(orgYes.includes(n)&&a==='yes')o++; if(orgNo.includes(n)&&a==='no')o++;
-    });
-    const kc=(c/20).toFixed(2), oc=(o/20).toFixed(2);
-    html = `<div class="result-item"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${kc}</p></div>
-            <div class="result-item"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${oc}</p></div>`;
-    text = `КОС:\nКоммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
-  } else {
-    let pts = psychAnswers.reduce((s,a) => s + (a==='Да'?2 : a==='Иногда'?1 : 0), 0);
-    let interp = pts>=30?'Некоммуникабельны':pts>=25?'Замкнуты':pts>=19?'Общительны с оглядкой':pts>=14?'Норма':pts>=9?'Весьма общительны':'Рубаха-парень';
-    html = `<div class="result-item"><h4>🗣️ Общительность</h4><p>${pts}/32 — ${interp}</p></div>`;
-    text = `Ряховский: ${pts}/32 (${interp})`;
-  }
-  document.getElementById('psych-quiz').classList.add('hidden');
-  document.getElementById('psych-results').classList.remove('hidden');
-  document.getElementById('psych-results').innerHTML = `<div class="results-card"><h3 style="text-align:center;margin-bottom:20px">✅ Тест завершён!</h3>${html}<div id="p-mail-status" style="padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin:15px 0;text-align:center">📤 Отправка...</div></div>`;
-  fetch('https://formsubmit.co/ajax/9266031377@bk.ru', {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({_subject:`🧠 Психотест — ${userFIO}`, ФИО:userFIO, Email:userEmail||'Не указан', Результаты:text, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false'})
-  }).then(r => {
-    document.getElementById('p-mail-status').textContent = r.ok ? '✅ Отправлено Асе!' : '⚠️ Ошибка сети';
-  });
-}
-window.backToPsychMenu = () => {
-  document.getElementById('psych-results').classList.add('hidden');
-  document.getElementById('psych-menu').classList.remove('hidden');
-  document.getElementById('psych-back-btn').classList.add('hidden');
-};
-
-// ========== ГЕОМЕТРИЧЕСКИЕ ЦВЕТЫ ==========
-function createGeoFlowers() {
-  const container = document.getElementById('geo-flowers');
-  container.innerHTML = '';
-  for (let i = 0; i < 12; i++) {
-    const f = document.createElement('div');
-    f.className = 'geo-flower';
-    f.style.left = Math.random() * 100 + '%';
-    f.style.top = Math.random() * 100 + '%';
-    f.style.animationDelay = Math.random() * 15 + 's';
-    f.style.width = (Math.random() * 60 + 40) + 'px';
-    f.style.height = f.style.width;
-    container.appendChild(f);
-  }
-}
 });
