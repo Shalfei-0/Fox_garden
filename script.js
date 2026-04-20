@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const commYes=[1,5,9,13,17,21,25,29,33,37], commNo=[3,7,11,15,19,23,27,31,35,39];
   const orgYes=[2,6,10,14,18,22,26,30,34,38], orgNo=[4,8,12,16,20,24,28,32,36,40];
 
-  // ✅ ТЕСТ МИХЕЛЬСОНА (27 вопросов)
   const michelsonQuestions = [
     {q:'Кто-либо говорит Вам: "Мне кажется, что Вы замечательный человек". Вы обычно:', opts:['"Нет, что Вы! Я таким не являюсь"','"Спасибо, я действительно человек выдающийся"','"Спасибо"','Ничего не говорите и краснеете','"Да, я отличаюсь от других в лучшую сторону"']},
     {q:'Кто-либо совершает замечательный поступок. Вы обычно:', opts:['"Нормально!"','"Отлично, но я видел получше"','Ничего не говорите','"Я могу сделать гораздо лучше"','"Это действительно замечательно!"']},
@@ -54,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     {q:'Вы видите кого-то, с кем хотели бы познакомиться. Вы:', opts:['Радостно окликаете и идёте навстречу','Подходите, представляетесь и начинаете разговор','Подходите и ждёте, когда заговорят с Вами','Подходите и рассказываете о крупных делах','Ничего не говорите']},
     {q:'Незнакомец окликает Вас: "Привет!". Вы:', opts:['"Что Вам угодно?"','Ничего не говорите','"Оставьте меня в покое"','"Привет!", представляетесь и просите представиться','Киваете, "Привет!" и проходите мимо']}
   ];
-
   const michelsonKey = [2,4,1,3,0,2,0,2,2,3,3,0,2,4,1,3,0,2,4,1,3,2,4,0,4,1,3];
   const michelsonBlocks = {
     '🎁 Комплименты': [1,2,11,12], '🗣️ Справедливая критика': [4,13], '⚠️ Несправедливая критика': [3,9],
@@ -69,50 +67,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ========== ТЕМА ==========
   const themeBtn = document.getElementById('theme-toggle');
-  const savedTheme = localStorage.getItem('fox_theme') || 'dark';
-  document.body.classList.toggle('light-theme', savedTheme === 'light');
-  themeBtn.textContent = savedTheme === 'light' ? '🌙' : '🌓';
+  document.body.classList.remove('light-theme');
+  themeBtn.textContent = '🌓';
   themeBtn.onclick = () => {
     document.body.classList.toggle('light-theme');
-    const l = document.body.classList.contains('light-theme');
-    themeBtn.textContent = l ? '🌙' : '🌓';
-    localStorage.setItem('fox_theme', l ? 'light' : 'dark');
+    themeBtn.textContent = document.body.classList.contains('light-theme') ? '🌙' : '🌓';
   };
 
-  // ✅ НАВИГАЦИЯ (починена)
-  window.switchTab = (id) => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const target = document.getElementById(id);
-    if(target) target.classList.add('active');
-    document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
-    
-    const psych = document.getElementById('psychology');
-    const petals = document.getElementById('petals-container');
-    if(id === 'psychology') { psych.classList.add('active'); createGeoFlowers(); petals?.classList.remove('active'); }
-    else { psych.classList.remove('active'); if(id === 'home') { petals?.classList.add('active'); initPetals(); } else petals?.classList.remove('active'); }
-  };
-  document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
-
-  // ========== ЛЕПЕСТКИ ==========
+  // ✅ НАВИГАЦИЯ & ЛЕПЕСТКИ
   const petalsContainer = document.getElementById('petals-container');
   let petalsInitialized = false;
+
   function initPetals() {
     if(petalsInitialized) return;
     petalsContainer.innerHTML = '';
-    for(let i=0; i<20; i++) {
+    for(let i=0; i<25; i++) {
       const p = document.createElement('div'); p.className = 'petal';
-      p.style.left = (Math.random() * 100 + 15) + '%';
-      p.style.top = (Math.random() * -20) + '%';
-      p.style.animationDuration = (Math.random() * 4 + 10) + 's';
+      p.style.left = (Math.random() * 90 + 5) + '%';
+      p.style.top = (Math.random() * -30) + '%';
+      p.style.animationDuration = (Math.random() * 5 + 10) + 's';
       p.style.animationDelay = (Math.random() * 8) + 's';
-      p.style.transform = `scale(${0.8 + Math.random()*0.6})`;
       petalsContainer.appendChild(p);
     }
     petalsInitialized = true;
   }
 
-  // ========== ЭФФЕКТЫ ==========
+  window.switchTab = (id) => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    // Исправлен баг с ID
+    const target = document.getElementById(id);
+    if(target) target.classList.add('active');
+    document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
+    
+    const psych = document.getElementById('psychology');
+    
+    if(id === 'psychology') { 
+      psych.classList.add('active'); 
+      createGeoFlowers();
+      petalsContainer.classList.remove('active'); // Скрываем лепестки в психологии
+    } else {
+      psych.classList.remove('active');
+      petalsContainer.classList.add('active'); // Показываем лепестки везде кроме психологии
+      if(!petalsInitialized) initPetals();
+    }
+  };
+  document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
+  // ========== ЭФФЕКТЫ ФОНА ==========
   const hour = new Date().getHours();
   if(hour >= 6 && hour < 18) document.getElementById('sunRays').classList.add('active');
   const dp = document.getElementById('dustParticles');
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1500);
 
-  // ========== ИСТОРИЯ (МОДАЛКА + ТЕСТ) ==========
+  // ========== ИСТОРИЯ ==========
   const hList = document.getElementById('history-test-list');
   historyTests.forEach(t => {
     const card = document.createElement('div');
@@ -138,15 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function openHistoryFioModal(test) {
     pendingTestId = 'history'; historyUserInfo = { test };
     document.getElementById('fio-modal').style.display = 'flex';
-    document.getElementById('fio-input').value = '';
-    document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   }
 
   function startHistoryTest() {
     if(!historyUserInfo) return;
-    currentTest = historyUserInfo.test;
-    qIdx=0; score=0; answered=false;
+    currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
     document.getElementById('fio-modal').style.display='none';
     document.getElementById('history-test-list').classList.add('hidden');
     document.getElementById('history-quiz').classList.remove('hidden');
@@ -193,7 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-back-btn').classList.add('hidden');
   };
 
-  // ========== ПСИХОЛОГИЯ (ФИКС СБРОСА + ВЫХОД) ==========
+  // ========== ПСИХОЛОГИЯ & КНОПКА ВЫХОДА ==========
+  const psychExitBtn = document.getElementById('btn-exit-psych');
+  const psychMenuView = document.getElementById('psych-menu-view');
+  const psychBackBtn = document.getElementById('psych-back-btn');
+
+  window.closePsychOverlay = () => {
+    switchTab('home');
+  };
+
   window.openFioModal = (id) => {
     pendingTestId = id;
     document.getElementById('fio-modal').style.display = 'flex';
@@ -211,12 +220,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function startPsychTest(id) {
     currentTest = id==='kos' ? {questions:kosQuestions, type:'kos'} : {questions:michelsonQuestions, type:'michelson'};
     psychIndex=0; psychAnswers=[]; michelsonScores={};
-    document.getElementById('psych-menu').classList.add('hidden');
-    document.getElementById('psych-quiz').classList.remove('hidden'); document.getElementById('psych-quiz').innerHTML=''; // Сброс
-    document.getElementById('psych-results').classList.add('hidden'); document.getElementById('psych-results').innerHTML=''; // Сброс
-    document.getElementById('psych-back-btn').classList.remove('hidden');
+    
+    // Скрываем меню и кнопку выхода, показываем тест
+    psychMenuView.classList.add('hidden');
+    psychBackBtn.classList.add('hidden');
+    document.getElementById('psych-quiz').classList.remove('hidden'); document.getElementById('psych-quiz').innerHTML='';
+    document.getElementById('psych-results').classList.add('hidden'); document.getElementById('psych-results').innerHTML='';
+    
     showPsychQuestion();
   }
+
   function showPsychQuestion() {
     const q = currentTest.questions[psychIndex];
     document.getElementById('psych-quiz').innerHTML = `
@@ -232,7 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(progress>=0.32&&progress<0.35) document.getElementById('psych-quiz').insertAdjacentHTML('beforeend', `<div class="asya-message">🌸 Треть пройдена!</div>`);
     else if(progress>=0.64&&progress<0.67) document.getElementById('psych-quiz').insertAdjacentHTML('beforeend', `<div class="asya-message">✨ Две трети позади!</div>`);
   }
+
   function answerPsych(ans) { psychAnswers.push(ans); psychIndex++; if(psychIndex<currentTest.questions.length) showPsychQuestion(); else calculatePsychResults(); }
+  
   function calculatePsychResults() {
     let html='', text='';
     if(currentTest.type==='kos') {
@@ -255,17 +270,18 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(r => document.getElementById('p-mail-status').textContent = r.ok ? '✅ Отправлено Асе!' : '⚠️ Ошибка сети')
       .catch(() => document.getElementById('p-mail-status').textContent='⚠️ Ошибка сети');
   }
+
   window.backToPsychMenu = () => {
-    // ✅ ПОЛНЫЙ СБРОС СОСТОЯНИЯ И DOM
     psychIndex=0; psychAnswers=[]; michelsonScores={}; currentTest=null;
     document.getElementById('psych-quiz').innerHTML=''; document.getElementById('psych-results').innerHTML='';
     document.getElementById('psych-quiz').classList.add('hidden');
     document.getElementById('psych-results').classList.add('hidden');
-    document.getElementById('psych-menu').classList.remove('hidden');
     document.getElementById('psych-back-btn').classList.add('hidden');
+    
+    // Возвращаем меню и кнопку выхода
+    psychMenuView.classList.remove('hidden');
   };
 
-  // ========== ГЕОМЕТРИЧЕСКИЕ ЦВЕТЫ ==========
   function createGeoFlowers() {
     const c = document.getElementById('geo-flowers'); if(c.children.length>0) return;
     for(let i=0; i<12; i++) {
@@ -275,5 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  initPetals(); petalsContainer.classList.add('active');
+  initPetals();
+  petalsContainer.classList.add('active'); // По умолчанию видны на главной
 });
