@@ -1,94 +1,92 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Лисий Сад</title>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лисий Сад</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="app">
-  <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌓</button>
-  
-  <div class="effects-container">
-    <div id="sunRays" class="sun-rays"></div>
-    <div id="moonLight" class="moon-light"></div>
-    <div id="dustParticles" class="dust-particles"></div>
-    <div id="petals-container" class="petals-container"></div>
-  </div>
+  <div id="app">
+    <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌓</button>
 
-  <header class="main-header">
-    <div class="logo-area">
-      <div class="fox-wrapper">
-        <div class="fox-rings">
-          <span class="ring"></span>
-          <span class="ring"></span>
-          <span class="ring"></span>
-        </div>
-        <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
-      </div>
-      <h1>Лисий Сад</h1>
+    <div class="effects-container">
+      <div id="sunRays" class="sun-rays"></div>
+      <div id="moonLight" class="moon-light"></div>
+      <div id="dustParticles" class="dust-particles"></div>
+      <div id="petals-container" class="petals-container"></div>
     </div>
-    <nav class="main-nav">
-      <button class="nav-btn active" data-tab="home">🏠 Главная</button>
-      <button class="nav-btn" data-tab="history">📜 Тесты</button>
-      <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
-    </nav>
-  </header>
 
-  <main class="content">
-    <section id="home" class="tab active">
-      <div class="card">
-        <h2>Добро пожаловать</h2>
-        <p>Я Шалфей, хранитель знаний. Здесь ты найдешь тесты по истории и психологические опросники с Асей. Выбирай раздел и начинай путь!</p>
-        <button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
-      </div>
-    </section>
-
-    <section id="history" class="tab">
-      <h2>📜 Тесты по истории России</h2>
-      <div class="test-list" id="history-test-list"></div>
-      <div id="history-quiz" class="hidden"></div>
-      <button class="btn-back hidden" id="history-back-btn" onclick="exitHistoryTest()">← Назад</button>
-    </section>
-
-    <section id="psychology" class="psych-overlay">
-      <div class="psych-container">
-        <div class="geometric-flowers" id="geo-flowers"></div>
-        <div class="asya-header">
-          <div class="asya-logo-wrap">
-            <div class="asya-rings">
-              <span class="ring"></span><span class="ring"></span><span class="ring"></span>
-            </div>
-            <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
+    <header class="main-header">
+      <div class="logo-area">
+        <div class="fox-wrapper">
+          <div class="fox-rings">
+            <span class="ring"></span>
+            <span class="ring"></span>
+            <span class="ring"></span>
           </div>
-          <h2>Психология с Асей</h2>
-          <p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
+          <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
         </div>
-        <div class="psych-menu" id="psych-menu">
-          <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
-          <div class="psych-card" onclick="openFioModal('ryakhovsky')">🗣️ Тест Ряховского (16 вопросов)</div>
-        </div>
-        <div id="psych-quiz" class="hidden"></div>
-        <div id="psych-results" class="hidden"></div>
-        <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← Назад</button>
+        <h1>Лисий Сад</h1>
       </div>
-    </section>
-  </main>
+      <nav class="main-nav">
+        <button class="nav-btn active" data-tab="home">🏠 Главная</button>
+        <button class="nav-btn" data-tab="history">📜 Тесты</button>
+        <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
+      </nav>
+    </header>
 
-  <div class="modal-overlay" id="fio-modal">
-    <div class="modal-box">
-      <h3>🐾 Перед началом теста</h3>
-      <input type="text" id="fio-input" placeholder="ФИО *" class="input">
-      <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
-      <div class="modal-actions">
-        <button class="btn-primary" id="start-psych-btn">Начать</button>
-        <button class="btn-secondary" id="cancel-psych-btn">Отмена</button>
+    <main class="content">
+      <section id="home" class="tab active">
+        <div class="card">
+          <h2>Добро пожаловать</h2>
+          <p>Я Шалфей, хранитель знаний. Здесь ты найдешь тесты по истории и психологические опросники с Асей. Выбирай раздел и начинай путь!</p>
+          <button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
+        </div>
+      </section>
+
+      <section id="history" class="tab">
+        <h2>📜 Тесты по истории России</h2>
+        <div class="test-list" id="history-test-list"></div>
+        <div id="history-quiz" class="hidden"></div>
+        <button class="btn-back hidden" id="history-back-btn" onclick="exitHistoryTest()">← Назад</button>
+      </section>
+
+      <section id="psychology" class="psych-overlay">
+        <div class="psych-container">
+          <div class="geometric-flowers" id="geo-flowers"></div>
+          <div class="asya-header">
+            <div class="asya-logo-wrap">
+              <div class="asya-pulse"></div>
+              <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
+            </div>
+            <h2>Психология с Асей</h2>
+            <p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
+          </div>
+          <div class="psych-menu" id="psych-menu">
+            <div class="psych-card" onclick="openPsychFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
+            <div class="psych-card" onclick="openPsychFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
+          </div>
+          <div id="psych-quiz" class="hidden"></div>
+          <div id="psych-results" class="hidden"></div>
+          <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← Назад</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal-overlay" id="fio-modal">
+      <div class="modal-box">
+        <h3>🐾 Перед началом теста</h3>
+        <input type="text" id="fio-input" placeholder="ФИО *" class="input">
+        <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
+        <div class="modal-actions">
+          <button class="btn-primary" id="start-test-btn">Начать</button>
+          <button class="btn-secondary" id="cancel-test-btn">Отмена</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
