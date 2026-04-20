@@ -71,7 +71,30 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 
 .main-header { display:flex; flex-direction:column; align-items:center; padding:25px 0 15px; position:relative; z-index:2; }
 .logo-area { display:flex; flex-direction:column; align-items:center; gap:8px; }
-.main-logo { width:70px; filter:drop-shadow(0 0 12px var(--accent)); }
+
+/* ✅ ИСПРАВЛЕНИЕ КРУГОВ: используем transform вместо width/height для плавности */
+.fox-wrapper { position: relative; display: inline-block; }
+.fox-rings {
+  position: absolute; top: 50%; left: 50%;
+  width: 0; height: 0; pointer-events: none; z-index: 0;
+}
+.fox-rings .ring {
+  position: absolute; top: 50%; left: 50%;
+  width: 80px; height: 80px; margin-top: -40px; margin-left: -40px;
+  border: 2px solid var(--accent); border-radius: 50%;
+  opacity: 0; transform: scale(0.8);
+  will-change: transform, opacity;
+  animation: ringExpand 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+.fox-rings .ring:nth-child(1) { animation-delay: 0s; }
+.fox-rings .ring:nth-child(2) { animation-delay: 2s; }
+.fox-rings .ring:nth-child(3) { animation-delay: 4s; }
+@keyframes ringExpand {
+  0% { opacity: 0.8; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(3.5); }
+}
+
+.main-logo { width:70px; filter:drop-shadow(0 0 12px var(--accent)); position:relative; z-index:1; }
 .main-header h1 { font-size:1.9rem; color:var(--accent); text-align:center; }
 .main-nav { display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; justify-content:center; }
 .nav-btn { padding:10px 20px; background:transparent; border:1px solid var(--border); border-radius:14px; color:var(--text); cursor:pointer; transition:0.25s; font-weight:500; }
@@ -90,7 +113,6 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
   cursor:pointer; transition:0.25s; text-align:left;
 }
 .test-card:hover, .question-frame:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--shadow); }
-
 .question-frame { margin:15px 0; }
 .question-frame h4 { color:var(--accent); margin-bottom:15px; font-size:1.1rem; }
 .answer-option {
