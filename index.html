@@ -13,7 +13,7 @@
 
     <div class="effects-container">
       <div id="sunRays" class="sun-rays"></div>
-      <div id="moonLight" class="moon-light"></div>
+      <!-- 🚫 moonLight убран по запросу -->
       <div id="dustParticles" class="dust-particles"></div>
       <div id="petals-container" class="petals-container"></div>
     </div>
@@ -26,7 +26,7 @@
             <span class="ring"></span>
             <span class="ring"></span>
           </div>
-          <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
+          <img src="persi_fox.png" alt="Лиса Шалфей" class="main-logo">
         </div>
         <h1>Лисий Сад</h1>
       </div>
@@ -65,8 +65,8 @@
             <p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
           </div>
           <div class="psych-menu" id="psych-menu">
-            <div class="psych-card" onclick="openPsychFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
-            <div class="psych-card" onclick="openPsychFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
+            <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
+            <div class="psych-card" onclick="openFioModal('ryakhovsky')">🗣️ Тест Ряховского (16 вопросов)</div>
           </div>
           <div id="psych-quiz" class="hidden"></div>
           <div id="psych-results" class="hidden"></div>
