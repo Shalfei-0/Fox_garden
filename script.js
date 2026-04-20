@@ -461,3 +461,9 @@ function backToPsychStart() {
 
 // Добавляем кнопку для перехода к психологическому тесту в главном меню
 // (добавьте это в существующую секцию тестов)
+function openPsychTest() {
+    // Скрываем все вкладки
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    // Показываем психологический тест
+    psychTestTab.classList.add('active');
+}
