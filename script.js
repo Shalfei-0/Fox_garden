@@ -63,21 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
   let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
-  // ========== ✅ ТЕМА (3 режима: Тёмная 🌓 → Светлая ☀️ → Оливковая 🌿 → Тёмная 🌓) ==========
+  // ========== ✅ ТЕМА (3 режима: Тёмная 🌓 → Светлая ☀️ → Оливковая 🌿) ==========
   const themeBtn = document.getElementById('theme-toggle');
   const themeClasses = ['', 'light-theme', 'olive-theme'];
   const themeIcons = ['🌓', '☀️', '🌿'];
   let themeIdx = 0;
-
   function applyTheme() {
     document.body.className = themeClasses[themeIdx];
     themeBtn.textContent = themeIcons[themeIdx];
   }
-  themeBtn.onclick = () => {
-    themeIdx = (themeIdx + 1) % themeClasses.length;
-    applyTheme();
-  };
-  applyTheme(); // Применяем стартовое состояние при загрузке
+  themeBtn.onclick = () => { themeIdx = (themeIdx + 1) % themeClasses.length; applyTheme(); };
+  applyTheme();
 
   // ========== ✅ ВСПЫШКИ ВМЕСТО ЛЕПЕСТКОВ ==========
   const petalsContainer = document.getElementById('petals-container');
@@ -86,11 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if(flashesInitialized) return;
     petalsContainer.innerHTML = '';
     for(let i=0; i<12; i++) {
-      const f = document.createElement('div');
-      f.className = 'flash';
+      const f = document.createElement('div'); f.className = 'flash';
       f.style.left = (Math.random() * 95) + '%';
       f.style.top = (Math.random() * 95) + '%';
-      f.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7 сек
+      f.style.animationDuration = (Math.random() * 3 + 4) + 's';
       f.style.animationDelay = (Math.random() * 5) + 's';
       petalsContainer.appendChild(f);
     }
@@ -101,13 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
   window.switchTab = (id) => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
-    
     const navBtn = document.querySelector(`.nav-btn[data-tab="${id}"]`);
     if(navBtn) navBtn.classList.add('active');
-
     const psych = document.getElementById('psychology');
     if(id === 'psychology') {
       psych.classList.add('active');
@@ -137,17 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ========== ИСТОРИЯ ==========
   const hList = document.getElementById('history-test-list');
   historyTests.forEach(t => {
-    const card = document.createElement('div');
-    card.className='test-card';
+    const card = document.createElement('div'); card.className='test-card';
     card.innerHTML=`<h3>${t.title}</h3><span style="font-size:0.8rem;opacity:0.7">${t.questions.length} вопросов</span>`;
-    card.onclick = () => openHistoryFioModal(t);
-    hList.appendChild(card);
+    card.onclick = () => openHistoryFioModal(t); hList.appendChild(card);
   });
   function openHistoryFioModal(test) {
     pendingTestId = 'history'; historyUserInfo = { test };
     document.getElementById('fio-modal').style.display = 'flex';
-    document.getElementById('fio-input').value = ''; 
-    document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   }
   function startHistoryTest() {
@@ -161,32 +150,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showHistoryQuestion() {
     const q = currentTest.questions[qIdx];
+    // ✅ Мобильная адаптация: word-break, max-width: 100%
     document.getElementById('history-quiz').innerHTML = `
-      <div class="question-frame"><h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4><p style="margin-bottom:18px">${q.q}</p><div id="h-opts"></div></div>`;
+      <div class="question-frame" style="max-width:100%; overflow-wrap:break-word;">
+        <h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4>
+        <p style="margin-bottom:18px; overflow-wrap:break-word; word-break:break-word;">${q.q}</p>
+        <div id="h-opts" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>`;
     const opts = document.getElementById('h-opts');
-    // ✅ Кнопки создаются вертикально через CSS #h-opts { flex-direction: column }
     q.options.forEach((opt,i) => {
-      const btn = document.createElement('button'); 
-      btn.className='answer-option'; 
-      btn.textContent=opt;
-      btn.onclick = () => checkHistoryAnswer(i); 
-      opts.appendChild(btn);
+      const btn = document.createElement('button'); btn.className='answer-option'; btn.textContent=opt;
+      btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
     });
   }
   function checkHistoryAnswer(idx) {
-    if(answered) return; 
-    answered=true;
+    if(answered) return; answered=true;
     const correct = currentTest.questions[qIdx].correct;
     document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
       el.style.pointerEvents='none';
-      if(i===correct) el.classList.add('correct'); 
-      else if(i===idx) el.classList.add('wrong');
+      if(i===correct) el.classList.add('correct'); else if(i===idx) el.classList.add('wrong');
     });
     if(idx===correct) score++;
     setTimeout(() => {
       qIdx++;
-      if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } 
-      else finishHistoryTest();
+      if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest();
     }, 1200);
   }
   async function finishHistoryTest() {
@@ -206,23 +193,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-back-btn').classList.add('hidden');
   };
 
-  // ========== ПСИХОЛОГИЯ ==========
+  // ========== ПСИХОЛОГИЯ (✅ ИСПРАВЛЕН ВЫХОД ЗА ГРАНИЦЫ НА ТЕЛЕФОНЕ) ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
-  
-  // ✅ КНОПКА ВЫХОДА (работает через переключение на главную, визуально находится под тестами)
   window.closePsychOverlay = () => switchTab('home');
-  
   window.openFioModal = (id) => {
     pendingTestId = id;
     document.getElementById('fio-modal').style.display = 'flex';
-    document.getElementById('fio-input').value = ''; 
-    document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   };
   document.getElementById('cancel-test-btn').onclick = () => {
-    document.getElementById('fio-modal').style.display='none'; 
-    pendingTestId=null; historyUserInfo=null;
+    document.getElementById('fio-modal').style.display='none'; pendingTestId=null; historyUserInfo=null;
   };
   document.getElementById('start-test-btn').onclick = () => {
     const fio = document.getElementById('fio-input').value.trim();
@@ -247,9 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showPsychQuestion() {
     const q = currentTest.questions[psychIndex];
+    // ✅ МОБИЛЬНАЯ АДАПТАЦИЯ: инлайн стили предотвращают выход за границы экрана
     document.getElementById('psych-quiz').innerHTML = `
-      <div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>
-      <div class="question-box"><p>${q.q}</p><div id="p-opts"></div></div>`;
+      <div class="progress-bar" style="max-width:100%; margin: 0 auto 20px;"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>
+      <div class="question-box" style="max-width: 95vw; padding: 20px 15px; margin: 0 auto 20px; overflow-wrap: break-word;">
+        <p style="margin-bottom:20px; line-height:1.5; word-break: break-word; overflow-wrap: break-word;">${q.q}</p>
+        <div id="p-opts" style="display:flex; flex-direction:column; gap:10px; width:100%;"></div>
+      </div>`;
     const opts = document.getElementById('p-opts');
     if(currentTest.type==='kos') {
       ['Да','Нет'].forEach(a => { const btn=document.createElement('button'); btn.className='btn-answer'; btn.textContent=a; btn.onclick=()=>answerPsych(a==='Да'?'yes':'no'); opts.appendChild(btn); });
@@ -262,8 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function answerPsych(ans) {
     psychAnswers.push(ans); psychIndex++;
-    if(psychIndex<currentTest.questions.length) showPsychQuestion(); 
-    else calculatePsychResults();
+    if(psychIndex<currentTest.questions.length) showPsychQuestion(); else calculatePsychResults();
   }
   function calculatePsychResults() {
     let html='', text='';
