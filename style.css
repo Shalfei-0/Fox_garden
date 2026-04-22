@@ -46,25 +46,21 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .dust-particles { position:absolute; inset:0; }
 .particle { position:absolute; background:radial-gradient(circle, rgba(255,255,200,0.5) 0%, transparent 70%); border-radius:50%; animation:float 8s infinite ease-in-out; }
 @keyframes float { 0%,100%{transform:translateY(0);opacity:0} 50%{transform:translateY(-30px);opacity:0.6} }
-/* 🌸 ЖИВЫЕ ЛЕПЕСТКИ (возвращено) */
-#petals-container { position:fixed; inset:0; pointer-events:none; z-index:1; display:none; }
+
+/* ✅ ЗАМЕНА ЛЕПЕСТКОВ НА ПЕРСИКОВЫЕ ВСПЫШКИ */
+#petals-container { position:fixed; inset:0; pointer-events:none; z-index:1; display:none; overflow:hidden; }
 #petals-container.active { display:block; }
-.petal {
-  position:absolute; width: 16px; height: 20px;
-  background: radial-gradient(ellipse at 30% 20%, #fff5f7, #ffb3c1, #ff8fab, #d35f5f);
-  border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
-  box-shadow: 0 0 8px rgba(255, 150, 160, 0.6), inset 0 -3px 6px rgba(180, 40, 60, 0.25);
-  animation: petalFloat linear infinite; filter: blur(0.3px);
+.flash {
+  position:absolute; width: 55px; height: 55px;
+  background: radial-gradient(circle, rgba(255, 183, 130, 0.85) 0%, rgba(255, 160, 100, 0.25) 40%, transparent 75%);
+  border-radius: 50%; filter: blur(4px);
+  animation: flashPulse ease-in-out infinite; pointer-events: none;
 }
-@keyframes petalFloat {
-  0% { transform: translateY(-10vh) translateX(0) rotate(0deg) scale(0.85); opacity:0; }
-  10% { opacity:0.9; }
-  25% { transform: translateY(25vh) translateX(-14px) rotate(70deg) scale(1.05); }
-  50% { transform: translateY(50vh) translateX(10px) rotate(140deg) scale(0.95); filter: blur(0.5px); }
-  75% { transform: translateY(75vh) translateX(-8px) rotate(210deg) scale(1); }
-  90% { opacity:0.85; }
-  100% { transform: translateY(110vh) translateX(0) rotate(360deg) scale(0.85); opacity:0; }
+@keyframes flashPulse {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  50% { opacity: 0.75; transform: scale(1.25); }
 }
+
 /* ШАПКА ПО ЦЕНТРУ */
 .main-header {
   display: flex; flex-direction: column; align-items: center;
@@ -72,19 +68,21 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 }
 .logo-area { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 5px; }
 .main-logo { width: 130px; filter: drop-shadow(0 0 12px var(--accent)); position: relative; z-index: 2; }
-/* ✅ КОЛЬЦА РОВНО 60px */
+/* ✅ КОЛЬЦА: 60px, ЯРЧЕ (box-shadow) */
 .fox-wrapper { position: relative; }
 .sage-rings { position: absolute; top: 50%; left: 50%; width: 0; height: 0; pointer-events: none; z-index: 1; }
 .sage-rings .ring {
   position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; margin-top: -30px; margin-left: -30px;
-  border: 2px solid var(--accent); border-radius: 50%; opacity: 0; transform: scale(0.6);
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 18px rgba(255, 170, 102, 0.4);
+  border-radius: 50%; opacity: 0; transform: scale(0.5);
   animation: ringExpand 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
 }
 .sage-rings .ring:nth-child(1) { animation-delay: 0s; }
 .sage-rings .ring:nth-child(2) { animation-delay: 1.6s; }
 .sage-rings .ring:nth-child(3) { animation-delay: 3.2s; }
-@keyframes ringExpand { 0% { opacity: 0.7; transform: scale(0.6); } 100% { opacity: 0; transform: scale(4.5); } }
-/* ✨ ПОДСВЕТКА БУКВ */
+@keyframes ringExpand { 0% { opacity: 0.8; transform: scale(0.5); } 100% { opacity: 0; transform: scale(4.8); } }
+
 .main-header h1 { font-size: 2.1rem; color: var(--accent); text-shadow: var(--glow-text); animation: titleGlow 3s ease-in-out infinite alternate; }
 @keyframes titleGlow { from { text-shadow: 0 0 10px var(--accent), 0 0 20px rgba(255,170,102,0.3); } to { text-shadow: 0 0 20px var(--accent), 0 0 35px rgba(255,170,102,0.6), 0 0 50px rgba(255,170,102,0.2); } }
 .main-nav { display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; justify-content: center; align-items: center; }
@@ -108,13 +106,20 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .btn-primary:hover { transform: scale(1.03); box-shadow: 0 4px 15px rgba(255,170,102,0.4); }
 .btn-back { margin-top: 15px; background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 12px; cursor: pointer; }
 .btn-back:hover { background: rgba(255,255,255,0.1); }
-.btn-exit-psych { position: fixed; top: 15px; right: 15px; z-index: 101; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
-.btn-exit-psych:hover { background: rgba(255,90,90,0.3); border-color: #ff8a80; }
 .hidden { display: none !important; }
+
+/* ✅ КНОПКА ВЫХОДА (под тестами, стрелка назад, подпись "вернуться") */
+.btn-exit-psych {
+  margin: 25px auto 0; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff;
+  padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.2s;
+  display: inline-flex; align-items: center; gap: 8px; font-family: inherit;
+}
+.btn-exit-psych:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
 /* ПСИХОЛОГИЯ */
 #psychology { position: fixed; inset: 0; z-index: 100; background: transparent; display: none; overflow-y: auto; }
 #psychology.active { display: block; }
-.psych-container { width: 100%; min-height: 100vh; background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 40%, #0f2847 100%); position: relative; padding: 60px 20px 40px; text-align: center; color: #e2e8f0; }
+.psych-container { width: 100%; min-height: 100vh; background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 40%, #0f2847 100%); position: relative; padding: 60px 20px 40px; text-align: center; color: #e2e8f0; display:flex; flex-direction:column; align-items:center; }
 .geometric-flowers { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .geo-flower { position: absolute; opacity: 0.12; width: 80px; height: 80px; animation: floatGeo 16s ease-in-out infinite; }
 .geo-flower::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, #64b5f6 12%, transparent 13%), radial-gradient(circle, #64b5f6 12%, transparent 13%) 50% 0, radial-gradient(circle, #64b5f6 12%, transparent 13%) 100% 50%, radial-gradient(circle, #64b5f6 12%, transparent 13%) 50% 100%, radial-gradient(circle, #64b5f6 12%, transparent 13%) 0 50%; background-size: 100% 100%; }
@@ -146,4 +151,12 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
 .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 11px; cursor: pointer; transition: 0.2s; }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-@media(max-width:600px) { .main-nav { justify-content:center; gap:10px; } .nav-right { margin-left:0; } .main-logo { width: 100px; } .question-box { padding: 22px; } .asya-logo-wrap { width: 95px; height: 95px; } }
+/* ✅ КНОПКИ ИСТОРИИ (вертикально + подсветка) */
+#h-opts { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+.answer-option { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px 18px; border-radius: 12px; cursor: pointer; transition: 0.2s; text-align: left; }
+.answer-option:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); transform: translateX(4px); }
+.answer-option.correct { background: rgba(76, 175, 80, 0.25); border-color: #4caf50; color: #4caf50; }
+.answer-option.wrong { background: rgba(244, 67, 54, 0.25); border-color: #f44336; color: #f44336; }
+@media(max-width:600px) {
+  .main-nav { justify-content:center; gap:10px; } .nav-right { margin-left:0; } .main-logo { width: 100px; } .question-box { padding: 22px; } .asya-logo-wrap { width: 95px; height: 95px; }
+}
