@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
   const commYes=[1,5,9,13,17,21,25,29,33,37], commNo=[3,7,11,15,19,23,27,31,35,39];
   const orgYes=[2,6,10,14,18,22,26,30,34,38], orgNo=[4,8,12,16,20,24,28,32,36,40];
-  // Тест Михельсона (27 вопросов)
   const michelsonQuestions = [
     {q:'Кто-либо говорит Вам: "Мне кажется, что Вы замечательный человек". Вы обычно:', opts:['"Нет, что Вы! Я таким не являюсь"','"Спасибо, я действительно человек выдающийся"','"Спасибо"','Ничего не говорите и краснеете','"Да, я отличаюсь от других в лучшую сторону"']},
     {q:'Кто-либо совершает замечательный поступок. Вы обычно:', opts:['"Нормально!"','"Отлично, но я видел получше"','Ничего не говорите','"Я могу сделать гораздо лучше"','"Это действительно замечательно!"']},
@@ -58,11 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
     '🔥 Провокация': [5,14,15,23,24], '🙏 Просьба': [6,16], '❌ Отказ': [10,17,25],
     '💙 Эмпатия (оказать)': [7,20], '🤲 Эмпатия (принять)': [8,21], '🤝 Инициатива': [18,26], '👋 Ответ на контакт': [19,27]
   };
+
   // ========== СОСТОЯНИЕ ==========
   let userFIO = '', userEmail = '', pendingTestId = null;
   let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
   let psychIndex = 0, psychAnswers = [], michelsonScores = {};
-  // ========== ТЕМА ==========
+
+  // ========== ТЕМА (возвращено как в оригинале) ==========
   const themeBtn = document.getElementById('theme-toggle');
   document.body.classList.remove('light-theme');
   themeBtn.textContent = '🌓';
@@ -70,30 +71,33 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.toggle('light-theme');
     themeBtn.textContent = document.body.classList.contains('light-theme') ? '🌙' : '🌓';
   };
-  // ========== НАВИГАЦИЯ & ЛЕПЕСТКИ ==========
+
+  // ========== НАВИГАЦИЯ & ВСПЫШКИ ==========
   const petalsContainer = document.getElementById('petals-container');
-  let petalsInitialized = false;
-  function initPetals() {
-    if(petalsInitialized) return;
+  let flashesInitialized = false;
+
+  function initFlashes() {
+    if(flashesInitialized) return;
     petalsContainer.innerHTML = '';
-    // ✅ УМЕНЬШЕНО КОЛИЧЕСТВО ЛЕПЕСТКОВ (14 вместо 25)
-    for(let i=0; i<14; i++) {
-      const p = document.createElement('div'); p.className = 'petal';
-      p.style.left = (Math.random() * 90 + 5) + '%';
-      p.style.top = (Math.random() * -30) + '%';
-      p.style.animationDuration = (Math.random() * 5 + 10) + 's';
-      p.style.animationDelay = (Math.random() * 8) + 's';
-      p.style.transform = `scale(${0.8 + Math.random()*0.5})`;
-      petalsContainer.appendChild(p);
+    // Создаём 12 медленных вспышек с рандомной задержкой
+    for(let i=0; i<12; i++) {
+      const f = document.createElement('div'); f.className = 'flash';
+      f.style.left = (Math.random() * 95) + '%';
+      f.style.top = (Math.random() * 95) + '%';
+      f.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7 сек (медленно)
+      f.style.animationDelay = (Math.random() * 6) + 's';
+      petalsContainer.appendChild(f);
     }
-    petalsInitialized = true;
+    flashesInitialized = true;
   }
+
   window.switchTab = (id) => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
     document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
+    
     const psych = document.getElementById('psychology');
     if(id === 'psychology') {
       psych.classList.add('active');
@@ -102,10 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       psych.classList.remove('active');
       petalsContainer.classList.add('active');
-      if(!petalsInitialized) initPetals();
+      if(!flashesInitialized) initFlashes();
     }
   };
   document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
   // ========== ЭФФЕКТЫ ФОНА ==========
   const hour = new Date().getHours();
   if(hour >= 6 && hour < 18) document.getElementById('sunRays').classList.add('active');
@@ -118,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dp.appendChild(p); setTimeout(()=>p.remove(), 8000);
     }
   }, 1500);
+
   // ========== ИСТОРИЯ ==========
   const hList = document.getElementById('history-test-list');
   historyTests.forEach(t => {
@@ -144,27 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showHistoryQuestion() {
     const q = currentTest.questions[qIdx];
-    document.getElementById('history-quiz').innerHTML = `
-      <div class="question-frame">
-        <h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4>
-        <p style="margin-bottom:18px">${q.q}</p>
-        <div id="h-opts"></div>
-      </div>`;
+    document.getElementById('history-quiz').innerHTML = `<div class="question-frame"><h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4><p style="margin-bottom:18px">${q.q}</p><div id="h-opts"></div></div>`;
     const opts = document.getElementById('h-opts');
-    // ✅ КНОПКИ ВЕРТИКАЛЬНО (сверху вниз)
     q.options.forEach((opt,i) => {
-      const btn = document.createElement('button');
-      btn.className='answer-option';
-      btn.textContent=opt;
-      btn.onclick = () => checkHistoryAnswer(i);
-      opts.appendChild(btn);
+      const btn = document.createElement('button'); btn.className='answer-option'; btn.textContent=opt;
+      btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
     });
   }
   function checkHistoryAnswer(idx) {
-    if(answered) return;
-    answered=true;
+    if(answered) return; answered=true;
     const correct = currentTest.questions[qIdx].correct;
-    // ✅ ПОДСВЕТКА ЗЕЛЁНЫМ/КРАСНЫМ
     document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
       el.style.pointerEvents='none';
       if(i===correct) el.classList.add('correct');
@@ -173,33 +168,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if(idx===correct) score++;
     setTimeout(() => {
       qIdx++;
-      if(qIdx<currentTest.questions.length) {
-        answered=false;
-        showHistoryQuestion();
-      } else finishHistoryTest();
+      if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest();
     }, 1200);
   }
   async function finishHistoryTest() {
     const pct = Math.round((score/currentTest.questions.length)*100);
-    document.getElementById('history-quiz').innerHTML = `
-      <div class="question-frame" style="text-align:center">
-        <h2 style="color:var(--accent)">Результат: ${pct}%</h2>
-        <p>${score} из ${currentTest.questions.length}</p>
-        <div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка на aniruf14.02@gmail.com...</div>
-      </div>`;
+    document.getElementById('history-quiz').innerHTML = `<div class="question-frame" style="text-align:center"><h2 style="color:var(--accent)">Результат: ${pct}%</h2><p>${score} из ${currentTest.questions.length}</p><div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка на aniruf14.02@gmail.com...</div></div>`;
     try {
-      await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          _subject:`📜 Тест "${currentTest.title}"`,
-          ФИО:historyUserInfo?.fio||'Аноним',
-          Email:historyUserInfo?.email||'Не указан',
-          Тест:currentTest.title,
-          Результат:`${score}/${currentTest.questions.length} (${pct}%)`,
-          Дата:new Date().toLocaleString('ru-RU'),
-          _captcha:'false'
-        })
+      await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', { method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ _subject:`📜 Тест "${currentTest.title}"`, ФИО:historyUserInfo?.fio||'Аноним', Email:historyUserInfo?.email||'Не указан', Тест:currentTest.title, Результат:`${score}/${currentTest.questions.length} (${pct}%)`, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false' })
       });
       document.getElementById('h-mail-status').textContent='✅ Отправлено!';
     } catch(e) { document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети'; }
@@ -209,12 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-test-list').classList.remove('hidden');
     document.getElementById('history-back-btn').classList.add('hidden');
   };
+
   // ========== ПСИХОЛОГИЯ ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
-  window.closePsychOverlay = () => {
-    switchTab('home');
-  };
+  window.closePsychOverlay = () => switchTab('home');
+
   window.openFioModal = (id) => {
     pendingTestId = id;
     document.getElementById('fio-modal').style.display = 'flex';
@@ -222,8 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fio-input').focus();
   };
   document.getElementById('cancel-test-btn').onclick = () => {
-    document.getElementById('fio-modal').style.display='none';
-    pendingTestId=null; historyUserInfo=null;
+    document.getElementById('fio-modal').style.display='none'; pendingTestId=null; historyUserInfo=null;
   };
   document.getElementById('start-test-btn').onclick = () => {
     const fio = document.getElementById('fio-input').value.trim();
@@ -248,9 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showPsychQuestion() {
     const q = currentTest.questions[psychIndex];
-    document.getElementById('psych-quiz').innerHTML = `
-      <div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>
-      <div class="question-box"><p>${q.q}</p><div id="p-opts"></div></div>`;
+    document.getElementById('psych-quiz').innerHTML = `<div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div><div class="question-box"><p>${q.q}</p><div id="p-opts"></div></div>`;
     const opts = document.getElementById('p-opts');
     if(currentTest.type==='kos') {
       ['Да','Нет'].forEach(a => { const btn=document.createElement('button'); btn.className='btn-answer'; btn.textContent=a; btn.onclick=()=>answerPsych(a==='Да'?'yes':'no'); opts.appendChild(btn); });
@@ -263,17 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function answerPsych(ans) {
     psychAnswers.push(ans); psychIndex++;
-    if(psychIndex<currentTest.questions.length) showPsychQuestion();
-    else calculatePsychResults();
+    if(psychIndex<currentTest.questions.length) showPsychQuestion(); else calculatePsychResults();
   }
   function calculatePsychResults() {
     let html='', text='';
     if(currentTest.type==='kos') {
       let c=0,o=0; psychAnswers.forEach((a,i)=>{const n=i+1; if(commYes.includes(n)&&a==='yes')c++; if(commNo.includes(n)&&a==='no')c++; if(orgYes.includes(n)&&a==='yes')o++; if(orgNo.includes(n)&&a==='no')o++;});
       html=`<div class="result-item"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${(c/20).toFixed(2)}</p></div><div class="result-item"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${(o/20).toFixed(2)}</p></div>`;
-      text=`КОС:
-Коммуникативные: ${c}/20
-Организаторские: ${o}/20`;
+      text=`КОС:\nКоммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
     } else {
       let total=0;
       Object.keys(michelsonBlocks).forEach(blockName => {
@@ -281,10 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         michelsonScores[blockName]=s; total+=s;
         html+=`<div class="result-item"><h4>${blockName}</h4><p>${s} из ${michelsonBlocks[blockName].length} компетентных ответов</p></div>`;
       });
-      text=`Тест Михельсона:
-Всего: ${total}/27
-${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('
-')}`;
+      text=`Тест Михельсона:\nВсего: ${total}/27\n${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('\n')}`;
     }
     document.getElementById('psych-quiz').classList.add('hidden');
     document.getElementById('psych-results').classList.remove('hidden');
@@ -309,6 +277,6 @@ ${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('
       f.style.width=(Math.random()*60+40)+'px'; f.style.height=f.style.width; c.appendChild(f);
     }
   }
-  initPetals();
+  initFlashes();
   petalsContainer.classList.add('active');
 });
