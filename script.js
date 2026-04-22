@@ -136,7 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function openHistoryFioModal(test) {
     pendingTestId = 'history'; historyUserInfo = { test };
     document.getElementById('fio-modal').style.display = 'flex';
-    document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').value = ''; 
+    document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   }
   function startHistoryTest() {
@@ -164,16 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   function checkHistoryAnswer(idx) {
-    if(answered) return; answered=true;
+    if(answered) return; 
+    answered=true;
     const correct = currentTest.questions[qIdx].correct;
     document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
       el.style.pointerEvents='none';
-      if(i===correct) el.classList.add('correct'); else if(i===idx) el.classList.add('wrong');
+      if(i===correct) el.classList.add('correct'); 
+      else if(i===idx) el.classList.add('wrong');
     });
     if(idx===correct) score++;
     setTimeout(() => {
       qIdx++;
-      if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest();
+      if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } 
+      else finishHistoryTest();
     }, 1200);
   }
   async function finishHistoryTest() {
@@ -196,15 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // ========== ПСИХОЛОГИЯ (✅ ИСПРАВЛЕН ВЫХОД ЗА ГРАНИЦЫ НА ТЕЛЕФОНЕ) ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
+  
+  // ✅ КНОПКА ВЫХОДА (работает через переключение на главную, визуально находится под тестами)
   window.closePsychOverlay = () => switchTab('home');
+  
   window.openFioModal = (id) => {
     pendingTestId = id;
     document.getElementById('fio-modal').style.display = 'flex';
-    document.getElementById('fio-input').value = ''; document.getElementById('email-input').value = '';
+    document.getElementById('fio-input').value = ''; 
+    document.getElementById('email-input').value = '';
     document.getElementById('fio-input').focus();
   };
   document.getElementById('cancel-test-btn').onclick = () => {
-    document.getElementById('fio-modal').style.display='none'; pendingTestId=null; historyUserInfo=null;
+    document.getElementById('fio-modal').style.display='none'; 
+    pendingTestId=null; historyUserInfo=null;
   };
   document.getElementById('start-test-btn').onclick = () => {
     const fio = document.getElementById('fio-input').value.trim();
@@ -248,7 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function answerPsych(ans) {
     psychAnswers.push(ans); psychIndex++;
-    if(psychIndex<currentTest.questions.length) showPsychQuestion(); else calculatePsychResults();
+    if(psychIndex<currentTest.questions.length) showPsychQuestion(); 
+    else calculatePsychResults();
   }
   function calculatePsychResults() {
     let html='', text='';
