@@ -64,7 +64,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .main-header { display: flex; flex-direction: column; align-items: center; padding: 25px 0 15px; position: relative; z-index: 2; text-align: center; }
 .logo-area { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 5px; }
 .main-logo { width: 130px; filter: drop-shadow(0 0 12px var(--accent)); position: relative; z-index: 2; }
-/* ✅ КОЛЬЦА: 60px, ЯРЧЕ (box-shadow) */
+/* ✅ КОЛЬЦА: 60px, ЯРЧЕ */
 .fox-wrapper { position: relative; }
 .sage-rings { position: absolute; top: 50%; left: 50%; width: 0; height: 0; pointer-events: none; z-index: 1; }
 .sage-rings .ring {
@@ -104,7 +104,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .btn-back:hover { background: rgba(255,255,255,0.1); }
 .hidden { display: none !important; }
 
-/* ✅ КНОПКА ВЫХОДА У АСИ (строго под тестами) */
+/* ✅ КНОПКА ВЫХОДА У АСИ (теперь внизу, под тестами) */
 .btn-exit-psych {
   margin: 25px auto 0; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff;
   padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.2s;
@@ -115,7 +115,13 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 /* ПСИХОЛОГИЯ */
 #psychology { position: fixed; inset: 0; z-index: 100; background: transparent; display: none; overflow-y: auto; }
 #psychology.active { display: block; }
-.psych-container { width: 100%; min-height: 100vh; background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 40%, #0f2847 100%); position: relative; padding: 60px 20px 40px; text-align: center; color: #e2e8f0; display:flex; flex-direction:column; align-items:center; }
+.psych-container { 
+  width: 100%; min-height: 100vh; 
+  background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 40%, #0f2847 100%); 
+  position: relative; padding: 60px 20px 40px; 
+  text-align: center; color: #e2e8f0; 
+  display:flex; flex-direction:column; align-items:center; 
+}
 .geometric-flowers { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .geo-flower { position: absolute; opacity: 0.12; width: 80px; height: 80px; animation: floatGeo 16s ease-in-out infinite; }
 .geo-flower::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, #64b5f6 12%, transparent 13%), radial-gradient(circle, #64b5f6 12%, transparent 13%) 50% 0, radial-gradient(circle, #64b5f6 12%, transparent 13%) 100% 50%, radial-gradient(circle, #64b5f6 12%, transparent 13%) 50% 100%, radial-gradient(circle, #64b5f6 12%, transparent 13%) 0 50%; background-size: 100% 100%; }
@@ -147,4 +153,47 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
 .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 11px; cursor: pointer; transition: 0.2s; }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-@media(max-width:600px) { .main-nav { justify-content:center; gap:10px; } .nav-right { margin-left:0; } .main-logo { width: 100px; } .question-box { padding: 22px; } .asya-logo-wrap { width: 95px; height: 95px; } }
+
+/* ✅ МОБИЛЬНАЯ АДАПТАЦИЯ (ИСПРАВЛЕНИЕ ВЫЛЕЗАНИЯ И СТОЛБИКА) */
+@media(max-width:600px) {
+  .main-nav { justify-content:center; gap:10px; }
+  .nav-right { margin-left:0; }
+  .main-logo { width: 100px; }
+  .asya-logo-wrap { width: 95px; height: 95px; }
+  
+  /* ✅ Меню тестов психологии строго в столбик */
+  .psych-menu { 
+    grid-template-columns: 1fr; 
+    width: 100%;
+  }
+  
+  /* ✅ Блок вопроса на всю ширину, без вылезания */
+  .question-box { 
+    padding: 20px 15px; 
+    margin: 0 auto 20px; 
+    width: calc(100% - 20px); 
+    max-width: none; 
+    box-sizing: border-box;
+  }
+  
+  /* ✅ Кнопки ответов на всю ширину */
+  .btn-answer {
+    width: 100%;
+    max-width: none;
+    margin: 8px 0;
+    padding: 12px;
+    word-wrap: break-word;
+  }
+  
+  /* ✅ Кнопка выхода на всю ширину для удобства */
+  .btn-exit-psych {
+    width: 90%;
+    max-width: 300px;
+    justify-content: center;
+  }
+  
+  /* ✅ Контейнер психологии не дергается */
+  #psychology {
+    overflow-x: hidden;
+  }
+}
