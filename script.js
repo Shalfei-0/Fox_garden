@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========== ДАННЫЕ ==========
 const historyTests = [
   {
-    id: 'knyazya', // ✅ Добавлен ID для старой логики (почта)
+    id: 'knyazya',
     title: 'Древняя Русь: первые князья',
     questions: [
       { q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
@@ -13,8 +13,8 @@ const historyTests = [
     ]
   },
   {
-    id: 'test_new_webhook', // ✅ ID нового теста (будет отправляться на Сайт 2)
-    title: 'Новый тест (отправка на сайт)',
+    id: 'test_new_webhook', // ✅ НОВЫЙ ТЕСТ — отправляет данные на сайт 2
+    title: 'Новый тест (результаты на сайте)',
     questions: [
       { q: 'В каком году крестили Русь?', options: ['862','988','1015','1054'], correct: 1 },
       { q: 'Кто написал "Слово о полку Игореве"?', options: ['Летописец Нестор','Неизвестный автор','Владимир Мономах','Ярослав Мудрый'], correct: 1 },
@@ -74,10 +74,10 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
-let historyDetailedAnswers = []; // ✅ Массив для детальной записи ответов нового теста
+let historyDetailedAnswers = []; // ✅ Для детальной записи ответов нового теста
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
-// ========== ✅ ТЕМА (3 режима) ==========
+// ========== ✅ ТЕМА ==========
 const themeBtn = document.getElementById('theme-toggle');
 const themeClasses = ['', 'light-theme', 'olive-theme'];
 const themeIcons = ['🌓', '☀️', '🌿'];
@@ -89,7 +89,7 @@ function applyTheme() {
 themeBtn.onclick = () => { themeIdx = (themeIdx + 1) % themeClasses.length; applyTheme(); };
 applyTheme();
 
-// ========== ✅ ВСПЫШКИ ВМЕСТО ЛЕПЕСТКОВ ==========
+// ========== ✅ ВСПЫШКИ ==========
 const petalsContainer = document.getElementById('petals-container');
 let flashesInitialized = false;
 function initFlashes() {
@@ -147,6 +147,7 @@ historyTests.forEach(t => {
   card.innerHTML=`<h3>${t.title}</h3><span style="font-size:0.8rem;opacity:0.7">${t.questions.length} вопросов</span>`;
   card.onclick = () => openHistoryFioModal(t); hList.appendChild(card);
 });
+
 function openHistoryFioModal(test) {
   pendingTestId = 'history'; historyUserInfo = { test };
   document.getElementById('fio-modal').style.display = 'flex';
@@ -154,6 +155,7 @@ function openHistoryFioModal(test) {
   document.getElementById('email-input').value = '';
   document.getElementById('fio-input').focus();
 }
+
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
@@ -164,6 +166,7 @@ function startHistoryTest() {
   document.getElementById('history-back-btn').classList.remove('hidden');
   showHistoryQuestion();
 }
+
 function showHistoryQuestion() {
   const q = currentTest.questions[qIdx];
   document.getElementById('history-quiz').innerHTML = `
@@ -178,19 +181,22 @@ function showHistoryQuestion() {
     btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
   });
 }
+
 function checkHistoryAnswer(idx) {
   if(answered) return;
   answered=true;
   const q = currentTest.questions[qIdx];
   
   // ✅ Сохраняем детальный ответ для нового теста
-  historyDetailedAnswers.push({
-    num: qIdx + 1,
-    question: q.q,
-    user_answer: q.options[idx],
-    correct_answer: q.options[q.correct],
-    is_correct: idx === q.correct
-  });
+  if (currentTest.id === 'test_new_webhook') {
+    historyDetailedAnswers.push({
+      num: qIdx + 1,
+      question: q.q,
+      user_answer: q.options[idx],
+      correct_answer: q.options[q.correct],
+      is_correct: idx === q.correct
+    });
+  }
 
   document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
     el.style.pointerEvents='none';
@@ -204,11 +210,12 @@ function checkHistoryAnswer(idx) {
     else finishHistoryTest();
   }, 1200);
 }
+
 async function finishHistoryTest() {
   const pct = Math.round((score/currentTest.questions.length)*100);
   const fio = historyUserInfo?.fio || 'Аноним';
 
-  // ✅ ЕСЛИ ЭТО НОВЫЙ ТЕСТ -> ОТРАВЛЯЕМ НА САЙТ 2
+  // ✅ НОВЫЙ ТЕСТ: отправляем на сайт 2 через Google Script
   if (currentTest.id === 'test_new_webhook') {
     const detailsHTML = historyDetailedAnswers.map(a => `
       <div style="background:${a.is_correct ? 'rgba(46,204,113,0.15)' : 'rgba(231,76,60,0.15)'};
@@ -227,15 +234,16 @@ async function finishHistoryTest() {
         <div style="max-height:450px; overflow-y:auto; margin-top:15px; padding-right:5px; text-align:left;">
           ${detailsHTML}
         </div>
-        <div id="h-mail-status" style="padding:12px; margin-top:15px; background:rgba(255,255,255,0.1); border-radius:10px; text-align:center;">📤 Отправка на Сайт 2...</div>
+        <div id="h-mail-status" style="padding:12px; margin-top:15px; background:rgba(255,255,255,0.1); border-radius:10px; text-align:center;">📤 Отправка на сайт 2...</div>
       </div>`;
 
     try {
-      // ⚠️ ЗАМЕНИТЕ ЭТОТ URL НА АДРЕС ВАШЕГО receive.php (см. инструкцию ниже)
-      await fetch('https://ваш-домен.site2.com/receive.php', {
+      // ⚠️ Ваш URL + секретный ключ
+      await fetch('https://script.google.com/macros/s/AKfycbwmbw_-MYraqUsSp452jWfdf1tPOX7TNrGR_Gm8JcBO_DGzODjv35ybwq9nIGDqK4TWDw/exec?key=fox_secret_2026', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' }, // ⚠️ Важно для Google Apps Script
         body: JSON.stringify({
+          key: 'fox_secret_2026',
           test_id: currentTest.id,
           test_title: currentTest.title,
           fio: fio,
@@ -245,7 +253,7 @@ async function finishHistoryTest() {
           submitted_at: new Date().toISOString()
         })
       });
-      document.getElementById('h-mail-status').textContent = '✅ Результат успешно отправлен!';
+      document.getElementById('h-mail-status').textContent = '✅ Результат отправлен!';
     } catch(e) {
       console.error(e);
       document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети (данные показаны выше)';
@@ -253,16 +261,33 @@ async function finishHistoryTest() {
     return; // Выход, чтобы не дублировать отправку на почту
   }
 
-  // === СТАРАЯ ЛОГИКА (FORMSUBMIT) ДЛЯ ОСТАЛЬНЫХ ТЕСТОВ ===
+  // === СТАРАЯ ЛОГИКА (почта) для остальных тестов ===
   document.getElementById('history-quiz').innerHTML = `
-    <div class="question-frame" style="text-align:center"><h2 style="color:var(--accent)">Результат: ${pct}%</h2><p>${score} из ${currentTest.questions.length}</p><div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка...</div></div>`;
+    <div class="question-frame" style="text-align:center">
+      <h2 style="color:var(--accent)">Результат: ${pct}%</h2>
+      <p>${score} из ${currentTest.questions.length}</p>
+      <div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка...</div>
+    </div>`;
   try {
-    await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', { method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({ _subject:`📜 Тест "${currentTest.title}"`, ФИО:fio, Email:historyUserInfo?.email||'Не указан', Тест:currentTest.title, Результат:`${score}/${currentTest.questions.length} (${pct}%)`, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false' })
+    await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        _subject:`📜 Тест "${currentTest.title}"`,
+        ФИО: fio,
+        Email: historyUserInfo?.email || 'Не указан',
+        Тест: currentTest.title,
+        Результат: `${score}/${currentTest.questions.length} (${pct}%)`,
+        Дата: new Date().toLocaleString('ru-RU'),
+        _captcha:'false'
+      })
     });
     document.getElementById('h-mail-status').textContent='✅ Отправлено!';
-  } catch(e) { document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети'; }
+  } catch(e) {
+    document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети';
+  }
 }
+
 window.exitHistoryTest = () => {
   document.getElementById('history-quiz').classList.add('hidden');
   document.getElementById('history-test-list').classList.remove('hidden');
@@ -333,9 +358,7 @@ function calculatePsychResults() {
   if(currentTest.type==='kos') {
     let c=0,o=0; psychAnswers.forEach((a,i)=>{const n=i+1; if(commYes.includes(n)&&a==='yes')c++; if(commNo.includes(n)&&a==='no')c++; if(orgYes.includes(n)&&a==='yes')o++; if(orgNo.includes(n)&&a==='no')o++;});
     html=`<div class="result-item"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${(c/20).toFixed(2)}</p></div><div class="result-item"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${(o/20).toFixed(2)}</p></div>`;
-    text=`КОС:
-Коммуникативные: ${c}/20
-Организаторские: ${o}/20`;
+    text=`КОС:\nКоммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
   } else {
     let total=0;
     Object.keys(michelsonBlocks).forEach(blockName => {
@@ -343,10 +366,7 @@ function calculatePsychResults() {
       michelsonScores[blockName]=s; total+=s;
       html+=`<div class="result-item"><h4>${blockName}</h4><p>${s} из ${michelsonBlocks[blockName].length} компетентных ответов</p></div>`;
     });
-    text=`Тест Михельсона:
-Всего: ${total}/27
-${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('
-')}`;
+    text=`Тест Михельсона:\nВсего: ${total}/27\n${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('\n')}`;
   }
   document.getElementById('psych-quiz').classList.add('hidden');
   document.getElementById('psych-results').classList.remove('hidden');
