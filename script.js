@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
   let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
-  // ========== ✅ ТЕМА (3 режима: Тёмная 🌓 → Светлая ☀️ → Оливковая 🌿) ==========
+  // ========== ✅ ТЕМА (3 режима) ==========
   const themeBtn = document.getElementById('theme-toggle');
   const themeClasses = ['', 'light-theme', 'olive-theme'];
   const themeIcons = ['🌓', '☀️', '🌿'];
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showHistoryQuestion() {
     const q = currentTest.questions[qIdx];
-    // ✅ Мобильная адаптация: word-break, max-width: 100%
+    // ✅ Мобильная адаптация
     document.getElementById('history-quiz').innerHTML = `
       <div class="question-frame" style="max-width:100%; overflow-wrap:break-word;">
         <h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4>
@@ -197,11 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-back-btn').classList.add('hidden');
   };
 
-  // ========== ПСИХОЛОГИЯ (✅ ИСПРАВЛЕН ВЫХОД ЗА ГРАНИЦЫ НА ТЕЛЕФОНЕ) ==========
+  // ========== ПСИХОЛОГИЯ ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
   
-  // ✅ КНОПКА ВЫХОДА (работает через переключение на главную, визуально находится под тестами)
+  // ✅ КНОПКА ВЫХОДА (работает через переключение на главную)
   window.closePsychOverlay = () => switchTab('home');
   
   window.openFioModal = (id) => {
