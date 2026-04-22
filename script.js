@@ -72,6 +72,7 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
+let webhookAnswers = []; // ✅ Массив для сохранения ответов нового теста
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
 // ========== ✅ ТЕМА ==========
@@ -153,6 +154,7 @@ function openHistoryFioModal(test) {
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
+  webhookAnswers = []; // ✅ Очищаем массив ответов
   document.getElementById('fio-modal').style.display='none';
   document.getElementById('history-test-list').classList.add('hidden');
   document.getElementById('history-quiz').classList.remove('hidden');
@@ -173,7 +175,6 @@ function showHistoryQuestion() {
     const btn = document.createElement('button');
     btn.className = 'answer-opt';
     btn.textContent = opt;
-    // ✅ Новый стиль: тёмная полупрозрачная рамка
     btn.style.cssText = `
       background: rgba(15,10,26,0.55);
       border: 1px solid rgba(255,170,102,0.35);
@@ -197,6 +198,18 @@ function checkHistoryAnswer(idx) {
   if(answered) return;
   answered = true;
   const correct = currentTest.questions[qIdx].correct;
+  
+  // ✅ Сохраняем ответ для нового теста
+  if (currentTest.id === 'test_new_webhook') {
+    webhookAnswers.push({
+      num: qIdx + 1,
+      question: currentTest.questions[qIdx].q,
+      user_answer: currentTest.questions[qIdx].options[idx],
+      correct_answer: currentTest.questions[qIdx].options[correct],
+      is_correct: idx === correct
+    });
+  }
+  
   const buttons = document.querySelectorAll('#h-opts .answer-opt');
   buttons.forEach((el,i) => {
     el.style.pointerEvents = 'none';
@@ -238,12 +251,7 @@ async function finishHistoryTest() {
           key: 'fox_secret_2026',
           test_id: currentTest.id, test_title: currentTest.title, fio,
           email: historyUserInfo?.email || '', score, total: currentTest.questions.length, pct,
-          answers: currentTest.questions.map((q,i) => ({
-            num: i+1, question: q.q,
-            user_answer: q.options[/* нужно сохранить выбор */],
-            correct_answer: q.options[q.correct],
-            is_correct: /* нужно сохранить */
-          })),
+          answers: webhookAnswers, // ✅ Используем сохранённые ответы
           submitted_at: new Date().toISOString()
         })
       });
@@ -282,7 +290,7 @@ window.exitHistoryTest = () => {
   document.getElementById('history-back-btn').classList.add('hidden');
 };
 
-// ========== ПСИХОЛОГИЯ (без изменений, кроме компактности) ==========
+// ========== ПСИХОЛОГИЯ ==========
 const psychMenuView = document.getElementById('psych-menu-view');
 const psychBackBtn = document.getElementById('psych-back-btn');
 window.closePsychOverlay = () => switchTab('home');
