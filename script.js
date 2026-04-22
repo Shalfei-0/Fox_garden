@@ -57,49 +57,45 @@ document.addEventListener('DOMContentLoaded', () => {
     '🔥 Провокация': [5,14,15,23,24], '🙏 Просьба': [6,16], '❌ Отказ': [10,17,25],
     '💙 Эмпатия (оказать)': [7,20], '🤲 Эмпатия (принять)': [8,21], '🤝 Инициатива': [18,26], '👋 Ответ на контакт': [19,27]
   };
-
   // ========== СОСТОЯНИЕ ==========
   let userFIO = '', userEmail = '', pendingTestId = null;
   let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
   let psychIndex = 0, psychAnswers = [], michelsonScores = {};
-
-  // ========== ✅ ИСПРАВЛЕННАЯ ТЕМА (3 режима) ==========
+  
+  // ========== ✅ ИСПРАВЛЕННАЯ ТЕМА (3 режима, строгий цикл) ==========
   const themeBtn = document.getElementById('theme-toggle');
-  const themeClasses = ['light-theme', 'olive-theme'];
-  let currentThemeIdx = -1;
+  const themeClasses = ['', 'light-theme', 'olive-theme']; // 0: Dark, 1: Light, 2: Olive
+  const themeIcons = ['🌓', '☀️', '🌿'];
+  let themeIdx = 0; // Начинаем с тёмной
 
   function applyTheme() {
-    document.body.className = '';
-    if (currentThemeIdx >= 0) {
-      document.body.classList.add(themeClasses[currentThemeIdx]);
-    }
-    themeBtn.textContent = document.body.classList.contains('light-theme') ? '☀️' : 
-                           document.body.classList.contains('olive-theme') ? '🌿' : '🌓';
+    document.body.className = themeClasses[themeIdx];
+    themeBtn.textContent = themeIcons[themeIdx];
   }
-
   themeBtn.onclick = () => {
-    currentThemeIdx = (currentThemeIdx + 1) % themeClasses.length;
+    themeIdx = (themeIdx + 1) % themeClasses.length;
     applyTheme();
   };
-  applyTheme(); // Применить дефолт при загрузке
+  applyTheme();
 
-  // ========== НАВИГАЦИЯ & ЛЕПЕСТКИ ==========
+  // ========== НАВИГАЦИЯ & ВСПЫШКИ ==========
   const petalsContainer = document.getElementById('petals-container');
-  let petalsInitialized = false;
-  function initPetals() {
-    if(petalsInitialized) return;
+  let effectsInitialized = false;
+
+  function initFlashes() {
+    if(effectsInitialized) return;
     petalsContainer.innerHTML = '';
-    for(let i=0; i<25; i++) {
-      const p = document.createElement('div'); p.className = 'petal';
-      p.style.left = (Math.random() * 90 + 5) + '%';
-      p.style.top = (Math.random() * -30) + '%';
-      p.style.animationDuration = (Math.random() * 5 + 10) + 's';
-      p.style.animationDelay = (Math.random() * 8) + 's';
-      p.style.transform = `scale(${0.8 + Math.random()*0.5})`;
-      petalsContainer.appendChild(p);
+    for(let i=0; i<12; i++) {
+      const f = document.createElement('div'); f.className = 'flash';
+      f.style.left = (Math.random() * 95) + '%';
+      f.style.top = (Math.random() * 95) + '%';
+      f.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7 сек
+      f.style.animationDelay = (Math.random() * 5) + 's';
+      petalsContainer.appendChild(f);
     }
-    petalsInitialized = true;
+    effectsInitialized = true;
   }
+
   window.switchTab = (id) => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -114,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       psych.classList.remove('active');
       petalsContainer.classList.add('active');
-      if(!petalsInitialized) initPetals();
+      if(!effectsInitialized) initFlashes();
     }
   };
   document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
@@ -158,8 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showHistoryQuestion() {
     const q = currentTest.questions[qIdx];
-    document.getElementById('history-quiz').innerHTML = `
-      <div class="question-frame"><h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4><p style="margin-bottom:18px">${q.q}</p><div id="h-opts"></div></div>`;
+    document.getElementById('history-quiz').innerHTML = `<div class="question-frame"><h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4><p style="margin-bottom:18px">${q.q}</p><div id="h-opts"></div></div>`;
     const opts = document.getElementById('h-opts');
     q.options.forEach((opt,i) => {
       const btn = document.createElement('button'); btn.className='answer-option'; btn.textContent=opt;
@@ -181,8 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   async function finishHistoryTest() {
     const pct = Math.round((score/currentTest.questions.length)*100);
-    document.getElementById('history-quiz').innerHTML = `
-      <div class="question-frame" style="text-align:center"><h2 style="color:var(--accent)">Результат: ${pct}%</h2><p>${score} из ${currentTest.questions.length}</p><div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка на aniruf14.02@gmail.com...</div></div>`;
+    document.getElementById('history-quiz').innerHTML = `<div class="question-frame" style="text-align:center"><h2 style="color:var(--accent)">Результат: ${pct}%</h2><p>${score} из ${currentTest.questions.length}</p><div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка на aniruf14.02@gmail.com...</div></div>`;
     try {
       await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', { method:'POST', headers:{'Content-Type':'application/json'},
         body:JSON.stringify({ _subject:`📜 Тест "${currentTest.title}"`, ФИО:historyUserInfo?.fio||'Аноним', Email:historyUserInfo?.email||'Не указан', Тест:currentTest.title, Результат:`${score}/${currentTest.questions.length} (${pct}%)`, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false' })
@@ -232,9 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function showPsychQuestion() {
     const q = currentTest.questions[psychIndex];
-    document.getElementById('psych-quiz').innerHTML = `
-      <div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>
-      <div class="question-box"><p>${q.q}</p><div id="p-opts"></div></div>`;
+    document.getElementById('psych-quiz').innerHTML = `<div class="progress-bar"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div><div class="question-box"><p>${q.q}</p><div id="p-opts"></div></div>`;
     const opts = document.getElementById('p-opts');
     if(currentTest.type==='kos') {
       ['Да','Нет'].forEach(a => { const btn=document.createElement('button'); btn.className='btn-answer'; btn.textContent=a; btn.onclick=()=>answerPsych(a==='Да'?'yes':'no'); opts.appendChild(btn); });
@@ -287,6 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
       f.style.width=(Math.random()*60+40)+'px'; f.style.height=f.style.width; c.appendChild(f);
     }
   }
-  initPetals();
+  initFlashes();
   petalsContainer.classList.add('active');
 });
