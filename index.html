@@ -9,96 +9,97 @@
 </head>
 <body>
 <div id="app">
-<button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌙</button>
-<div class="effects-container">
-<div id="sunRays" class="sun-rays"></div>
-<div id="moonLight" class="moon-light"></div>
-<div id="dustParticles" class="dust-particles"></div>
-<div id="petals-container" class="petals-container"></div>
-</div>
-<header class="main-header">
-<div class="logo-area">
-<div class="fox-wrapper">
-<div class="sage-rings">
-<span class="ring"></span>
-<span class="ring"></span>
-<span class="ring"></span>
-</div>
-<img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
-</div>
-<h1>Лисий Сад</h1>
-</div>
-<nav class="main-nav">
-<button class="nav-btn active" data-tab="home">🏠 Главная</button>
-<button class="nav-btn" data-tab="history">📜 Тесты</button>
-<button class="nav-btn" data-tab="psychology">🧠 Психология</button>
-<button class="nav-btn nav-right" data-tab="about">📖 О нас</button>
-</nav>
-</header>
-<main class="content">
-<section id="home" class="tab active">
-<div class="card">
-<h2>Добро пожаловать</h2>
-<p class="quote">🌿 «Привет! Я Шалфей, твой помощник по учёбе и проводник по истории! В этом саду каждое дерево хранит память, а каждый камень — урок прошлого.»</p>
-<button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
-</div>
-</section>
-<section id="history" class="tab">
-<h2>📜 Тесты по истории России</h2>
-<div class="test-list" id="history-test-list"></div>
-<div id="history-quiz" class="hidden"></div>
-<button class="btn-back hidden" id="history-back-btn" onclick="exitHistoryTest()">← Назад</button>
-</section>
-<section id="psychology" class="psych-overlay">
-<div class="psych-container">
-<button class="btn-exit-psych" onclick="closePsychOverlay()">✕ Выйти на главную</button>
-<div class="geometric-flowers" id="geo-flowers"></div>
-<div class="asya-header">
-<div class="asya-logo-wrap">
-<div class="asya-pulse"></div>
-<img src="red_panda_asya.png" alt="Ася" class="asya-logo">
-</div>
-<h2>Психология с Асей</h2>
-<p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
-</div>
-<div id="psych-menu-view">
-<div class="psych-menu" id="psych-menu">
-<div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
-<div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
-</div>
-</div>
-<div id="psych-quiz" class="hidden"></div>
-<div id="psych-results" class="hidden"></div>
-<button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← В меню</button>
-</div>
-</section>
-<section id="about" class="tab">
-<div class="card lore-single">
-<div class="lore-block sage-block">
-<h3>🦊 Шалфей — Хранитель Времени</h3>
-<p>Говорят, что Лисий Сад существует столько же, сколько и первые книги. В самой чаще леса поселился мудрый лис по имени Шалфей. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой рассказ. Шалфей не просто хранит знания — он помогает тебе пройти сквозь века без ошибок и скуки.</p>
-</div>
-<div class="lore-glow-divider">
-<span class="glow-sym">✦</span> <span class="glow-text">Связь Времени и Души</span> <span class="glow-sym">✦</span>
-</div>
-<div class="lore-block asya-block">
-<h3>🐾 Ася — Душа Гармонии</h3>
-<p>Если Шалфей следит за временем, то Ася — маленькая красная панда — хранит внутренний мир тех, кто приходит в Сад. Она появилась у тихого ручья и научилась слышать не только слова, но и тишину между ними. Ася проводит психологические опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс.</p>
-</div>
-</div>
-</section>
-</main>
-<div class="modal-overlay" id="fio-modal">
-<div class="modal-box">
-<h3>🐾 Перед началом теста</h3>
-<input type="text" id="fio-input" placeholder="ФИО *" class="input">
-<input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
-<div class="modal-actions">
-<button class="btn-primary" id="start-test-btn">Начать</button>
-<button class="btn-secondary" id="cancel-test-btn">Отмена</button>
-</div>
-</div>
-</div>
+  <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌓</button>
+  <div class="effects-container">
+    <div id="sunRays" class="sun-rays"></div>
+    <div id="moonLight" class="moon-light"></div>
+    <div id="dustParticles" class="dust-particles"></div>
+    <div id="petals-container" class="petals-container"></div>
+  </div>
+  <header class="main-header">
+    <div class="logo-area">
+      <div class="fox-wrapper">
+        <div class="sage-rings">
+          <span class="ring"></span>
+          <span class="ring"></span>
+          <span class="ring"></span>
+        </div>
+        <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
+      </div>
+      <h1>Лисий Сад</h1>
+    </div>
+    <nav class="main-nav">
+      <button class="nav-btn active" data-tab="home">🏠 Главная</button>
+      <button class="nav-btn" data-tab="history">📜 Тесты</button>
+      <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
+      <button class="nav-btn nav-right" data-tab="about">📖 О нас</button>
+    </nav>
+  </header>
+  <main class="content">
+    <section id="home" class="tab active">
+      <div class="card">
+        <h2>Добро пожаловать</h2>
+        <p class="quote">🌿 «Привет! Я Шалфей, твой помощник по учёбе и проводник по истории! В этом саду каждое дерево хранит память, а каждый камень — урок прошлого.»</p>
+        <button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
+      </div>
+    </section>
+    <section id="history" class="tab">
+      <h2>📜 Тесты по истории России</h2>
+      <div class="test-list" id="history-test-list"></div>
+      <div id="history-quiz" class="hidden"></div>
+      <button class="btn-back hidden" id="history-back-btn" onclick="exitHistoryTest()">← Назад</button>
+    </section>
+    <section id="psychology" class="psych-overlay">
+      <div class="psych-container">
+        <div class="geometric-flowers" id="geo-flowers"></div>
+        <div class="asya-header">
+          <div class="asya-logo-wrap">
+            <div class="asya-pulse"></div>
+            <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
+          </div>
+          <h2>Психология с Асей</h2>
+          <p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
+        </div>
+        <div id="psych-menu-view">
+          <div class="psych-menu" id="psych-menu">
+            <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
+            <div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
+          </div>
+        </div>
+        <div id="psych-quiz" class="hidden"></div>
+        <div id="psych-results" class="hidden"></div>
+        <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← В меню</button>
+        <!-- ✅ КНОПКА ВЫХОДА (под тестами, стрелка, подпись) -->
+        <button class="btn-exit-psych" onclick="closePsychOverlay()">← Вернуться</button>
+      </div>
+    </section>
+    <section id="about" class="tab">
+      <div class="card lore-single">
+        <div class="lore-block sage-block">
+          <h3>🦊 Шалфей — Хранитель Времени</h3>
+          <p>Говорят, что Лисий Сад существует столько же, сколько и первые книги. В самой чаще леса поселился мудрый лис по имени Шалфей. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой рассказ. Шалфей не просто хранит знания — он помогает тебе пройти сквозь века без ошибок и скуки.</p>
+        </div>
+        <div class="lore-glow-divider">
+          <span class="glow-sym">✦</span> <span class="glow-text">Связь Времени и Души</span> <span class="glow-sym">✦</span>
+        </div>
+        <div class="lore-block asya-block">
+          <h3>🐾 Ася — Душа Гармонии</h3>
+          <p>Если Шалфей следит за временем, то Ася — маленькая красная панда — хранит внутренний мир тех, кто приходит в Сад. Она появилась у тихого ручья и научилась слышать не только слова, но и тишину между ними. Ася проводит психологические опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="modal-overlay" id="fio-modal">
+    <div class="modal-box">
+      <h3>🐾 Перед началом теста</h3>
+      <input type="text" id="fio-input" placeholder="ФИО *" class="input">
+      <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
+      <div class="modal-actions">
+        <button class="btn-primary" id="start-test-btn">Начать</button>
+        <button class="btn-secondary" id="cancel-test-btn">Отмена</button>
+      </div>
+    </div>
+  </div>
 </div>
 <script src="script.js"></script>
 </body>
