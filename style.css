@@ -47,25 +47,21 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .particle { position:absolute; background:radial-gradient(circle, rgba(255,255,200,0.5) 0%, transparent 70%); border-radius:50%; animation:float 8s infinite ease-in-out; }
 @keyframes float { 0%,100%{transform:translateY(0);opacity:0} 50%{transform:translateY(-30px);opacity:0.6} }
 
-/* ✅ ЗАМЕНА ЛЕПЕСТКОВ НА ПЕРСИКОВЫЕ ВСПЫШКИ */
+/* ✅ ВСПЫШКИ ВМЕСТО ЛЕПЕСТКОВ */
 #petals-container { position:fixed; inset:0; pointer-events:none; z-index:1; display:none; overflow:hidden; }
 #petals-container.active { display:block; }
 .flash {
-  position:absolute; width: 55px; height: 55px;
-  background: radial-gradient(circle, rgba(255, 183, 130, 0.85) 0%, rgba(255, 160, 100, 0.25) 40%, transparent 75%);
-  border-radius: 50%; filter: blur(4px);
-  animation: flashPulse ease-in-out infinite; pointer-events: none;
+  position:absolute; width: 55px; height: 55px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,183,130,0.85) 0%, rgba(255,160,100,0.25) 40%, transparent 75%);
+  filter: blur(4px); animation: flashPulse ease-in-out infinite; pointer-events: none;
 }
 @keyframes flashPulse {
-  0%, 100% { opacity: 0; transform: scale(0.6); }
-  50% { opacity: 0.75; transform: scale(1.25); }
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.75; transform: scale(1.35); }
 }
 
 /* ШАПКА ПО ЦЕНТРУ */
-.main-header {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 25px 0 15px; position: relative; z-index: 2; text-align: center;
-}
+.main-header { display: flex; flex-direction: column; align-items: center; padding: 25px 0 15px; position: relative; z-index: 2; text-align: center; }
 .logo-area { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 5px; }
 .main-logo { width: 130px; filter: drop-shadow(0 0 12px var(--accent)); position: relative; z-index: 2; }
 /* ✅ КОЛЬЦА: 60px, ЯРЧЕ (box-shadow) */
@@ -74,7 +70,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .sage-rings .ring {
   position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; margin-top: -30px; margin-left: -30px;
   border: 1.5px solid var(--accent);
-  box-shadow: 0 0 8px var(--accent), 0 0 18px rgba(255, 170, 102, 0.4);
+  box-shadow: 0 0 8px var(--accent), 0 0 18px rgba(255,170,102,0.4);
   border-radius: 50%; opacity: 0; transform: scale(0.5);
   animation: ringExpand 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
 }
@@ -108,7 +104,7 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .btn-back:hover { background: rgba(255,255,255,0.1); }
 .hidden { display: none !important; }
 
-/* ✅ КНОПКА ВЫХОДА (под тестами, стрелка назад, подпись "вернуться") */
+/* ✅ КНОПКА ВЫХОДА У АСИ (строго под тестами) */
 .btn-exit-psych {
   margin: 25px auto 0; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff;
   padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: 0.2s;
@@ -151,12 +147,4 @@ body { background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hid
 .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
 .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 11px; cursor: pointer; transition: 0.2s; }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-/* ✅ КНОПКИ ИСТОРИИ (вертикально + подсветка) */
-#h-opts { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-.answer-option { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px 18px; border-radius: 12px; cursor: pointer; transition: 0.2s; text-align: left; }
-.answer-option:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); transform: translateX(4px); }
-.answer-option.correct { background: rgba(76, 175, 80, 0.25); border-color: #4caf50; color: #4caf50; }
-.answer-option.wrong { background: rgba(244, 67, 54, 0.25); border-color: #f44336; color: #f44336; }
-@media(max-width:600px) {
-  .main-nav { justify-content:center; gap:10px; } .nav-right { margin-left:0; } .main-logo { width: 100px; } .question-box { padding: 22px; } .asya-logo-wrap { width: 95px; height: 95px; }
-}
+@media(max-width:600px) { .main-nav { justify-content:center; gap:10px; } .nav-right { margin-left:0; } .main-logo { width: 100px; } .question-box { padding: 22px; } .asya-logo-wrap { width: 95px; height: 95px; } }
