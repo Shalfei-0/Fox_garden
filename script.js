@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {q:'Кто-то опоздал на 30 минут без объяснений. Вы:', opts:['"Я расстроен, что заставили ждать"','"Я думал, когда Вы придёте"','"Это последний раз, когда я ждал Вас"','Ничего не говорите','"Как Вы смели так опаздывать!"']},
     {q:'Вам нужно, чтобы кто-то сделал для Вас вещь. Вы:', opts:['Никого ни о чём не просите','"Вы должны сделать это для меня"','"Не могли бы Вы сделать одну вещь?" + объясняете','Слегка намекаете','"Я очень хочу, чтобы Вы сделали это"']},
     {q:'Вы знаете, что кто-то расстроен. Вы:', opts:['"Вы выглядите расстроенным. Могу помочь?"','Не заводите разговор о состоянии','"У Вас неприятность?"','Ничего не говорите и оставляете одного','"Вы как большой ребенок!" (смеясь)']},
-    {q:'Вы расстроены, кто-то говорит: "Вы выглядите расстроенным". Вы:', opts:['Отрицательно качаете головой/не реагируете','"Это не Ваше дело!"','"Да, немного расстроен. Спасибо за участие"','"Пустяки','"Оставьте меня одного"']},
+    {q:'Вы расстроены, кто-то говорит: "Вы выглядите расстроенным". Вы:', opts:['Отрицательно качаете головой/не реагируете','"Это не Ваше дело!"','"Да, немного расстроен. Спасибо за участие"','"Пустяки"','"Оставьте меня одного"']},
     {q:'Вас порицают за ошибку, совершённую другими. Вы:', opts:['"Вы с ума сошли!"','"Это не моя вина, ошибка другого"','"Я не думаю, что это моя вина"','"Оставьте меня, Вы не знаете, что говорите"','Принимаете вину или молчите']},
     {q:'Кто-то просит сделать что-то, но Вы не знаете зачем. Вы:', opts:['"Это не имеет смысла, не хочу"','Выполняете и молчите','"Это глупость, не буду"','"Объясните, почему это должно быть сделано"','"Если Вы хотите..." + выполняете']},
     {q:'Кто-то говорит, что Вы сделали великолепно. Вы:', opts:['"Да, я делаю лучше большинства"','"Нет, это не было столь здорово"','"Правильно, я делаю лучше всех"','"Спасибо"','Игнорируете']},
@@ -57,47 +57,41 @@ document.addEventListener('DOMContentLoaded', () => {
     '🔥 Провокация': [5,14,15,23,24], '🙏 Просьба': [6,16], '❌ Отказ': [10,17,25],
     '💙 Эмпатия (оказать)': [7,20], '🤲 Эмпатия (принять)': [8,21], '🤝 Инициатива': [18,26], '👋 Ответ на контакт': [19,27]
   };
-
   // ========== СОСТОЯНИЕ ==========
   let userFIO = '', userEmail = '', pendingTestId = null;
   let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
   let psychIndex = 0, psychAnswers = [], michelsonScores = {};
-
-  // ========== ТЕМА (возвращено как в оригинале) ==========
+  // ========== ТЕМА ==========
   const themeBtn = document.getElementById('theme-toggle');
   document.body.classList.remove('light-theme');
   themeBtn.textContent = '🌓';
   themeBtn.onclick = () => {
     document.body.classList.toggle('light-theme');
-    themeBtn.textContent = document.body.classList.contains('light-theme') ? '🌙' : '🌓';
+    themeBtn.textContent = document.body.classList.contains('light-theme') ? '🌿' : '🌓';
   };
-
-  // ========== НАВИГАЦИЯ & ВСПЫШКИ ==========
+  // ========== НАВИГАЦИЯ & ЛЕПЕСТКИ ==========
   const petalsContainer = document.getElementById('petals-container');
-  let flashesInitialized = false;
-
-  function initFlashes() {
-    if(flashesInitialized) return;
+  let petalsInitialized = false;
+  function initPetals() {
+    if(petalsInitialized) return;
     petalsContainer.innerHTML = '';
-    // Создаём 12 медленных вспышек с рандомной задержкой
-    for(let i=0; i<12; i++) {
-      const f = document.createElement('div'); f.className = 'flash';
-      f.style.left = (Math.random() * 95) + '%';
-      f.style.top = (Math.random() * 95) + '%';
-      f.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7 сек (медленно)
-      f.style.animationDelay = (Math.random() * 6) + 's';
-      petalsContainer.appendChild(f);
+    for(let i=0; i<14; i++) {
+      const p = document.createElement('div'); p.className = 'petal';
+      p.style.left = (Math.random() * 90 + 5) + '%';
+      p.style.top = (Math.random() * -30) + '%';
+      p.style.animationDuration = (Math.random() * 5 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.transform = `scale(${0.8 + Math.random()*0.5})`;
+      petalsContainer.appendChild(p);
     }
-    flashesInitialized = true;
+    petalsInitialized = true;
   }
-
   window.switchTab = (id) => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
     document.querySelector(`.nav-btn[data-tab="${id}"]`).classList.add('active');
-    
     const psych = document.getElementById('psychology');
     if(id === 'psychology') {
       psych.classList.add('active');
@@ -106,11 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       psych.classList.remove('active');
       petalsContainer.classList.add('active');
-      if(!flashesInitialized) initFlashes();
+      if(!petalsInitialized) initPetals();
     }
   };
   document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
-
   // ========== ЭФФЕКТЫ ФОНА ==========
   const hour = new Date().getHours();
   if(hour >= 6 && hour < 18) document.getElementById('sunRays').classList.add('active');
@@ -123,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dp.appendChild(p); setTimeout(()=>p.remove(), 8000);
     }
   }, 1500);
-
   // ========== ИСТОРИЯ ==========
   const hList = document.getElementById('history-test-list');
   historyTests.forEach(t => {
@@ -162,8 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const correct = currentTest.questions[qIdx].correct;
     document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
       el.style.pointerEvents='none';
-      if(i===correct) el.classList.add('correct');
-      else if(i===idx) el.classList.add('wrong');
+      if(i===correct) el.classList.add('correct'); else if(i===idx) el.classList.add('wrong');
     });
     if(idx===correct) score++;
     setTimeout(() => {
@@ -186,12 +177,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('history-test-list').classList.remove('hidden');
     document.getElementById('history-back-btn').classList.add('hidden');
   };
-
   // ========== ПСИХОЛОГИЯ ==========
   const psychMenuView = document.getElementById('psych-menu-view');
   const psychBackBtn = document.getElementById('psych-back-btn');
   window.closePsychOverlay = () => switchTab('home');
-
   window.openFioModal = (id) => {
     pendingTestId = id;
     document.getElementById('fio-modal').style.display = 'flex';
@@ -277,6 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
       f.style.width=(Math.random()*60+40)+'px'; f.style.height=f.style.width; c.appendChild(f);
     }
   }
-  initFlashes();
+  initPetals();
   petalsContainer.classList.add('active');
 });
