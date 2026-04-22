@@ -72,10 +72,10 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
-let webhookAnswers = []; // ✅ Массив для сохранения ответов нового теста
+let webhookAnswers = [];
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
-// ========== ✅ ТЕМА ==========
+// ========== ТЕМА ==========
 const themeBtn = document.getElementById('theme-toggle');
 const themeClasses = ['', 'light-theme', 'olive-theme'];
 const themeIcons = ['🌓', '☀️', '🌿'];
@@ -87,7 +87,7 @@ function applyTheme() {
 themeBtn.onclick = () => { themeIdx = (themeIdx + 1) % themeClasses.length; applyTheme(); };
 applyTheme();
 
-// ========== ✅ ВСПЫШКИ ==========
+// ========== ВСПЫШКИ ==========
 const petalsContainer = document.getElementById('petals-container');
 let flashesInitialized = false;
 function initFlashes() {
@@ -154,7 +154,7 @@ function openHistoryFioModal(test) {
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
-  webhookAnswers = []; // ✅ Очищаем массив ответов
+  webhookAnswers = [];
   document.getElementById('fio-modal').style.display='none';
   document.getElementById('history-test-list').classList.add('hidden');
   document.getElementById('history-quiz').classList.remove('hidden');
@@ -199,7 +199,6 @@ function checkHistoryAnswer(idx) {
   answered = true;
   const correct = currentTest.questions[qIdx].correct;
   
-  // ✅ Сохраняем ответ для нового теста
   if (currentTest.id === 'test_new_webhook') {
     webhookAnswers.push({
       num: qIdx + 1,
@@ -234,12 +233,31 @@ async function finishHistoryTest() {
   const pct = Math.round((score/currentTest.questions.length)*100);
   const fio = historyUserInfo?.fio || 'Аноним';
   
-  // ✅ НОВЫЙ ТЕСТ: отправка на сайт 2
+  // ✅ НОВЫЙ ТЕСТ: отправка + ПОЛНЫЙ РАЗБОР
   if (currentTest.id === 'test_new_webhook') {
+    // Формируем детальный разбор ВСЕХ вопросов
+    const detailsHTML = currentTest.questions.map((q, i) => {
+      const ans = webhookAnswers[i] || {};
+      const isCorrect = ans.is_correct ?? (ans.user_answer === ans.correct_answer);
+      return `
+        <div style="background:${isCorrect ? 'rgba(46,204,113,0.12)' : 'rgba(231,76,60,0.12)'};
+                    padding:12px 14px; border-radius:10px; margin:8px 0; text-align:left;
+                    border-left:3px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}">
+          <div style="font-weight:600; margin-bottom:6px; opacity:0.95">В${ans.num || i+1}. ${q.q}</div>
+          <div style="font-size:0.95rem">
+            Ваш ответ: <span style="color:${isCorrect ? '#2ecc71' : '#e74c3c'}; font-weight:500">${ans.user_answer || '—'}</span><br>
+            ${!isCorrect ? `Правильно: <b>${ans.correct_answer || q.options[q.correct]}</b>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
     document.getElementById('history-quiz').innerHTML = `
       <div class="question-frame">
         <h2 style="color:var(--accent); margin-bottom:8px">Результат: ${pct}%</h2>
-        <p style="margin:0 0 15px; opacity:0.85">${fio} • ${score} из ${currentTest.questions.length}</p>
+        <p style="margin:0 0 12px; opacity:0.85">${fio} • ${score} из ${currentTest.questions.length}</p>
+        <div style="max-height:400px; overflow-y:auto; padding-right:4px; margin-bottom:15px;">
+          ${detailsHTML}
+        </div>
         <div id="h-mail-status" style="padding:10px; background:rgba(255,255,255,0.08); border-radius:10px; text-align:center; font-size:0.95rem;">📤 Отправка...</div>
       </div>`;
     
@@ -251,14 +269,14 @@ async function finishHistoryTest() {
           key: 'fox_secret_2026',
           test_id: currentTest.id, test_title: currentTest.title, fio,
           email: historyUserInfo?.email || '', score, total: currentTest.questions.length, pct,
-          answers: webhookAnswers, // ✅ Используем сохранённые ответы
+          answers: webhookAnswers,
           submitted_at: new Date().toISOString()
         })
       });
       document.getElementById('h-mail-status').textContent = '✅ Готово!';
     } catch(e) {
       console.error(e);
-      document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети';
+      document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети (данные показаны выше)';
     }
     return;
   }
