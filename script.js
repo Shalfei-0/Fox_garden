@@ -1,25 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
 // ========== ДАННЫЕ ==========
-const historyTests = [{
-  id: 'knyazya', title: 'Древняя Русь: первые князья',
-  questions: [
-    { q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
-    { q: 'Кто захватил Киев в 882 году?', options: ['Рюрик','Олег','Игорь','Святослав'], correct: 1 },
-    { q: 'Какое племя убило Игоря?', options: ['Поляне','Древляне','Вятичи','Кривичи'], correct: 1 },
-    { q: 'Что ввела Ольга вместо полюдья?', options: ['Серебро','Уроки и погосты','Торговлю','Дань'], correct: 1 },
-    { q: 'Кто стал первым киевским князем Рюриковичей?', options: ['Рюрик','Олег','Игорь','Владимир'], correct: 2 }
-  ]
-}, {
-  id: 'test_new_webhook',
-  title: 'Цифровое государство',
-  questions: [
-    { q: 'Что из перечисленного является самым широким понятием?', options: ['а) Портал «Госуслуги»','б) Электронное правительство','в) Цифровое государство','г) ГИС ЖКХ'], correct: 2 },
-    { q: 'Как называется система, которая объединяет все цифровые сервисы и базы данных для взаимодействия государства и граждан?', options: ['а) Цифровое государство','б) Электронное правительство','в) МФЦ','г) ГАС «Выборы»'], correct: 1 },
-    { q: 'Что из перечисленного является примером государственной информационной системы (ГИС)?', options: ['а) Instagram','б) Портал «Госуслуги»','в) ГАС «Выборы»','г) Электронная почта'], correct: 2 },
-    { q: 'Какой элемент электронного правительства предназначен непосредственно для граждан, чтобы получать услуги онлайн?', options: ['а) ГИС ЖКХ','б) Портал «Госуслуги»','в) Внутренняя база налоговой','г) Бумажный архив'], correct: 1 },
-    { q: 'Какова основная цель создания электронного правительства?', options: ['а) Заменить все государственные органы','б) Обеспечить получение государственных услуг в электронном виде и взаимодействие ведомств','в) Отменить налоги','г) Создать новые бумажные архивы'], correct: 1 }
-  ]
-}];
+const historyTests = [
+  {
+    id: 'knyazya',
+    title: 'Древняя Русь: первые князья',
+    questions: [
+      { q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
+      { q: 'Кто захватил Киев в 882 году?', options: ['Рюрик','Олег','Игорь','Святослав'], correct: 1 },
+      { q: 'Какое племя убило Игоря?', options: ['Поляне','Древляне','Вятичи','Кривичи'], correct: 1 },
+      { q: 'Что ввела Ольга вместо полюдья?', options: ['Серебро','Уроки и погосты','Торговлю','Дань'], correct: 1 },
+      { q: 'Кто стал первым киевским князем Рюриковичей?', options: ['Рюрик','Олег','Игорь','Владимир'], correct: 2 }
+    ]
+  },
+  {
+    id: 'test_new_webhook',
+    title: 'Цифровое государство',
+    questions: [
+      { q: 'Что из перечисленного является самым широким понятием?', options: ['а) Портал «Госуслуги»','б) Электронное правительство','в) Цифровое государство','г) ГИС ЖКХ'], correct: 2 },
+      { q: 'Как называется система, которая объединяет все цифровые сервисы и базы данных для взаимодействия государства и граждан?', options: ['а) Цифровое государство','б) Электронное правительство','в) МФЦ','г) ГАС «Выборы»'], correct: 1 },
+      { q: 'Что из перечисленного является примером государственной информационной системы (ГИС)?', options: ['а) Instagram','б) Портал «Госуслуги»','в) ГАС «Выборы»','г) Электронная почта'], correct: 2 },
+      { q: 'Какой элемент электронного правительства предназначен непосредственно для граждан, чтобы получать услуги онлайн?', options: ['а) ГИС ЖКХ','б) Портал «Госуслуги»','в) Внутренняя база налоговой','г) Бумажный архив'], correct: 1 },
+      { q: 'Какова основная цель создания электронного правительства?', options: ['а) Заменить все государственные органы','б) Обеспечить получение государственных услуг в электронном виде и взаимодействие ведомств','в) Отменить налоги','г) Создать новые бумажные архивы'], correct: 1 }
+    ]
+  }
+];
 
 const kosQuestions = [
 {q:"Много ли у Вас друзей?"},{q:"Часто ли удается склонить товарищей?"},{q:"Долго ли беспокоит обида?"},{q:"Трудно ли ориентироваться в критической ситуации?"},{q:"Стремитесь ли к новым знакомствам?"},
@@ -72,7 +76,7 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
-let webhookAnswers = [];
+let webhookAnswers = []; // ✅ Для сохранения ответов нового теста
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
 // ========== ТЕМА ==========
@@ -154,7 +158,7 @@ function openHistoryFioModal(test) {
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
-  webhookAnswers = [];
+  webhookAnswers = []; // ✅ Очищаем массив
   document.getElementById('fio-modal').style.display='none';
   document.getElementById('history-test-list').classList.add('hidden');
   document.getElementById('history-quiz').classList.remove('hidden');
@@ -175,6 +179,7 @@ function showHistoryQuestion() {
     const btn = document.createElement('button');
     btn.className = 'answer-opt';
     btn.textContent = opt;
+    // ✅ Тёмные полупрозрачные рамки
     btn.style.cssText = `
       background: rgba(15,10,26,0.55);
       border: 1px solid rgba(255,170,102,0.35);
@@ -199,6 +204,7 @@ function checkHistoryAnswer(idx) {
   answered = true;
   const correct = currentTest.questions[qIdx].correct;
   
+  // ✅ Сохраняем ответ для нового теста
   if (currentTest.id === 'test_new_webhook') {
     webhookAnswers.push({
       num: qIdx + 1,
@@ -235,7 +241,6 @@ async function finishHistoryTest() {
   
   // ✅ НОВЫЙ ТЕСТ: отправка + ПОЛНЫЙ РАЗБОР
   if (currentTest.id === 'test_new_webhook') {
-    // Формируем детальный разбор ВСЕХ вопросов
     const detailsHTML = currentTest.questions.map((q, i) => {
       const ans = webhookAnswers[i] || {};
       const isCorrect = ans.is_correct ?? (ans.user_answer === ans.correct_answer);
@@ -262,6 +267,7 @@ async function finishHistoryTest() {
       </div>`;
     
     try {
+      // ✅ Ваш URL + секретный ключ
       await fetch('https://script.google.com/macros/s/AKfycbwmbw_-MYraqUsSp452jWfdf1tPOX7TNrGR_Gm8JcBO_DGzODjv35ybwq9nIGDqK4TWDw/exec?key=fox_secret_2026', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
