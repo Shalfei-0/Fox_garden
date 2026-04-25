@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 // ========== ДАННЫЕ ==========
 const historyTests = [
-  {
-    id: 'knyazya',
-    title: 'Древняя Русь: первые князья',
+  { id: 'knyazya', title: 'Древняя Русь: первые князья',
     questions: [
       { q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
       { q: 'Кто захватил Киев в 882 году?', options: ['Рюрик','Олег','Игорь','Святослав'], correct: 1 },
@@ -60,7 +58,7 @@ const michelsonQuestions = [
 {q:'Вы видите споткнувшегося человека. Вы:', opts:['"Почему не смотрите под ноги?" (смеясь)','"У Вас всё в порядке? Могу помочь?"','"Что случилось?"','"Это всё колдобины в тротуаре"','Никак не реагируете']},
 {q:'Вы ушиблись, кто-то спрашивает: "С Вами всё в порядке?". Вы:', opts:['"Я прекрасно себя чувствую. Оставьте меня!"','Ничего не говорите, игнорируете','"Почему не занимаетесь своим делом?"','"Нет, ушиб голову, спасибо за внимание"','"Пустяки, всё будет о\'кей"']},
 {q:'Вы допустили ошибку, но вина возложена на другого. Вы:', opts:['Ничего не говорите','"Это их ошибка!"','"Эту ошибку допустил Я"','"Я не думаю, что это сделал этот человек"','"Это их горькая доля"']},
-{q:'Вы оскорблены словами в Ваш адрес. Вы:', opts:['Уходите, не сказав, что расстроены','Заявляете, чтобы не смел больше','Ничего не говорите, хотя обижены','Оскорбляете в ответ','Заявляете, что не нравится, и что не должен делать снова']},
+{q:'Вы оскорблены словами в Ваш адрес. Вы:', opts:['Уходите, не сказав, что расстроены','Заявляйте, чтобы не смел больше','Ничего не говорите, хотя обижены','Оскорбляете в ответ','Заявляйте, что не нравится, и что не должен делать снова']},
 {q:'Кто-то часто перебивает, когда Вы говорите. Вы:', opts:['"Извините, но я хотел бы закончить"','"Так не делают. Могу продолжить?"','Прерываете этого человека, возобновляя рассказ','Ничего не говорите, позволяя продолжать','"Замолчите! Вы меня перебили!"']},
 {q:'Кто-то просит сделать что-то, что помешает Вашим планам. Вы:', opts:['"Имел другие планы, но сделаю, что хотите"','"Ни в коем случае! Поищите кого-то ещё"','"Хорошо, сделаю, что хотите"','"Отойдите, оставьте меня"','"Уже приступил к другим планам. Может, потом"']},
 {q:'Вы видите кого-то, с кем хотели бы познакомиться. Вы:', opts:['Радостно окликаете и идёте навстречу','Подходите, представляетесь и начинаете разговор','Подходите и ждёте, когда заговорят с Вами','Подходите и рассказываете о крупных делах','Ничего не говорите']},
@@ -76,7 +74,7 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
-let webhookAnswers = []; // ✅ Для сохранения ответов нового теста
+let webhookAnswers = []; // Для отправки на сайт 2
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
 // ========== ТЕМА ==========
@@ -88,10 +86,10 @@ function applyTheme() {
   document.body.className = themeClasses[themeIdx];
   themeBtn.textContent = themeIcons[themeIdx];
 }
-themeBtn.onclick = () => { themeIdx = (themeIdx + 1) % themeClasses.length; applyTheme(); };
+if(themeBtn) themeBtn.onclick = () => { themeIdx = (themeIdx + 1) % themeClasses.length; applyTheme(); };
 applyTheme();
 
-// ========== ВСПЫШКИ ==========
+// ========== ФОН ==========
 const petalsContainer = document.getElementById('petals-container');
 let flashesInitialized = false;
 function initFlashes() {
@@ -126,7 +124,7 @@ window.switchTab = (id) => {
 };
 document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
 
-// ========== ФОН ==========
+// ========== ЭФФЕКТЫ ФОНА ==========
 const hour = new Date().getHours();
 if(hour >= 6 && hour < 18) document.getElementById('sunRays').classList.add('active');
 const dp = document.getElementById('dustParticles');
@@ -139,14 +137,13 @@ setInterval(() => {
   }
 }, 1500);
 
-// ========== ИСТОРИЯ: ОТРИСОВКА ТЕСТА ==========
+// ========== ИСТОРИЯ ==========
 const hList = document.getElementById('history-test-list');
 historyTests.forEach(t => {
   const card = document.createElement('div'); card.className='test-card';
   card.innerHTML=`<h3>${t.title}</h3><span style="font-size:0.8rem;opacity:0.7">${t.questions.length} вопросов</span>`;
   card.onclick = () => openHistoryFioModal(t); hList.appendChild(card);
 });
-
 function openHistoryFioModal(test) {
   pendingTestId = 'history'; historyUserInfo = { test };
   document.getElementById('fio-modal').style.display = 'flex';
@@ -154,123 +151,89 @@ function openHistoryFioModal(test) {
   document.getElementById('email-input').value = '';
   document.getElementById('fio-input').focus();
 }
-
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
-  webhookAnswers = []; // ✅ Очищаем массив
+  webhookAnswers = []; // Очищаем перед стартом
   document.getElementById('fio-modal').style.display='none';
   document.getElementById('history-test-list').classList.add('hidden');
   document.getElementById('history-quiz').classList.remove('hidden');
   document.getElementById('history-back-btn').classList.remove('hidden');
   showHistoryQuestion();
 }
-
 function showHistoryQuestion() {
   const q = currentTest.questions[qIdx];
   document.getElementById('history-quiz').innerHTML = `
   <div class="question-frame" style="max-width:100%; overflow-wrap:break-word;">
-    <h4 style="margin-bottom:8px; opacity:0.85">Вопрос ${qIdx+1} <span style="opacity:0.6">/ ${currentTest.questions.length}</span></h4>
-    <p style="margin:0 0 18px; line-height:1.5; font-size:1.05rem;">${q.q}</p>
-    <div id="h-opts" style="display:flex; flex-direction:column; gap:8px;"></div>
+  <h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4>
+  <p style="margin-bottom:18px; overflow-wrap:break-word; word-break:break-word;">${q.q}</p>
+  <div id="h-opts" style="display:flex; flex-direction:column; gap:10px;"></div>
   </div>`;
   const opts = document.getElementById('h-opts');
   q.options.forEach((opt,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'answer-opt';
-    btn.textContent = opt;
+    const btn = document.createElement('button'); btn.className='answer-option'; btn.textContent=opt;
     // ✅ Тёмные полупрозрачные рамки
-    btn.style.cssText = `
-      background: rgba(15,10,26,0.55);
-      border: 1px solid rgba(255,170,102,0.35);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 10px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      font-size: 0.95rem;
-      line-height: 1.3;
-    `;
-    btn.onmouseenter = () => { if(!answered) btn.style.borderColor = 'var(--accent)'; };
-    btn.onmouseleave = () => { if(!answered) btn.style.borderColor = 'rgba(255,170,102,0.35)'; };
-    btn.onclick = () => checkHistoryAnswer(i);
-    opts.appendChild(btn);
+    btn.style.cssText = `background:rgba(15,10,26,0.6); border:1px solid rgba(255,170,102,0.35); color:var(--text); padding:12px 16px; border-radius:12px; text-align:left; cursor:pointer; transition:0.2s; font-size:1rem;`;
+    btn.onmouseenter = () => { if(!answered) { btn.style.borderColor='var(--accent)'; btn.style.transform='translateX(4px)'; } };
+    btn.onmouseleave = () => { if(!answered) { btn.style.borderColor='rgba(255,170,102,0.35)'; btn.style.transform='translateX(0)'; } };
+    btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
   });
 }
-
 function checkHistoryAnswer(idx) {
   if(answered) return;
-  answered = true;
+  answered=true;
   const correct = currentTest.questions[qIdx].correct;
   
-  // ✅ Сохраняем ответ для нового теста
-  if (currentTest.id === 'test_new_webhook') {
+  // ✅ Сохраняем ответы для вебхука
+  if(currentTest.id === 'test_new_webhook') {
     webhookAnswers.push({
-      num: qIdx + 1,
-      question: currentTest.questions[qIdx].q,
+      num: qIdx+1, question: currentTest.questions[qIdx].q,
       user_answer: currentTest.questions[qIdx].options[idx],
       correct_answer: currentTest.questions[qIdx].options[correct],
-      is_correct: idx === correct
+      is_correct: idx===correct
     });
   }
   
-  const buttons = document.querySelectorAll('#h-opts .answer-opt');
-  buttons.forEach((el,i) => {
-    el.style.pointerEvents = 'none';
-    el.style.opacity = i===idx || i===correct ? '1' : '0.65';
-    if(i===correct) {
-      el.style.borderColor = '#2ecc71';
-      el.style.boxShadow = '0 0 0 2px rgba(46,204,113,0.25)';
-    } else if(i===idx) {
-      el.style.borderColor = '#e74c3c';
-      el.style.boxShadow = '0 0 0 2px rgba(231,76,60,0.25)';
-    }
+  document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
+    el.style.pointerEvents='none';
+    if(i===correct) { el.style.borderColor='#2ecc71'; el.style.boxShadow='0 0 0 2px rgba(46,204,113,0.25)'; }
+    else if(i===idx) { el.style.borderColor='#e74c3c'; el.style.boxShadow='0 0 0 2px rgba(231,76,60,0.25)'; }
   });
   if(idx===correct) score++;
   setTimeout(() => {
     qIdx++;
-    if(qIdx < currentTest.questions.length) { answered=false; showHistoryQuestion(); }
+    if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); }
     else finishHistoryTest();
   }, 1100);
 }
-
 async function finishHistoryTest() {
   const pct = Math.round((score/currentTest.questions.length)*100);
   const fio = historyUserInfo?.fio || 'Аноним';
-  
-  // ✅ НОВЫЙ ТЕСТ: отправка + ПОЛНЫЙ РАЗБОР
-  if (currentTest.id === 'test_new_webhook') {
+
+  // ✅ НОВЫЙ ТЕСТ: Отправка на сайт 2 + Детальный разбор
+  if(currentTest.id === 'test_new_webhook') {
     const detailsHTML = currentTest.questions.map((q, i) => {
       const ans = webhookAnswers[i] || {};
-      const isCorrect = ans.is_correct ?? (ans.user_answer === ans.correct_answer);
-      return `
-        <div style="background:${isCorrect ? 'rgba(46,204,113,0.12)' : 'rgba(231,76,60,0.12)'};
-                    padding:12px 14px; border-radius:10px; margin:8px 0; text-align:left;
-                    border-left:3px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}">
-          <div style="font-weight:600; margin-bottom:6px; opacity:0.95">В${ans.num || i+1}. ${q.q}</div>
-          <div style="font-size:0.95rem">
-            Ваш ответ: <span style="color:${isCorrect ? '#2ecc71' : '#e74c3c'}; font-weight:500">${ans.user_answer || '—'}</span><br>
-            ${!isCorrect ? `Правильно: <b>${ans.correct_answer || q.options[q.correct]}</b>` : ''}
-          </div>
-        </div>`;
+      const isCorrect = ans.is_correct;
+      return `<div style="background:${isCorrect?'rgba(46,204,113,0.12)':'rgba(231,76,60,0.12)'}; padding:12px; border-radius:10px; margin:8px 0; border-left:3px solid ${isCorrect?'#2ecc71':'#e74c3c'};">
+        <div style="font-weight:600; margin-bottom:5px;">В${ans.num}. ${q.q}</div>
+        <div>Ваш ответ: <span style="color:${isCorrect?'#2ecc71':'#e74c3c'}">${ans.user_answer||'—'}</span>
+        ${!isCorrect?`<br>Правильно: <b>${ans.correct_answer||q.options[q.correct]}</b>`:''}</div>
+      </div>`;
     }).join('');
 
     document.getElementById('history-quiz').innerHTML = `
       <div class="question-frame">
-        <h2 style="color:var(--accent); margin-bottom:8px">Результат: ${pct}%</h2>
-        <p style="margin:0 0 12px; opacity:0.85">${fio} • ${score} из ${currentTest.questions.length}</p>
-        <div style="max-height:400px; overflow-y:auto; padding-right:4px; margin-bottom:15px;">
-          ${detailsHTML}
-        </div>
-        <div id="h-mail-status" style="padding:10px; background:rgba(255,255,255,0.08); border-radius:10px; text-align:center; font-size:0.95rem;">📤 Отправка...</div>
+        <h2 style="color:var(--accent)">Результат: ${pct}%</h2>
+        <p>${fio} • ${score} из ${currentTest.questions.length}</p>
+        <div style="max-height:350px; overflow-y:auto; padding:5px;">${detailsHTML}</div>
+        <div id="h-mail-status" style="padding:10px; background:rgba(255,255,255,0.08); border-radius:10px; margin-top:15px; text-align:center;">📤 Отправка на сайт 2...</div>
       </div>`;
-    
+
     try {
-      // ✅ Ваш URL + секретный ключ
       await fetch('https://script.google.com/macros/s/AKfycbwmbw_-MYraqUsSp452jWfdf1tPOX7TNrGR_Gm8JcBO_DGzODjv35ybwq9nIGDqK4TWDw/exec?key=fox_secret_2026', {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        headers: {'Content-Type': 'text/plain'},
         body: JSON.stringify({
           key: 'fox_secret_2026',
           test_id: currentTest.id, test_title: currentTest.title, fio,
@@ -279,35 +242,23 @@ async function finishHistoryTest() {
           submitted_at: new Date().toISOString()
         })
       });
-      document.getElementById('h-mail-status').textContent = '✅ Готово!';
+      document.getElementById('h-mail-status').textContent = '✅ Готово! Данные на сайте 2.';
     } catch(e) {
-      console.error(e);
-      document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети (данные показаны выше)';
+      document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети (результат сохранён локально)';
     }
     return;
   }
 
   // === СТАРАЯ ЛОГИКА (почта) ===
   document.getElementById('history-quiz').innerHTML = `
-    <div class="question-frame" style="text-align:center">
-      <h2 style="color:var(--accent)">Результат: ${pct}%</h2>
-      <p>${score} из ${currentTest.questions.length}</p>
-      <div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка...</div>
-    </div>`;
+  <div class="question-frame" style="text-align:center"><h2 style="color:var(--accent)">Результат: ${pct}%</h2><p>${score} из ${currentTest.questions.length}</p><div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка...</div></div>`;
   try {
-    await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        _subject:`📜 Тест "${currentTest.title}"`, ФИО: fio,
-        Email: historyUserInfo?.email || 'Не указан', Тест: currentTest.title,
-        Результат: `${score}/${currentTest.questions.length} (${pct}%)`,
-        Дата: new Date().toLocaleString('ru-RU'), _captcha:'false'
-      })
+    await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', { method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ _subject:`📜 Тест "${currentTest.title}"`, ФИО:fio, Email:historyUserInfo?.email||'Не указан', Тест:currentTest.title, Результат:`${score}/${currentTest.questions.length} (${pct}%)`, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false' })
     });
     document.getElementById('h-mail-status').textContent='✅ Отправлено!';
   } catch(e) { document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети'; }
 }
-
 window.exitHistoryTest = () => {
   document.getElementById('history-quiz').classList.add('hidden');
   document.getElementById('history-test-list').classList.remove('hidden');
@@ -355,8 +306,8 @@ function showPsychQuestion() {
   document.getElementById('psych-quiz').innerHTML = `
   <div class="progress-bar" style="max-width:100%; margin: 0 auto 20px;"><div class="progress-fill" style="width:${(psychIndex/currentTest.questions.length)*100}%"></div></div>
   <div class="question-box" style="max-width: 95vw; padding: 20px 15px; margin: 0 auto 20px; overflow-wrap: break-word;">
-    <p style="margin-bottom:20px; line-height:1.5; word-break: break-word; overflow-wrap: break-word;">${q.q}</p>
-    <div id="p-opts" style="display:flex; flex-direction:column; gap:10px; width:100%;"></div>
+  <p style="margin-bottom:20px; line-height:1.5; word-break: break-word; overflow-wrap: break-word;">${q.q}</p>
+  <div id="p-opts" style="display:flex; flex-direction:column; gap:10px; width:100%;"></div>
   </div>`;
   const opts = document.getElementById('p-opts');
   if(currentTest.type==='kos') {
@@ -378,7 +329,7 @@ function calculatePsychResults() {
   if(currentTest.type==='kos') {
     let c=0,o=0; psychAnswers.forEach((a,i)=>{const n=i+1; if(commYes.includes(n)&&a==='yes')c++; if(commNo.includes(n)&&a==='no')c++; if(orgYes.includes(n)&&a==='yes')o++; if(orgNo.includes(n)&&a==='no')o++;});
     html=`<div class="result-item"><h4>🗣️ Коммуникативные</h4><p>Баллы: ${c}/20 | Коэф: ${(c/20).toFixed(2)}</p></div><div class="result-item"><h4>📋 Организаторские</h4><p>Баллы: ${o}/20 | Коэф: ${(o/20).toFixed(2)}</p></div>`;
-    text=`КОС:\nКоммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
+    text=`КОС: Коммуникативные: ${c}/20\nОрганизаторские: ${o}/20`;
   } else {
     let total=0;
     Object.keys(michelsonBlocks).forEach(blockName => {
@@ -386,7 +337,7 @@ function calculatePsychResults() {
       michelsonScores[blockName]=s; total+=s;
       html+=`<div class="result-item"><h4>${blockName}</h4><p>${s} из ${michelsonBlocks[blockName].length} компетентных ответов</p></div>`;
     });
-    text=`Тест Михельсона:\nВсего: ${total}/27\n${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('\n')}`;
+    text=`Тест Михельсона: Всего: ${total}/27\n${Object.entries(michelsonScores).map(([k,v])=>`${k}: ${v}`).join('\n')}`;
   }
   document.getElementById('psych-quiz').classList.add('hidden');
   document.getElementById('psych-results').classList.remove('hidden');
@@ -411,6 +362,118 @@ function createGeoFlowers() {
     f.style.width=(Math.random()*60+40)+'px'; f.style.height=f.style.width; c.appendChild(f);
   }
 }
+
+// 🎮 ЛОГИКА ИГРЫ
+const G = { points: 0, level: 'Новичок', currentScene: null, news: [] };
+const SCENES = {
+  start: { text: 'Привет! Ты попал в игру "Гражданин: Право голоса". Здесь твои решения влияют на репутацию и открывают новые арки.', actions: [{text: '📱 Получить первое задание', next: 'consumer_intro'}] },
+  consumer_intro: { npc: '👦 Алексей', text: 'Прикинь, купил наушники, а они не заряжаются. Продавец говорит: "Ничем не помогу, вы же их открыли". Что делать?', actions: [
+    {text: '😤 Устроить скандал', next: 'fail_scare', hint: 'Риск: хулиганство'},
+    {text: '😔 Забить', next: 'fail_giveup', hint: 'Путь игнора'},
+    {text: '📚 Открыть "Кодекс"', next: 'hint_codex', hint: 'Путь знания'}
+  ]},
+  hint_codex: { sys: true, text: '💡 В поиске Кодекса введи "возврат" или "статья 18".', actions: [{text: '🔍 Перейти в Кодекс', action: 'openCodex'}] },
+  success_consumer: { npc: '👦 Алексей', text: 'Сработало! Продавец вернул деньги, когда я показал статью 18. Ты гений! 🎉', points: 25, news: '✅ Наушники возвращены по закону. +25 баллов!', actions: [{text: '🚀 Следующая арка', next: 'admin_intro'}] },
+  fail_scare: { sys: true, text: '⚠️ Крик на продавца → полиция → ст. 20.1 КоАП РФ (мелкое хулиганство). Штраф/арест.', points: -10, news: '❌ Попытка решить силой → административное дело. -10 баллов.', actions: [{text: '🔄 Попробовать иначе', next: 'consumer_intro'}] },
+  fail_giveup: { sys: true, text: '💭 Ты смирился. Но в следующий раз ситуация повторится.', points: 0, news: '⚪ Нарушение прав проигнорировано.', actions: [{text: '🔄 Попробовать иначе', next: 'consumer_intro'}] },
+  admin_intro: { npc: '📢 Мэрия', text: 'Ваш район хотят застроить, вырубив парк. Что делать?', actions: [
+    {text: '📝 Собрать подписи', next: 'success_petition'},
+    {text: '🤷 Ничего', next: 'fail_ignore'}
+  ]},
+  success_petition: { sys: true, text: '📋 200 подписей собраны! По ФЗ-131 власти обязаны рассмотреть обращение.', points: 30, level: 'Активист', news: '🎉 Успешное обращение в органы власти. Уровень повышен!', actions: [{text: '🏆 Завершить демо', action: 'finish'}] },
+  fail_ignore: { sys: true, text: '🌳 Парк вырубили. Бездействие — тоже выбор.', points: -5, news: '⚠️ Упущена возможность повлиять. -5 баллов.', actions: [{text: '🔄 Попробовать иначе', next: 'admin_intro'}] }
+};
+const CODEX = [
+  { id: 'zoZPP', title: 'Закон "О защите прав потребителей", ст. 18', keywords: ['возврат', 'товар', 'недостаток', 'гарантия'], text: 'Технически сложный товар можно вернуть в течение 15 дней при недостатке. Открытая упаковка — не помеха.' },
+  { id: 'koap', title: 'КоАП РФ, ст. 20.1 «Мелкое хулиганство»', keywords: ['скандал', 'полиция', 'шум', 'оскорбление'], text: 'Нарушение общественного порядка: штраф 500–1000 руб. или арест до 15 суток.' },
+  { id: 'fz131', title: 'ФЗ №131 «О местном самоуправлении»', keywords: ['слушания', 'парк', 'подписи', 'застройка'], text: 'Граждане вправе обращаться в органы власти. Публичные слушания по застройке обязательны.' }
+];
+
+document.getElementById('start-game-btn').addEventListener('click', () => {
+  document.getElementById('start-game-btn').classList.add('hidden');
+  document.getElementById('game-ui').classList.remove('hidden');
+  switchGameTab('chat'); loadScene('start'); updateStats();
+});
+document.getElementById('reset-game-btn').addEventListener('click', resetCivicsGame);
+document.querySelectorAll('.g-tab').forEach(btn => btn.addEventListener('click', () => switchGameTab(btn.dataset.gtab)));
+
+function switchGameTab(tab) {
+  document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b.dataset.gtab === tab));
+  document.querySelectorAll('.g-panel').forEach(p => p.classList.toggle('active', p.id === `g-${tab}`));
+  if (tab === 'codex') renderCodex();
+  if (tab === 'news') renderNews();
+  if (tab === 'profile') renderProfile();
+}
+
+function loadScene(id) {
+  const s = SCENES[id]; if (!s) return;
+  G.currentScene = id;
+  const chat = document.getElementById('chat-messages');
+  const actions = document.getElementById('chat-actions');
+  let cls = 'sys', lbl = '💡';
+  if (s.npc) { cls = 'npc'; lbl = s.npc.split(' ')[0]; }
+  chat.innerHTML += `<div class="chat-msg ${cls}"><b>${lbl}</b><br>${s.text}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+  if (s.points) { G.points += s.points; if(s.level) G.level = s.level; updateStats(); }
+  if (s.news) G.news.unshift(s.news);
+  if (s.action === 'openCodex') switchGameTab('codex');
+  if (s.action === 'finish') { alert('🏆 Демо-версия пройдена! Спасибо за игру.'); resetCivicsGame(); return; }
+  actions.innerHTML = '';
+  (s.actions || []).forEach(a => {
+    const btn = document.createElement('button'); btn.className = 'g-action';
+    btn.innerHTML = a.text + (a.hint ? ` <small style="opacity:0.7">(${a.hint})</small>` : '');
+    btn.onclick = () => {
+      chat.innerHTML += `<div class="chat-msg player">${a.text.replace(/<.*?>/g,'')}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+      setTimeout(() => loadScene(a.next), 400);
+    };
+    actions.appendChild(btn);
+  });
+}
+
+function renderCodex() {
+  const q = document.getElementById('codex-search').value.toLowerCase();
+  const res = document.getElementById('codex-results');
+  const found = CODEX.filter(c => c.title.toLowerCase().includes(q) || c.keywords.some(k => k.includes(q)));
+  res.innerHTML = found.length ? found.map(c => `<div class="codex-card" onclick="useCodex('${c.id}')"><h5>📜 ${c.title}</h5><p>${c.text}</p></div>`).join('') : '<div style="opacity:0.7; padding:10px">🔍 Ничего не найдено.</div>';
+}
+document.getElementById('codex-search').addEventListener('input', renderCodex);
+
+function useCodex(id) {
+  const item = CODEX.find(c => c.id === id); if (!item) return;
+  document.getElementById('chat-messages').innerHTML += `<div class="chat-msg sys">📖 Изучено: <b>${item.title}</b><br><small>${item.text}</small></div>`;
+  if (G.currentScene === 'hint_codex' && id === 'zoZPP') { setTimeout(() => loadScene('success_consumer'), 500); }
+  else { setTimeout(() => switchGameTab('chat'), 300); }
+}
+
+function renderNews() {
+  document.getElementById('news-feed').innerHTML = G.news.length ? G.news.map(n => `<div class="news-card ${n.startsWith('✅')||n.startsWith('🎉')?'ok':''}">${n}</div>`).join('') : '<div style="opacity:0.7; padding:10px">📰 Лента пуста.</div>';
+}
+
+function renderProfile() {
+  document.getElementById('profile-stats').innerHTML = `
+    <div style="margin-bottom:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; border:1px solid #cc8855;">
+      <div style="color:#ffb380; font-size:1.2rem; margin-bottom:10px">📊 ${G.level}</div>
+      <div style="height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden">
+        <div style="height:100%; width:${Math.min(100, G.points/2)}%; background:#ff9966; transition:0.3s"></div>
+      </div>
+      <div style="margin-top:8px; color:#e6a373">Баллов: ${G.points} / 200</div>
+    </div>`;
+}
+
+function updateStats() {
+  document.getElementById('g-level').textContent = `Уровень: ${G.level}`;
+  document.getElementById('g-points').textContent = `🍑 ${G.points} баллов`;
+}
+
+function resetCivicsGame() {
+  G.points = 0; G.level = 'Новичок'; G.news = []; G.currentScene = null;
+  document.getElementById('chat-messages').innerHTML = '';
+  document.getElementById('chat-actions').innerHTML = '';
+  document.getElementById('start-game-btn').classList.remove('hidden');
+  document.getElementById('game-ui').classList.add('hidden');
+}
+
 initFlashes();
-petalsContainer.classList.add('active');
+if(petalsContainer) petalsContainer.classList.add('active');
 });
