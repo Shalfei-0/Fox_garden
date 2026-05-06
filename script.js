@@ -13,7 +13,7 @@ const historyTests = [
     ]
   },
   {
-    id: 'ancient_rus_quiz', // ✅ НОВЫЙ ТЕСТ
+    id: 'ancient_rus_quiz', // ✅ НОВЫЙ ТЕСТ №2
     title: 'Становление Древней Руси',
     questions: [
       {
@@ -96,7 +96,6 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
-let userAnswers = []; // ✅ Для хранения ответов пользователя
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
 // ========== ТЕМА ==========
@@ -176,7 +175,6 @@ function openHistoryFioModal(test) {
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
-  userAnswers = []; // ✅ Очищаем перед стартом
   document.getElementById('fio-modal').style.display='none';
   document.getElementById('history-test-list').classList.add('hidden');
   document.getElementById('history-quiz').classList.remove('hidden');
@@ -204,16 +202,6 @@ function checkHistoryAnswer(idx) {
   if(answered) return;
   answered=true;
   const correct = currentTest.questions[qIdx].correct;
-  
-  // ✅ Сохраняем ответ пользователя
-  userAnswers.push({
-    num: qIdx+1,
-    question: currentTest.questions[qIdx].q,
-    user_answer: currentTest.questions[qIdx].options[idx],
-    correct_answer: currentTest.questions[qIdx].options[correct],
-    is_correct: idx===correct
-  });
-  
   document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
     el.style.pointerEvents='none';
     if(i===correct) { el.style.borderColor='#2ecc71'; el.style.boxShadow='0 0 0 2px rgba(46,204,113,0.25)'; }
@@ -222,33 +210,26 @@ function checkHistoryAnswer(idx) {
   if(idx===correct) score++;
   setTimeout(() => { qIdx++; if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest(); }, 1100);
 }
-
 async function finishHistoryTest() {
   const pct = Math.round((score/currentTest.questions.length)*100);
   const fio = historyUserInfo?.fio || 'Аноним';
   
-  // ✅ ПОКАЗЫВАЕМ ДЕТАЛЬНЫЙ РАЗБОР ВСЕХ ВОПРОСОВ
-  const detailsHTML = currentTest.questions.map((q, i) => {
-    const ans = userAnswers[i] || {};
-    const isCorrect = ans.is_correct;
-    return `<div style="background:${isCorrect?'rgba(46,204,113,0.12)':'rgba(231,76,60,0.12)'}; padding:12px; border-radius:10px; margin:8px 0; border-left:3px solid ${isCorrect?'#2ecc71':'#e74c3c'};">
-      <div style="font-weight:600; margin-bottom:5px;">В${ans.num}. ${q.q}</div>
-      <div>Ваш ответ: <span style="color:${isCorrect?'#2ecc71':'#e74c3c'}">${ans.user_answer||'—'}</span>
-      ${!isCorrect?`<br>✅ Правильно: <b>${ans.correct_answer||q.options[q.correct]}</b>`:''}</div>
-    </div>`;
-  }).join('');
-
+  // ✅ РАЗНЫЕ ПОЧТЫ ДЛЯ РАЗНЫХ ТЕСТОВ
+  const emailMap = {
+    'knyazya': 'aniruf14.02@gmail.com',
+    'ancient_rus_quiz': 'Screen.shotis@mail.ru'
+  };
+  const targetEmail = emailMap[currentTest.id] || 'aniruf14.02@gmail.com';
+  
   document.getElementById('history-quiz').innerHTML = `
-    <div class="question-frame">
+    <div class="question-frame" style="text-align:center">
       <h2 style="color:var(--accent)">Результат: ${pct}%</h2>
-      <p>${fio} • ${score} из ${currentTest.questions.length}</p>
-      <div style="max-height:350px; overflow-y:auto; padding:5px; margin-bottom:15px;">${detailsHTML}</div>
-      <div id="h-mail-status" style="padding:10px; background:rgba(255,255,255,0.08); border-radius:10px; text-align:center;">📤 Отправка результатов...</div>
+      <p>${score} из ${currentTest.questions.length}</p>
+      <div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка...</div>
     </div>`;
-
-  // ✅ ОТПРАВКА НА ПОЧТУ
+  
   try {
-    await fetch('https://formsubmit.co/ajax/Screen.shotis@mail.ru', {
+    await fetch('https://formsubmit.co/ajax/' + targetEmail, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -258,15 +239,13 @@ async function finishHistoryTest() {
         Тест: currentTest.title,
         Результат: `${score}/${currentTest.questions.length} (${pct}%)`,
         Дата: new Date().toLocaleString('ru-RU'),
-        _captcha:'false',
-        // Добавляем детальные ответы
-        ...Object.fromEntries(userAnswers.map((a,i) => [`В${a.num}`, `${a.question}\nВаш ответ: ${a.user_answer}\nПравильно: ${a.correct_answer}\n${a.is_correct?'✅':'❌'}`]))
+        _captcha:'false'
       })
     });
-    document.getElementById('h-mail-status').textContent = '✅ Отправлено на Screen.shotis@mail.ru!';
+    document.getElementById('h-mail-status').textContent = `✅ Отправлено на ${targetEmail}!`;
   } catch(e) {
     console.error(e);
-    document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети (результат показан выше)';
+    document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети';
   }
 }
 window.exitHistoryTest = () => {
