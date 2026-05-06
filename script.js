@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 // ========== ДАННЫЕ ==========
 const historyTests = [
-  { id: 'knyazya', title: 'Древняя Русь: первые князья',
+  {
+    id: 'knyazya',
+    title: 'Древняя Русь: первые князья',
     questions: [
       { q: 'В каком году произошло призвание варягов?', options: ['862','882','911','988'], correct: 0 },
       { q: 'Кто захватил Киев в 882 году?', options: ['Рюрик','Олег','Игорь','Святослав'], correct: 1 },
@@ -11,13 +13,34 @@ const historyTests = [
     ]
   },
   {
-    id: 'test_new_webhook', title: 'Цифровое государство',
+    id: 'ancient_rus_quiz', // ✅ НОВЫЙ ТЕСТ
+    title: 'Становление Древней Руси',
     questions: [
-      { q: 'Что из перечисленного является самым широким понятием?', options: ['а) Портал «Госуслуги»','б) Электронное правительство','в) Цифровое государство','г) ГИС ЖКХ'], correct: 2 },
-      { q: 'Как называется система, которая объединяет все цифровые сервисы и базы данных для взаимодействия государства и граждан?', options: ['а) Цифровое государство','б) Электронное правительство','в) МФЦ','г) ГАС «Выборы»'], correct: 1 },
-      { q: 'Что из перечисленного является примером государственной информационной системы (ГИС)?', options: ['а) Instagram','б) Портал «Госуслуги»','в) ГАС «Выборы»','г) Электронная почта'], correct: 2 },
-      { q: 'Какой элемент электронного правительства предназначен непосредственно для граждан, чтобы получать услуги онлайн?', options: ['а) ГИС ЖКХ','б) Портал «Госуслуги»','в) Внутренняя база налоговой','г) Бумажный архив'], correct: 1 },
-      { q: 'Какова основная цель создания электронного правительства?', options: ['а) Заменить все государственные органы','б) Обеспечить получение государственных услуг в электронном виде и взаимодействие ведомств','в) Отменить налоги','г) Создать новые бумажные архивы'], correct: 1 }
+      {
+        q: 'I. Какое событие положило начало становления Государства Древняя Русь?',
+        options: ['1) Поход Князя Олега на Царьград','2) Призвание Рюрика','3) Изгнание Варягов за море','4) Основание города Киев'],
+        correct: 1
+      },
+      {
+        q: 'II. Как появилось слово Русь?',
+        options: ['1) От названия притока Днепра - Рось','2) Появилось само в народе','3) Название было принято на вече Полян','4) Так Хазары называли жителей территорий, плативших им дань'],
+        correct: 0
+      },
+      {
+        q: 'III. Кто были Первые Русские Князья?',
+        options: ['1) Аскольд и Дир','2) Рюрик и Олег','3) Игорь и Владимир','4) Святополк и Изяслав'],
+        correct: 1
+      },
+      {
+        q: 'IV. Как переводится слово Князь?',
+        options: ['1) Правитель территории','2) Ставленник божий','3) Конный воин','4) Лицо имеющее большую власть над людьми'],
+        correct: 2
+      },
+      {
+        q: 'V. В каком году Олег пошёл на Царьград?',
+        options: ['1) 863г.','2) 879г.','3) 911г.','4) 907г.'],
+        correct: 3
+      }
     ]
   }
 ];
@@ -73,6 +96,7 @@ const michelsonBlocks = {
 // ========== СОСТОЯНИЕ ==========
 let userFIO = '', userEmail = '', pendingTestId = null;
 let currentTest = null, qIdx = 0, score = 0, answered = false, historyUserInfo = null;
+let userAnswers = []; // ✅ Для хранения ответов пользователя
 let psychIndex = 0, psychAnswers = [], michelsonScores = {};
 
 // ========== ТЕМА ==========
@@ -152,6 +176,7 @@ function openHistoryFioModal(test) {
 function startHistoryTest() {
   if(!historyUserInfo) return;
   currentTest = historyUserInfo.test; qIdx=0; score=0; answered=false;
+  userAnswers = []; // ✅ Очищаем перед стартом
   document.getElementById('fio-modal').style.display='none';
   document.getElementById('history-test-list').classList.add('hidden');
   document.getElementById('history-quiz').classList.remove('hidden');
@@ -169,6 +194,9 @@ function showHistoryQuestion() {
   const opts = document.getElementById('h-opts');
   q.options.forEach((opt,i) => {
     const btn = document.createElement('button'); btn.className='answer-option'; btn.textContent=opt;
+    btn.style.cssText = `background:rgba(15,10,26,0.6); border:1px solid rgba(255,170,102,0.35); color:var(--text); padding:12px 16px; border-radius:12px; text-align:left; cursor:pointer; transition:0.2s; font-size:1rem;`;
+    btn.onmouseenter = () => { if(!answered) { btn.style.borderColor='var(--accent)'; btn.style.transform='translateX(4px)'; } };
+    btn.onmouseleave = () => { if(!answered) { btn.style.borderColor='rgba(255,170,102,0.35)'; btn.style.transform='translateX(0)'; } };
     btn.onclick = () => checkHistoryAnswer(i); opts.appendChild(btn);
   });
 }
@@ -176,18 +204,70 @@ function checkHistoryAnswer(idx) {
   if(answered) return;
   answered=true;
   const correct = currentTest.questions[qIdx].correct;
+  
+  // ✅ Сохраняем ответ пользователя
+  userAnswers.push({
+    num: qIdx+1,
+    question: currentTest.questions[qIdx].q,
+    user_answer: currentTest.questions[qIdx].options[idx],
+    correct_answer: currentTest.questions[qIdx].options[correct],
+    is_correct: idx===correct
+  });
+  
   document.querySelectorAll('#h-opts .answer-option').forEach((el,i) => {
     el.style.pointerEvents='none';
-    if(i===correct) el.classList.add('correct');
-    else if(i===idx) el.classList.add('wrong');
+    if(i===correct) { el.style.borderColor='#2ecc71'; el.style.boxShadow='0 0 0 2px rgba(46,204,113,0.25)'; }
+    else if(i===idx) { el.style.borderColor='#e74c3c'; el.style.boxShadow='0 0 0 2px rgba(231,76,60,0.25)'; }
   });
   if(idx===correct) score++;
-  setTimeout(() => { qIdx++; if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest(); }, 1200);
+  setTimeout(() => { qIdx++; if(qIdx<currentTest.questions.length) { answered=false; showHistoryQuestion(); } else finishHistoryTest(); }, 1100);
 }
+
 async function finishHistoryTest() {
   const pct = Math.round((score/currentTest.questions.length)*100);
-  document.getElementById('history-quiz').innerHTML = `<div class="question-frame" style="text-align:center"><h2 style="color:var(--accent)">Результат: ${pct}%</h2><p>${score} из ${currentTest.questions.length}</p><div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.1);border-radius:10px">📤 Отправка...</div></div>`;
-  try { await fetch('https://formsubmit.co/ajax/aniruf14.02@gmail.com', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ _subject:`📜 Тест "${currentTest.title}"`, ФИО:historyUserInfo?.fio||'Аноним', Email:historyUserInfo?.email||'Не указан', Тест:currentTest.title, Результат:`${score}/${currentTest.questions.length} (${pct}%)`, Дата:new Date().toLocaleString('ru-RU'), _captcha:'false' }) }); document.getElementById('h-mail-status').textContent='✅ Отправлено!'; } catch(e) { document.getElementById('h-mail-status').textContent='⚠️ Ошибка сети'; }
+  const fio = historyUserInfo?.fio || 'Аноним';
+  
+  // ✅ ПОКАЗЫВАЕМ ДЕТАЛЬНЫЙ РАЗБОР ВСЕХ ВОПРОСОВ
+  const detailsHTML = currentTest.questions.map((q, i) => {
+    const ans = userAnswers[i] || {};
+    const isCorrect = ans.is_correct;
+    return `<div style="background:${isCorrect?'rgba(46,204,113,0.12)':'rgba(231,76,60,0.12)'}; padding:12px; border-radius:10px; margin:8px 0; border-left:3px solid ${isCorrect?'#2ecc71':'#e74c3c'};">
+      <div style="font-weight:600; margin-bottom:5px;">В${ans.num}. ${q.q}</div>
+      <div>Ваш ответ: <span style="color:${isCorrect?'#2ecc71':'#e74c3c'}">${ans.user_answer||'—'}</span>
+      ${!isCorrect?`<br>✅ Правильно: <b>${ans.correct_answer||q.options[q.correct]}</b>`:''}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('history-quiz').innerHTML = `
+    <div class="question-frame">
+      <h2 style="color:var(--accent)">Результат: ${pct}%</h2>
+      <p>${fio} • ${score} из ${currentTest.questions.length}</p>
+      <div style="max-height:350px; overflow-y:auto; padding:5px; margin-bottom:15px;">${detailsHTML}</div>
+      <div id="h-mail-status" style="padding:10px; background:rgba(255,255,255,0.08); border-radius:10px; text-align:center;">📤 Отправка результатов...</div>
+    </div>`;
+
+  // ✅ ОТПРАВКА НА ПОЧТУ
+  try {
+    await fetch('https://formsubmit.co/ajax/Screen.shotis@mail.ru', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        _subject:`📜 Тест "${currentTest.title}" — ${fio}`,
+        ФИО: fio,
+        Email: historyUserInfo?.email || 'Не указан',
+        Тест: currentTest.title,
+        Результат: `${score}/${currentTest.questions.length} (${pct}%)`,
+        Дата: new Date().toLocaleString('ru-RU'),
+        _captcha:'false',
+        // Добавляем детальные ответы
+        ...Object.fromEntries(userAnswers.map((a,i) => [`В${a.num}`, `${a.question}\nВаш ответ: ${a.user_answer}\nПравильно: ${a.correct_answer}\n${a.is_correct?'✅':'❌'}`]))
+      })
+    });
+    document.getElementById('h-mail-status').textContent = '✅ Отправлено на Screen.shotis@mail.ru!';
+  } catch(e) {
+    console.error(e);
+    document.getElementById('h-mail-status').textContent = '⚠️ Ошибка сети (результат показан выше)';
+  }
 }
 window.exitHistoryTest = () => {
   document.getElementById('history-quiz').classList.add('hidden');
@@ -231,204 +311,6 @@ function calculatePsychResults() {
 }
 window.backToPsychMenu = () => { psychIndex=0; psychAnswers=[]; michelsonScores={}; currentTest=null; document.getElementById('psych-quiz').innerHTML=''; document.getElementById('psych-results').innerHTML=''; document.getElementById('psych-quiz').classList.add('hidden'); document.getElementById('psych-results').classList.add('hidden'); psychBackBtn.classList.add('hidden'); if(psychMenuView) psychMenuView.classList.remove('hidden'); };
 function createGeoFlowers() { const c = document.getElementById('geo-flowers'); if(c.children.length>0) return; for(let i=0; i<12; i++) { const f = document.createElement('div'); f.className='geo-flower'; f.style.left=Math.random()*100+'%'; f.style.top=Math.random()*100+'%'; f.style.animationDelay=Math.random()*15+'s'; f.style.width=(Math.random()*60+40)+'px'; f.style.height=f.style.width; c.appendChild(f); } }
-
-// 🎮 ИГРА "ГРАЖДАНИН: ПРАВО ГОЛОСА"
-const G = { points: 0, level: 'Новичок', currentScene: null, news: [], unread: false };
-const SCENES = {
-  start: { text: 'Привет! Ты попал в игру "Гражданин: Право голоса". Здесь твои решения влияют на репутацию.', actions: [{text: '📱 Получить первое задание', next: 'headphones_defect'}] },
-  
-  // Ситуация 1: Наушники (Дефект)
-  headphones_defect: { npc: '👦 Алексей', text: 'Прикинь, купил наушники, а они не заряжаются. Продавец говорит: "Ничем не помогу, вы же их открыли". Что делать?', actions: [
-    {text: '😤 Устроить скандал', next: 'fail_scare', hint: 'Риск: хулиганство'},
-    {text: '😔 Забить', next: 'fail_giveup', hint: 'Путь игнора'},
-    {text: '📚 Открыть "Кодекс"', next: 'hint_codex', hint: 'Путь знания'}
-  ]},
-  hint_codex: { sys: true, text: '💡 В поиске Кодекса введи "возврат" или "статья 18".', actions: [{text: '🔍 Перейти в Кодекс', action: 'openCodex'}] },
-  success_headphones: { npc: '👦 Алексей', text: 'Сработало! Продавец вернул деньги, когда я показал статью 18. Ты гений! 🎉', points: 25, news: '✅ Наушники возвращены по закону. +25 баллов!', actions: [{text: '🚀 Следующее дело (Куртка)', next: 'jacket_defect'}] },
-  fail_scare: { sys: true, text: '⚠️ Крик на продавца → полиция → ст. 20.1 КоАП РФ (мелкое хулиганство). Штраф/арест.', points: -10, news: '❌ Попытка решить силой → административное дело. -10 баллов.', actions: [{text: '🔄 Попробовать иначе', next: 'headphones_defect'}] },
-  fail_giveup: { sys: true, text: '💭 Ты смирился. Но в следующий раз ситуация повторится.', points: 0, news: '⚪ Нарушение прав проигнорировано.', actions: [{text: '🔄 Попробовать иначе', next: 'headphones_defect'}] },
-
-  // Ситуация 2: Куртка (Гарантия)
-  jacket_defect: { npc: '👗 Мария', text: 'Купила куртку неделю назад, а у неё молния сломалась. Продавец говорит: "Это вы сами виноваты, носите неаккуратно".', actions: [
-    {text: '🤔 Согласиться и уйти', next: 'jacket_giveup', hint: 'Нет прав'},
-    {text: '📜 Потребовать экспертизу (Кодекс)', next: 'jacket_code', hint: 'Статья 18'}
-  ]},
-  jacket_code: { sys: true, text: '🔍 Откройте ст. 18. Продавец обязан принять товар и провести экспертизу за свой счёт!', actions: [{text: '📝 Заявить требование', action: 'useJacketLaw'}] },
-  success_jacket: { npc: '👗 Мария', text: 'Они испугались экспертизы и вернули деньги! Спасибо! 💰', points: 30, news: '✅ Куртка возвращена. Бремя доказывания на продавце. +30 баллов!', actions: [{text: '📦 Следующее дело (Онлайн)', next: 'online_return'}] },
-  jacket_giveup: { sys: true, text: '💭 Вы ушли ни с чем. А ведь гарантия была!', points: -5, news: '⚪ Вы потеряли деньги из-за незнания прав. -5 баллов.', actions: [{text: '🔄 Попробовать иначе', next: 'jacket_defect'}] },
-
-  // Ситуация 3: Онлайн покупка (Возврат без брака)
-  online_return: { npc: '📱 Олег', text: 'Заказал кроссовки в интернет-магазине. Не подошли по цвету. Хочу вернуть, а магазин пишет: "Без брака возврат невозможен".', actions: [
-    {text: '😡 Оставить отзыв', next: 'online_bad_review', hint: 'Эмоции'},
-    {text: '⚖️ Проверить закон (Кодекс)', next: 'online_code', hint: 'Дистанционная продажа'}
-  ]},
-  online_code: { sys: true, text: '🔍 Откройте ст. 26.1. При дистанционной продаже можно вернуть товар в течение 7 дней даже без дефекта!', actions: [{text: '📤 Оформить возврат', action: 'useOnlineLaw'}] },
-  success_online: { npc: '📱 Олег', text: 'Приняли заявку! Деньги вернут после проверки. Ты профи! 🤝', points: 35, news: '✅ Товар возвращен. Право на отказ при онлайн-покупке. +35 баллов!', actions: [{text: '🏗️ Финал: Застройка парка', next: 'admin_park'}] },
-  online_bad_review: { sys: true, text: '📝 Отзыв написан, но магазин молчит. Закон защищает больше, чем эмоции.', points: 0, news: '⚪ Отзыв не вернул деньги.', actions: [{text: '🔄 Попробовать иначе', next: 'online_return'}] },
-
-  // Ситуация 4 (Финал): Администрация
-  admin_park: { npc: '📢 Мэрия', text: 'Ваш район хотят застроить, вырубив парк. Что делать?', actions: [
-    {text: '📝 Собрать подписи', next: 'success_petition'},
-    {text: '🤷 Ничего', next: 'fail_ignore'}
-  ]},
-  success_petition: { sys: true, text: '📋 200 подписей собраны! По ФЗ-131 власти обязаны рассмотреть обращение.', points: 30, level: 'Активист', news: '🎉 Успешное обращение в органы власти. Уровень повышен!', actions: [{text: '🏆 Завершить демо', action: 'finish'}] },
-  fail_ignore: { sys: true, text: '🌳 Парк вырубили. Бездействие — тоже выбор.', points: -5, news: '⚠️ Упущена возможность повлиять. -5 баллов.', actions: [{text: '🔄 Попробовать иначе', next: 'admin_park'}] }
-};
-
-const CODEX = [
-  { 
-    id: 'zoZPP', 
-    title: 'Закон "О защите прав потребителей", ст. 18', 
-    summary: 'Права потребителя при обнаружении недостатков в товаре.',
-    text: 'Потребитель в случае обнаружения в товаре недостатков, если они не были оговорены продавцом, по своему выбору вправе:\n\n1. Отказаться от исполнения договора купли-продажи и потребовать возврата уплаченной за такой товар суммы;\n2. Либо предъявить требование о его замене на товар этой же марки (модели, артикула) или на такой же товар другой марки (модели, артикула) с соответствующим перерасчетом покупной цены;\n\nВсё это возможно в течение пятнадцати дней со дня передачи потребителю такого товара.' 
-  },
-  { 
-    id: 'zoZPP_26', 
-    title: 'Закон "О защите прав потребителей", ст. 26.1', 
-    summary: 'Дистанционный способ продажи товара (Интернет-магазин).',
-    text: 'При дистанционном способе продажи потребитель вправе отказаться от товара в любое время до его передачи, а после передачи товара — в течение семи дней.\n\nВ случае, если информация о порядке и сроках возврата товара надлежащего качества не была предоставлена в письменной форме, указанный срок увеличивается до трех месяцев.' 
-  },
-  { 
-    id: 'koap', 
-    title: 'КоАП РФ, ст. 20.1 «Мелкое хулиганство»', 
-    summary: 'Наказание за скандалы в общественных местах.',
-    text: 'Нарушение общественного порядка, выражающее явное неуважение к обществу, сопровождающееся нецензурной бранью в общественных местах, оскорбительным приставанием к гражданам, а равно уничтожением или повреждением чужого имущества:\n\nВлечёт наложение административного штрафа в размере от 500 до 1000 рублей или административный арест на срок до 15 суток.' 
-  },
-  { 
-    id: 'fz131', 
-    title: 'ФЗ №131 «О местном самоуправлении»', 
-    summary: 'Право граждан на обращение и публичные слушания.',
-    text: 'Граждане имеют право обращаться в органы местного самоуправления с предложениями, заявлениями и жалобами.\n\nВопросы застройки территорий, затрагивающие интересы жителей, должны выноситься на публичные слушания.' 
-  }
-];
-
-document.getElementById('start-game-btn').addEventListener('click', () => {
-  document.getElementById('start-game-btn').classList.add('hidden');
-  document.getElementById('game-ui').classList.remove('hidden');
-  switchGameTab('chat'); loadScene('start'); updateStats();
-});
-document.getElementById('reset-game-btn').addEventListener('click', resetCivicsGame);
-document.querySelectorAll('.g-tab').forEach(btn => btn.addEventListener('click', () => switchGameTab(btn.dataset.gtab)));
-
-function switchGameTab(tab) {
-  document.querySelectorAll('.g-tab').forEach(b => b.classList.toggle('active', b.dataset.gtab === tab));
-  document.querySelectorAll('.g-panel').forEach(p => {
-    p.classList.toggle('active', p.id === `g-${tab}`);
-    p.classList.toggle('hidden', p.id !== `g-${tab}`);
-  });
-  if (tab === 'codex') renderCodex();
-  if (tab === 'news') { renderNews(); G.unread = false; document.getElementById('news-badge').classList.add('hidden'); }
-  if (tab === 'profile') renderProfile();
-}
-
-function addNews(text) {
-  if(!text) return;
-  G.news.unshift(text);
-  G.unread = true;
-  document.getElementById('news-badge').classList.remove('hidden');
-  showToast('📰 Новое событие в ленте!');
-}
-
-function showToast(msg) {
-  const toast = document.createElement('div'); toast.className = 'toast-notification'; toast.textContent = msg;
-  document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000);
-}
-
-function loadScene(id) {
-  const s = SCENES[id]; if (!s) return;
-  G.currentScene = id;
-  const chat = document.getElementById('chat-messages');
-  const actions = document.getElementById('chat-actions');
-  let cls = 'sys', lbl = '💡';
-  if (s.npc) { cls = 'npc'; lbl = s.npc.split(' ')[0]; }
-  chat.innerHTML += `<div class="chat-msg ${cls}"><b>${lbl}</b><br>${s.text}</div>`;
-  chat.scrollTop = chat.scrollHeight;
-  
-  if (s.points) { G.points += s.points; if(s.level) G.level = s.level; updateStats(); }
-  if (s.news) { addNews(s.news); }
-  
-  actions.innerHTML = '';
-  (s.actions || []).forEach(a => {
-    if (a.action === 'openCodex') {
-      const btn = document.createElement('button'); btn.className = 'g-action'; btn.textContent = a.text;
-      btn.onclick = () => switchGameTab('codex');
-      actions.appendChild(btn);
-      return;
-    }
-    if (a.action === 'useJacketLaw') {
-       const btn = document.createElement('button'); btn.className = 'g-action'; btn.textContent = a.text;
-       btn.onclick = () => {
-         chat.innerHTML += `<div class="chat-msg player">${a.text}</div>`;
-         chat.scrollTop = chat.scrollHeight;
-         setTimeout(() => loadScene('success_jacket'), 400);
-       };
-       actions.appendChild(btn);
-       return;
-    }
-    if (a.action === 'useOnlineLaw') {
-       const btn = document.createElement('button'); btn.className = 'g-action'; btn.textContent = a.text;
-       btn.onclick = () => {
-         chat.innerHTML += `<div class="chat-msg player">${a.text}</div>`;
-         chat.scrollTop = chat.scrollHeight;
-         setTimeout(() => loadScene('success_online'), 400);
-       };
-       actions.appendChild(btn);
-       return;
-    }
-    
-    const btn = document.createElement('button'); btn.className = 'g-action';
-    btn.innerHTML = a.text + (a.hint ? ` <small style="opacity:0.7">(${a.hint})</small>` : '');
-    btn.onclick = () => {
-      chat.innerHTML += `<div class="chat-msg player">${a.text.replace(/<.*?>/g,'')}</div>`;
-      chat.scrollTop = chat.scrollHeight;
-      setTimeout(() => loadScene(a.next), 400);
-    };
-    actions.appendChild(btn);
-  });
-  if (s.action === 'finish') { alert('🏆 Демо-версия пройдена! Спасибо за игру.'); resetCivicsGame(); return; }
-}
-
-function renderCodex() {
-  const q = document.getElementById('codex-search').value.toLowerCase();
-  const res = document.getElementById('codex-results');
-  const found = CODEX.filter(c => c.title.toLowerCase().includes(q) || c.summary.toLowerCase().includes(q));
-  
-  res.innerHTML = found.map((c, index) => `
-    <div class="codex-card" onclick="toggleCodex(${index})">
-      <h5>📜 ${c.title}</h5>
-      <div class="codex-short">${c.summary}</div>
-      <div id="codex-text-${index}" class="codex-full" style="display:none; margin-top:8px; background:rgba(0,0,0,0.3); padding:8px; border-radius:6px; line-height:1.5; word-wrap:break-word;">
-        ${c.text.replace(/\n/g, '<br>')}
-      </div>
-      <span id="codex-btn-${index}" class="codex-toggle">Читать полностью ▼</span>
-    </div>
-  `).join('');
-}
-
-window.toggleCodex = (index) => {
-  const el = document.getElementById(`codex-text-${index}`);
-  const btn = document.getElementById(`codex-btn-${index}`);
-  if (el.style.display === 'none') {
-    el.style.display = 'block';
-    btn.textContent = 'Свернуть ▲';
-  } else {
-    el.style.display = 'none';
-    btn.textContent = 'Читать полностью ▼';
-  }
-};
-
-document.getElementById('codex-search').addEventListener('input', renderCodex);
-
-function renderNews() {
-  document.getElementById('news-feed').innerHTML = G.news.length ? G.news.map(n => `<div class="news-card ${n.startsWith('✅')||n.startsWith('🎉')?'ok':''}">${n}</div>`).join('') : '<div style="opacity:0.7; padding:10px">📰 Лента пуста.</div>';
-}
-
-function renderProfile() {
-  document.getElementById('profile-stats').innerHTML = `<div style="margin-bottom:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; border:1px solid #cc8855;"><div style="color:#ffb380; font-size:1.2rem; margin-bottom:10px">📊 ${G.level}</div><div style="height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden"><div style="height:100%; width:${Math.min(100, G.points/2)}%; background:#ff9966; transition:0.3s"></div></div><div style="margin-top:8px; color:#e6a373">Баллов: ${G.points} / 200</div></div>`;
-}
-
-function updateStats() { document.getElementById('g-level').textContent = `Уровень: ${G.level}`; document.getElementById('g-points').textContent = `🍑 ${G.points} баллов`; }
-function resetCivicsGame() { G.points = 0; G.level = 'Новичок'; G.news = []; G.currentScene = null; G.unread = false; document.getElementById('chat-messages').innerHTML = ''; document.getElementById('chat-actions').innerHTML = ''; document.getElementById('start-game-btn').classList.remove('hidden'); document.getElementById('game-ui').classList.add('hidden'); document.getElementById('news-badge').classList.add('hidden'); }
 
 initFlashes(); if(petalsContainer) petalsContainer.classList.add('active');
 });
