@@ -28,7 +28,7 @@ questions: [
 ]},
 { id: 'history_19_full', title: '📜 История России XIX века (80 вопросов)',
 questions: [
-{ q: '1. Прочтите высказывание: «[[1]] будут во что бы то ни стало, хотя бы пришлось уложить трупами дорогу от [[2]] до [[3]]». [[4]]', options: ['Александр I', 'Николай I', 'Александр II', 'Павел I'], correct: 0 },
+{ q: '1. «[[1]] будут во что бы то ни стало, хотя бы пришлось уложить трупами дорогу от [[2]] до [[3]]». [[4]]', options: ['военные поселения', 'фабрики', 'Петербург', 'Москва', 'Чугуева', 'Вятки', 'Александр I', 'Николай I'], correct: [0, 2, 4, 6], multi: true },
 { q: '2. Установите соответствие: 1) Русско-турецкая война 1877–1878, 2) IV антифранцузская коалиция, 3) Крымская война 1853–1856', options: ['1-д, 2-в, 3-г', '1-а, 2-б, 3-в', '1-г, 2-д, 3-а', '1-б, 2-в, 3-д'], correct: 0 },
 { q: '3. «Запереть Московию в лесах» стремилась (стремились)', options: ['Англия и Франция', 'Турция', 'Пруссия', 'Австрия'], correct: 0 },
 { q: '4. Поражение России в Крымской войне, по мнению ряда историков:', options: ['Было реальным итогом военных сражений', 'Было просчетом русской дипломатии', 'Было политическим решением'], correct: 0 },
@@ -143,8 +143,76 @@ if(hList){
 
 function openHistoryFioModal(test){ pendingTestId='history'; historyUserInfo={test}; document.getElementById('fio-modal').style.display='flex'; document.getElementById('fio-input').value=''; document.getElementById('email-input').value=''; document.getElementById('fio-input').focus(); }
 function startHistoryTest(){ if(!historyUserInfo)return; currentTest=historyUserInfo.test; qIdx=0; score=0; answered=false; webhookAnswers=[]; document.getElementById('fio-modal').style.display='none'; document.getElementById('history-test-list').classList.add('hidden'); document.getElementById('history-quiz').classList.remove('hidden'); document.getElementById('history-back-btn').classList.remove('hidden'); showHistoryQuestion(); }
-function showHistoryQuestion(){ const q=currentTest.questions[qIdx]; document.getElementById('history-quiz').innerHTML=`<div class="question-frame" style="max-width:100%;overflow-wrap:break-word;"><h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4><p style="margin-bottom:18px;overflow-wrap:break-word;word-break:break-word;">${q.q}</p><div id="h-opts" style="display:flex;flex-direction:column;gap:10px;"></div></div>`; const opts=document.getElementById('h-opts'); q.options.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='answer-option'; btn.textContent=opt; btn.style.cssText=`background:rgba(15,10,26,0.6);border:1px solid rgba(255,170,102,0.35);color:var(--text);padding:12px 16px;border-radius:12px;text-align:left;cursor:pointer;transition:0.2s;font-size:1rem;`; btn.onmouseenter=()=>{if(!answered){btn.style.borderColor='var(--accent)';btn.style.transform='translateX(4px)';}}; btn.onmouseleave=()=>{if(!answered){btn.style.borderColor='rgba(255,170,102,0.35)';btn.style.transform='translateX(0)';}}; btn.onclick=()=>checkHistoryAnswer(i); opts.appendChild(btn); }); }
-function checkHistoryAnswer(idx){ if(answered)return; answered=true; const correct=currentTest.questions[qIdx].correct; if(currentTest.id==='test_new_webhook'){ webhookAnswers.push({num:qIdx+1,question:currentTest.questions[qIdx].q,user_answer:currentTest.questions[qIdx].options[idx],correct_answer:currentTest.questions[qIdx].options[correct],is_correct:idx===correct}); } document.querySelectorAll('#h-opts .answer-option').forEach((el,i)=>{ el.style.pointerEvents='none'; if(i===correct){el.style.borderColor='#2ecc71';el.style.boxShadow='0 0 0 2px rgba(46,204,113,0.25)';} else if(i===idx){el.style.borderColor='#e74c3c';el.style.boxShadow='0 0 0 2px rgba(231,76,60,0.25)';} }); if(idx===correct)score++; setTimeout(()=>{ qIdx++; if(qIdx<currentTest.questions.length){answered=false;showHistoryQuestion();} else finishHistoryTest(); },1100); }
+
+let multiSelected=[];
+function showHistoryQuestion(){ 
+  const q=currentTest.questions[qIdx]; 
+  const isMulti=Array.isArray(q.correct); 
+  multiSelected=[]; 
+  document.getElementById('history-quiz').innerHTML=`<div class="question-frame" style="max-width:100%;overflow-wrap:break-word;"><h4>Вопрос ${qIdx+1} из ${currentTest.questions.length}</h4>${isMulti?'<p style="font-size:0.85rem;color:#ffb380;margin-bottom:8px">👉 Выберите ВСЕ верные варианты и нажмите «Проверить»</p>':''}<p style="margin-bottom:18px;overflow-wrap:break-word;word-break:break-word;">${q.q}</p><div id="h-opts" style="display:flex;flex-direction:column;gap:10px;"></div></div>`; 
+  const opts=document.getElementById('h-opts'); 
+  q.options.forEach((opt,i)=>{ 
+    const btn=document.createElement('button'); 
+    btn.className='answer-option'; 
+    btn.textContent=opt; 
+    btn.dataset.idx=i;
+    btn.style.cssText=`background:rgba(15,10,26,0.6);border:1px solid rgba(255,170,102,0.35);color:var(--text);padding:12px 16px;border-radius:12px;text-align:left;cursor:pointer;transition:0.2s;font-size:1rem;`; 
+    if(isMulti){
+      btn.onclick=()=>{
+        const idx=parseInt(btn.dataset.idx);
+        if(multiSelected.includes(idx)) multiSelected=multiSelected.filter(x=>x!==idx);
+        else multiSelected.push(idx);
+        btn.style.borderColor=multiSelected.includes(idx)?'#ffb380':'rgba(255,170,102,0.35)';
+        btn.style.background=multiSelected.includes(idx)?'rgba(255,179,128,0.15)':'rgba(15,10,26,0.6)';
+      };
+    } else {
+      btn.onmouseenter=()=>{if(!answered){btn.style.borderColor='var(--accent)';btn.style.transform='translateX(4px)';}}; 
+      btn.onmouseleave=()=>{if(!answered){btn.style.borderColor='rgba(255,170,102,0.35)';btn.style.transform='translateX(0)';}}; 
+      btn.onclick=()=>checkHistoryAnswer(i); 
+    }
+    opts.appendChild(btn); 
+  });
+  if(isMulti){
+    const checkBtn=document.createElement('button');
+    checkBtn.textContent='✅ Проверить';
+    checkBtn.style.cssText='margin-top:15px;background:var(--accent);color:#0f0a1a;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;font-weight:bold;align-self:center;';
+    checkBtn.onclick=()=>checkHistoryMultiAnswer(q);
+    opts.appendChild(checkBtn);
+  }
+}
+
+function checkHistoryAnswer(idx){ 
+  if(answered)return; answered=true; 
+  const correct=currentTest.questions[qIdx].correct; 
+  if(currentTest.id==='test_new_webhook'){ webhookAnswers.push({num:qIdx+1,question:currentTest.questions[qIdx].q,user_answer:currentTest.questions[qIdx].options[idx],correct_answer:currentTest.questions[qIdx].options[correct],is_correct:idx===correct}); } 
+  document.querySelectorAll('#h-opts .answer-option').forEach((el,i)=>{ 
+    el.style.pointerEvents='none'; 
+    if(i===correct){el.style.borderColor='#2ecc71';el.style.boxShadow='0 0 0 2px rgba(46,204,113,0.25)';} 
+    else if(i===idx){el.style.borderColor='#e74c3c';el.style.boxShadow='0 0 0 2px rgba(231,76,60,0.25)';} 
+  }); 
+  if(idx===correct)score++; 
+  setTimeout(()=>{ qIdx++; if(qIdx<currentTest.questions.length){answered=false;showHistoryQuestion();} else finishHistoryTest(); },1100); 
+}
+
+function checkHistoryMultiAnswer(q){
+  if(answered)return; answered=true;
+  const correctSet=new Set(q.correct);
+  const selectedSet=new Set(multiSelected);
+  const isCorrect=correctSet.size===selectedSet.size && [...correctSet].every(c=>selectedSet.has(c));
+  
+  document.querySelectorAll('#h-opts .answer-option').forEach(el=>{
+    el.style.pointerEvents='none';
+    const idx=parseInt(el.dataset.idx);
+    if(correctSet.has(idx)){el.style.borderColor='#2ecc71';el.style.boxShadow='0 0 0 2px rgba(46,204,113,0.25)';}
+    else if(selectedSet.has(idx)){el.style.borderColor='#e74c3c';el.style.boxShadow='0 0 0 2px rgba(231,76,60,0.25)';}
+  });
+  if(isCorrect)score++;
+  if(currentTest.id==='test_new_webhook'){
+    webhookAnswers.push({num:qIdx+1,question:q.q,user_answer:multiSelected.map(i=>q.options[i]).join(', '),correct_answer:q.correct.map(i=>q.options[i]).join(', '),is_correct:isCorrect});
+  }
+  setTimeout(()=>{ qIdx++; if(qIdx<currentTest.questions.length){answered=false;showHistoryQuestion();} else finishHistoryTest(); },1100);
+}
+
 async function finishHistoryTest(){ const pct=Math.round((score/currentTest.questions.length)*100), fio=historyUserInfo?.fio||'Аноним';
 if(currentTest.id==='test_new_webhook'){
 const detailsHTML=currentTest.questions.map((q,i)=>{const ans=webhookAnswers[i]||{},isCorrect=ans.is_correct; return `<div style="background:${isCorrect?'rgba(46,204,113,0.12)':'rgba(231,76,60,0.12)'};padding:12px;border-radius:10px;margin:8px 0;border-left:3px solid ${isCorrect?'#2ecc71':'#e74c3c'};"><div style="font-weight:600;margin-bottom:5px;">В${ans.num}. ${q.q}</div><div>Ваш ответ: <span style="color:${isCorrect?'#2ecc71':'#e74c3c'}">${ans.user_answer||'—'}</span>${!isCorrect?`<br>Правильно: <b>${ans.correct_answer||q.options[q.correct]}</b>`:''}</div></div>`;}).join('');
