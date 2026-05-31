@@ -235,7 +235,20 @@ function checkHistoryAnswer(userSelection){
     const fmtAns=Object.values(userSelection).join(', ');
     webhookAnswers.push({num:qIdx+1,question:q.q,user_answer:fmtAns,correct_answer:q.type==='single'?q.options[q.correct]:Object.values(q.correct).join(', '),is_correct:isCorrect});
   }
-  setTimeout(()=>{ qIdx++; if(qIdx<currentTest.questions.length){answered=false;showHistoryQuestion();} else finishHistoryTest(); },2200); 
+  const nextBtn = document.createElement('button');
+nextBtn.textContent = qIdx + 1 < currentTest.questions.length ? 'Далее →' : 'Показать результат 📊';
+nextBtn.style.cssText = 'margin-top:15px;background:var(--accent);color:#0f0a1a;border:none;padding:12px 24px;border-radius:10px;cursor:pointer;font-weight:bold;align-self:center;';
+nextBtn.onclick = () => {
+  qIdx++;
+  if(qIdx < currentTest.questions.length){
+    answered = false;
+    showHistoryQuestion();
+  } else {
+    finishHistoryTest();
+  }
+};
+const opts = document.getElementById('h-opts');
+if(opts) opts.appendChild(nextBtn); 
 }
 
 async function finishHistoryTest(){ const pct=Math.round((score/currentTest.questions.length)*100), fio=historyUserInfo?.fio||'Аноним';
