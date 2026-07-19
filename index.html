@@ -5,119 +5,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Лисий Сад</title>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="app">
-  <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌓</button>
-  <div class="effects-container">
-    <div id="sunRays" class="sun-rays"></div>
-    <div id="moonLight" class="moon-light"></div>
-    <div id="dustParticles" class="dust-particles"></div>
-    <div id="petals-container" class="petals-container"></div>
-  </div>
-  <header class="main-header">
-    <div class="logo-area">
-      <div class="fox-wrapper">
-        <div class="sage-rings"><span class="ring"></span><span class="ring"></span><span class="ring"></span></div>
-        <img src="persi_fox.png" alt="Лисий Сад" class="main-logo">
-      </div>
-      <h1>Лисий Сад</h1>
+  <!-- Фон с визуализацией -->
+  <canvas id="visualizer"></canvas>
+  
+  <!-- Навигация -->
+  <nav class="nav">
+    <div class="nav-logo">🦊 Лисий Сад</div>
+    <div class="nav-links">
+      <button class="nav-link active" data-tab="home">Главная</button>
+      <button class="nav-link" data-tab="psychology">🧠 Психология</button>
+      <button class="nav-link" data-tab="about">О проекте</button>
     </div>
-    <nav class="main-nav">
-      <button class="nav-btn active" data-tab="home">🏠 Главная</button>
-      <button class="nav-btn" data-tab="history">📜 Тесты</button>
-      <button class="nav-btn" data-tab="civics-game">🎮 Игра</button>
-      <button class="nav-btn" data-tab="psychology">🧠 Психология</button>
-      <button class="nav-btn nav-right" data-tab="about">📖 О нас</button>
-    </nav>
-  </header>
+    <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌓</button>
+  </nav>
 
+  <!-- Контент -->
   <main class="content">
+    <!-- Главная -->
     <section id="home" class="tab active">
-      <div class="card">
-        <h2>Добро пожаловать</h2>
-        <p class="quote">🌿 «Привет! Я Шалфей, твой помощник по учёбе и проводник по истории! В этом саду каждое дерево хранит память, а каждый камень — урок прошлого.»</p>
-        <button class="btn-primary" onclick="switchTab('history')">📜 Перейти к тестам</button>
-      </div>
-    </section>
-
-    <section id="history" class="tab">
-      <h2>📜 Тесты по истории и обществознанию</h2>
-      <div class="test-list" id="history-test-list"></div>
-      <div id="history-quiz" class="hidden"></div>
-      <button class="btn-back hidden" id="history-back-btn" onclick="exitHistoryTest()">← Назад</button>
-    </section>
-
-    <!-- 🎮 ИГРА -->
-    <section id="civics-game" class="tab">
-      <div class="game-container">
-        <div class="game-header">
-          <h2>🎮 Гражданин: Право голоса</h2>
-          <p>Текстовая RPG о законах и выборе</p>
+      <div class="hero">
+        <h1>Добро пожаловать в Лисий Сад</h1>
+        <p class="hero-sub">Интерактивное пространство для самопознания и гармонии</p>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="switchTab('psychology')">Начать тестирование</button>
+          <button class="btn-secondary" onclick="switchTab('about')">Узнать больше</button>
         </div>
-        <button id="start-game-btn" class="game-btn-start">▶ Начать игру</button>
-        
-        <div id="game-ui" class="hidden">
-          <div class="game-stats">
-            <span id="g-level">Уровень: Новичок</span>
-            <span id="g-points">🍑 0 баллов</span>
-          </div>
-          <div class="game-tabs">
-            <button class="g-tab active" data-gtab="chat">💬 Чат</button>
-            <button class="g-tab" data-gtab="codex">📚 Кодекс</button>
-            <button class="g-tab" data-gtab="news">📰 Новости <span id="news-badge" class="news-badge hidden">!</span></button>
-            <button class="g-tab" data-gtab="profile">👤 Профиль</button>
-          </div>
-          <div id="g-chat" class="g-panel active"><div id="chat-messages"></div><div id="chat-actions"></div></div>
-          <div id="g-codex" class="g-panel hidden"><input type="text" id="codex-search" placeholder="🔍 Поиск: возврат..." class="game-input"><div id="codex-results"></div></div>
-          <div id="g-news" class="g-panel hidden"><div id="news-feed"></div></div>
-          <div id="g-profile" class="g-panel hidden">
-            <div id="profile-stats"></div>
-            <button class="game-btn-small" id="reset-game-btn">🔄 Заново</button>
-            <button class="game-btn-small" onclick="switchTab('home')">← Выйти</button>
-          </div>
+      </div>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>Психологические тесты</h3>
+          <p>Профессиональные методики для понимания себя: КОС и тест Михельсона</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Визуальная медитация</h3>
+          <p>Успокаивающая анимация Catmull-Rom кривых для релаксации</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Конфиденциальность</h3>
+          <p>Ваши результаты отправляются только вам и не сохраняются на сервере</p>
         </div>
       </div>
     </section>
 
-    <!-- 🧠 ПСИХОЛОГИЯ С АСЕЙ -->
-    <section id="psychology" class="psych-overlay">
-      <div class="psych-container">
-        <div class="geometric-flowers" id="geo-flowers"></div>
-        <div class="asya-header">
-          <div class="asya-logo-wrap">
-            <div class="asya-pulse"></div>
-            <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
-          </div>
+    <!-- Психология с Асей -->
+    <section id="psychology" class="tab">
+      <div class="psych-header">
+        <div class="asya-avatar">
+          <img src="red_panda_asya.png" alt="Ася">
+          <div class="asya-glow"></div>
+        </div>
+        <div>
           <h2>Психология с Асей</h2>
-          <p>Привет! Я Ася, отвечаю за психологию и твоё самочувствие 🐾</p>
+          <p>Привет! Я Ася 🐾 Помогу тебе лучше понять себя через проверенные методики</p>
         </div>
-        <div id="psych-menu-view">
-          <div class="psych-menu" id="psych-menu">
-            <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
-            <div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
-          </div>
-        </div>
-        <div id="psych-quiz" class="hidden"></div>
-        <div id="psych-results" class="hidden"></div>
-        <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← В меню</button>
-        <button class="btn-exit-psych" onclick="switchTab('home')">← Вернуться</button>
       </div>
+      
+      <div class="test-cards">
+        <div class="test-card" onclick="openFioModal('kos')">
+          <div class="test-card-icon">🧩</div>
+          <h3>Тест КОС</h3>
+          <p>Коммуникативные и организаторские склонности • 40 вопросов</p>
+          <span class="test-duration">~10 минут</span>
+        </div>
+        <div class="test-card" onclick="openFioModal('michelson')">
+          <div class="test-card-icon">💬</div>
+          <h3>Тест Михельсона</h3>
+          <p>Коммуникативная компетентность • 27 ситуационных вопросов</p>
+          <span class="test-duration">~8 минут</span>
+        </div>
+      </div>
+      
+      <!-- Контейнер для теста -->
+      <div id="psych-quiz" class="hidden"></div>
+      <div id="psych-results" class="hidden"></div>
+      <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← Назад к выбору</button>
     </section>
 
+    <!-- О проекте -->
     <section id="about" class="tab">
-      <div class="card lore-single">
-        <div class="lore-block sage-block"><h3>🦊 Шалфей — Хранитель Времени</h3><p>Говорят, что Лисий Сад существует столько же, сколько и первые книги. В самой чаще леса поселился мудрый лис по имени Шалфей. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой рассказ.</p></div>
-        <div class="lore-glow-divider"><span class="glow-sym">✦</span><span class="glow-text">Связь Времени и Души</span><span class="glow-sym">✦</span></div>
-        <div class="lore-block asya-block"><h3>🐾 Ася — Душа Гармонии</h3><p>Если Шалфей следит за временем, то Ася — маленькая красная панда — хранит внутренний мир тех, кто приходит в Сад. Она помогает понять свои мысли, укрепить уверенность и найти баланс.</p></div>
+      <div class="about-card">
+        <h2>О проекте</h2>
+        <p><strong>Лисий Сад</strong> — это интерактивное пространство, созданное для поддержки вашего психологического благополучия.</p>
+        <p>Мы объединили проверенные психологические методики с успокаивающей визуальной эстетикой, чтобы создать комфортную среду для самопознания.</p>
+        
+        <h3 style="margin-top:24px">Технологии</h3>
+        <ul class="tech-list">
+          <li>✨ Визуализация Catmull-Rom кривых в реальном времени</li>
+          <li>🎨 Адаптивный тёмный интерфейс с плавными переходами</li>
+          <li>🔐 Безопасная отправка результатов через FormSubmit</li>
+          <li>📱 Полная поддержка мобильных устройств</li>
+        </ul>
+        
+        <h3 style="margin-top:24px">Контакты</h3>
+        <p>По вопросам сотрудничества: <a href="mailto:aniruf14.02@gmail.com">aniruf14.02@gmail.com</a></p>
       </div>
     </section>
   </main>
 
+  <!-- Модальное окно для ввода ФИО -->
   <div class="modal-overlay" id="fio-modal">
     <div class="modal-box">
       <h3>🐾 Перед началом теста</h3>
+      <p style="margin:8px 0 16px;opacity:0.8;font-size:0.9rem">Введите ваше имя для персонализации результатов</p>
       <input type="text" id="fio-input" placeholder="ФИО *" class="input">
       <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
       <div class="modal-actions">
@@ -127,6 +123,7 @@
     </div>
   </div>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>
