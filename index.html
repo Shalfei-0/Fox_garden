@@ -31,383 +31,130 @@
   }
 
   [data-theme="light"] {
-    --bg: #f4f5f9;
-    --bg2: #e9eaf0;
-    --bg-panel: rgba(255, 255, 255, 0.8);
-    --bg-panel-hover: rgba(255, 255, 255, 0.95);
-    --border-subtle: rgba(0, 0, 0, 0.08);
-    --border-accent: rgba(200, 60, 20, 0.4);
-    --accent: #d9441e;
-    --accent-glow: 0 0 20px rgba(217, 68, 30, 0.3);
-    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.12);
-    --text-primary: #1a1a28;
-    --text-secondary: rgba(26, 26, 40, 0.6);
+    --bg: #f4f5f9; --bg2: #e9eaf0;
+    --bg-panel: rgba(255, 255, 255, 0.8); --bg-panel-hover: rgba(255, 255, 255, 0.95);
+    --border-subtle: rgba(0, 0, 0, 0.08); --border-accent: rgba(200, 60, 20, 0.4);
+    --accent: #d9441e; --accent-glow: 0 0 20px rgba(217, 68, 30, 0.3);
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08); --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.12);
+    --text-primary: #1a1a28; --text-secondary: rgba(26, 26, 40, 0.6);
   }
 
   body.psychology-mode {
-    --bg: #0a1128;
-    --bg2: #12243d;
-    --bg-panel: rgba(10, 17, 40, 0.75);
-    --border-accent: rgba(100, 181, 246, 0.4);
-    --accent: #64b5f6;
+    --bg: #0a1128; --bg2: #12243d; --bg-panel: rgba(10, 17, 40, 0.75);
+    --border-accent: rgba(100, 181, 246, 0.4); --accent: #64b5f6;
     --accent-glow: 0 0 25px rgba(100, 181, 246, 0.5);
-    --text-primary: #e0e0e0;
-    --text-secondary: rgba(224, 224, 224, 0.6);
+    --text-primary: #e0e0e0; --text-secondary: rgba(224, 224, 224, 0.6);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html, body {
-    height: 100%;
-    background: var(--bg);
+    height: 100%; background: var(--bg);
     background-image: radial-gradient(circle at 50% 0%, var(--bg2) 0%, var(--bg) 60%);
-    color: var(--text-primary);
-    font-family: var(--font-main);
-    font-weight: 400;
-    line-height: 1.65;
-    letter-spacing: 0.005em;
-    overflow-x: hidden;
+    color: var(--text-primary); font-family: var(--font-main);
+    font-weight: 400; line-height: 1.65; overflow-x: hidden;
     transition: background-color 0.5s ease, color 0.5s ease;
   }
 
-  /* Фоновые частицы */
-  #particles-bg {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.4;
-  }
-
-  /* Визуализатор амплитуды (полный экран, по центру) */
-  #bg-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    z-index: 0; pointer-events: none;
-  }
+  #particles-bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.4; }
+  #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   
-  /* Навигация */
   .top-nav {
-    position: fixed;
-    top: 0; left: 0; width: 100%;
-    z-index: 50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-    background: var(--bg-panel);
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 30px; background: var(--bg-panel);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-subtle);
-    transition: var(--transition);
   }
-  .logo {
-    font-family: var(--font-heading);
-    font-size: 1.5rem; font-weight: 700;
-    display: flex; align-items: center; gap: 10px;
-    color: var(--text-primary);
-    text-shadow: 0 0 15px var(--accent-glow);
-  }
-  
+  .logo { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px var(--accent-glow); }
   .nav-links { display: flex; gap: 12px; align-items: center; }
   .nav-links a, .nav-links button {
-    color: var(--text-secondary);
-    text-decoration: none; background: none; border: 1px solid transparent;
+    color: var(--text-secondary); text-decoration: none; background: none; border: 1px solid transparent;
     cursor: pointer; font-family: var(--font-main); font-size: 1rem; font-weight: 600;
-    padding: 9px 18px; border-radius: 30px;
-    transition: var(--transition); position: relative; overflow: hidden;
+    padding: 9px 18px; border-radius: 30px; transition: var(--transition); position: relative; overflow: hidden;
   }
-  
-  /* Эффекты навигации */
-  .nav-links a:hover, .nav-links button:hover { 
-    color: var(--text-primary); 
-    background: rgba(255,140,50,0.12); 
-    border-color: var(--border-subtle);
-  }
-  
-  /* Подсветка активного раздела */
-  .nav-links a.active-nav {
-    color: #0a0a0f;
-    background: var(--accent);
-    border-color: var(--accent);
-    box-shadow: 0 0 20px var(--accent-glow), inset 0 1px 2px rgba(255,255,255,0.3);
-  }
-  [data-theme="light"] .nav-links a.active-nav {
-    color: #ffffff;
-  }
-  body.psychology-mode .nav-links a.active-nav {
-    color: #0a1128;
-  }
-
-  /* Эффект нажатия (мягкое вдавливание) */
-  .nav-links a:active, .nav-links button:active {
-    transform: scale(0.92);
-    box-shadow: 0 0 10px var(--accent-glow), inset 0 2px 5px rgba(0,0,0,0.2);
-  }
-  .nav-links a.active-nav:active {
-    box-shadow: 0 0 15px var(--accent-glow), inset 0 3px 8px rgba(0,0,0,0.3);
-  }
-
-  /* Кнопка гамбургер (скрыта по умолчанию) */
-  .hamburger {
-    display: none;
-    background: none;
-    border: 1px solid var(--border-subtle);
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    padding: 4px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: var(--transition);
-  }
+  .nav-links a:hover, .nav-links button:hover { color: var(--text-primary); background: rgba(255,140,50,0.12); border-color: var(--border-subtle); }
+  .nav-links a.active-nav { color: #0a0a0f; background: var(--accent); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow), inset 0 1px 2px rgba(255,255,255,0.3); }
+  [data-theme="light"] .nav-links a.active-nav { color: #ffffff; }
+  body.psychology-mode .nav-links a.active-nav { color: #0a1128; }
+  .nav-links a:active, .nav-links button:active { transform: scale(0.92); box-shadow: 0 0 10px var(--accent-glow), inset 0 2px 5px rgba(0,0,0,0.2); }
+  .hamburger { display: none; background: none; border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 1.5rem; padding: 4px 12px; border-radius: 10px; cursor: pointer; transition: var(--transition); }
   .hamburger:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* Основной контент */
-  .site-content {
-    position: relative;
-    z-index: 2;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 110px 20px 120px;
-    min-height: 100vh;
-  }
-
+  .site-content { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 110px 20px 120px; min-height: 100vh; }
   .view { display: none; animation: fadeIn 0.6s ease; }
   .view.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
   .home-center { text-align: center; margin-top: 40px; }
-  
-  /* Изображения персонажей (уменьшены для ПК) */
-  .fox-icon {
-    width: 180px; 
-    height: auto;
-    max-width: 85%;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    margin-bottom: 20px;
-    object-fit: contain;
-    transition: transform 0.4s;
-  }
+  .fox-icon { width: 180px; height: auto; max-width: 85%; border: none; border-radius: 0; box-shadow: none; margin-bottom: 20px; object-fit: contain; transition: transform 0.4s; }
   .fox-icon:hover { transform: scale(1.05); }
   
   .home-center h1, .view h2 {
-    font-family: var(--font-heading);
-    font-size: 2.6rem; font-weight: 700;
+    font-family: var(--font-heading); font-size: 2.6rem; font-weight: 700;
     background: linear-gradient(135deg, #fff 10%, var(--accent) 50%, #ffb380 90%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
-    letter-spacing: -0.01em; margin-bottom: 15px;
-    background-size: 200% 200%;
-    animation: shimmer 3s ease-in-out infinite;
+    letter-spacing: -0.01em; margin-bottom: 15px; background-size: 200% 200%; animation: shimmer 3s ease-in-out infinite;
   }
-  body.psychology-mode .home-center h1, body.psychology-mode .view h2 {
-    background: linear-gradient(135deg, #fff 10%, #64b5f6 50%, #b3d9f7 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  [data-theme="light"] .home-center h1, [data-theme="light"] .view h2 {
-     background: linear-gradient(135deg, #333 10%, var(--accent) 50%, #ff8c32 90%);
-     -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  body.psychology-mode .home-center h1, body.psychology-mode .view h2 { background: linear-gradient(135deg, #fff 10%, #64b5f6 50%, #b3d9f7 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  [data-theme="light"] .home-center h1, [data-theme="light"] .view h2 { background: linear-gradient(135deg, #333 10%, var(--accent) 50%, #ff8c32 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
   @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-  
   .home-center p { font-size: 1.1rem; margin: 10px 0 30px; opacity: 0.85; font-weight: 400; }
 
-  /* Кнопки со свечением */
   .btn-group { display: flex; gap: 15px; justify-content: center; margin-bottom: 50px; flex-wrap: wrap; }
   .btn {
-    padding: 14px 28px; border-radius: 30px; border: 1px solid var(--accent);
-    background: transparent; color: var(--text-primary);
-    cursor: pointer; font-size: 1rem; font-weight: 700;
-    transition: var(--transition); position: relative; overflow: hidden;
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    font-family: var(--font-main);
+    padding: 14px 28px; border-radius: 30px; border: 1px solid var(--accent); background: transparent; color: var(--text-primary);
+    cursor: pointer; font-size: 1rem; font-weight: 700; transition: var(--transition); position: relative; overflow: hidden;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-family: var(--font-main);
   }
-  .btn.primary { 
-    background: var(--accent); color: #0a0a0f; border: none; 
-    box-shadow: 0 4px 20px rgba(255,140,50,0.3); 
-  }
+  .btn.primary { background: var(--accent); color: #0a0a0f; border: none; box-shadow: 0 4px 20px rgba(255,140,50,0.3); }
   [data-theme="light"] .btn.primary { color: #ffffff; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn:hover:not(:disabled) { 
-    transform: translateY(-3px); 
-    box-shadow: var(--accent-glow);
-    border-color: var(--accent);
-  }
-  .btn.primary:hover:not(:disabled) {
-    box-shadow: 0 0 35px var(--accent-glow);
-  }
-  .btn:active:not(:disabled), .btn.primary:active:not(:disabled) {
-    transform: scale(0.95);
-    box-shadow: 0 0 20px var(--accent), inset 0 0 15px rgba(255,255,255,0.3);
-  }
+  .btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: var(--accent-glow); border-color: var(--accent); }
+  .btn.primary:hover:not(:disabled) { box-shadow: 0 0 35px var(--accent-glow); }
+  .btn:active:not(:disabled), .btn.primary:active:not(:disabled) { transform: scale(0.95); box-shadow: 0 0 20px var(--accent), inset 0 0 15px rgba(255,255,255,0.3); }
 
-  /* Карточки тестов */
-  .tests-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-  .test-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: 24px; padding: 28px;
-    transition: var(--transition); cursor: pointer; position: relative; overflow: hidden;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  }
-  .test-card::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle at 50% 50%, rgba(255,140,50,0.06) 0%, transparent 70%);
-    opacity: 0; transition: opacity 0.5s ease;
-  }
-  .test-card:hover {
-    background: var(--bg-panel-hover); border-color: var(--border-accent);
-    transform: translateY(-6px); box-shadow: var(--shadow-card);
-  }
-  .test-card:hover::before { opacity: 1; }
+  .tests-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .test-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 28px; transition: var(--transition); cursor: pointer; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+  .test-card:hover { background: var(--bg-panel-hover); border-color: var(--border-accent); transform: translateY(-6px); box-shadow: var(--shadow-card); }
   .test-card:active { transform: scale(0.98); }
-  .test-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); font-family: var(--font-heading); }
+  .test-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; font-family: var(--font-heading); }
   .test-card p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; }
-  .test-tag {
-    display: inline-block; font-size: 0.8rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.05em;
-    color: var(--accent); background: rgba(255, 140, 50, 0.1);
-    padding: 5px 12px; border-radius: 20px; margin-bottom: 15px;
-  }
-  body.psychology-mode .test-tag { background: rgba(100, 181, 246, 0.1); }
+  .test-tag { display: inline-block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--accent); background: rgba(255, 140, 50, 0.1); padding: 5px 12px; border-radius: 20px; margin-bottom: 15px; }
 
-  /* Панель визуализатора (правый нижний угол) */
-  .viz-toggle {
-    position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
-    background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-subtle); border-radius: 50%;
-    color: var(--text-secondary); font-size: 22px; cursor: pointer; z-index: 100;
-    display: flex; align-items: center; justify-content: center; transition: var(--transition);
-  }
+  .viz-toggle { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 50%; color: var(--text-secondary); font-size: 22px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
   .viz-toggle:hover { color: var(--accent); border-color: var(--accent); box-shadow: var(--accent-glow); transform: rotate(90deg); }
-  .viz-toggle:active { transform: scale(0.9); box-shadow: 0 0 15px var(--accent); }
 
-  .viz-panel {
-    position: fixed; bottom: 95px; right: 30px; width: 320px; max-height: calc(100vh - 140px);
-    background: var(--bg-panel); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--border-subtle); border-radius: 24px; padding: 24px;
-    z-index: 99; overflow-y: auto; box-shadow: var(--shadow-lg);
-    transform: translateY(20px); opacity: 0; pointer-events: none;
-    transition: var(--transition);
-  }
+  .viz-panel { position: fixed; bottom: 95px; right: 30px; width: 320px; max-height: calc(100vh - 140px); background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 24px; z-index: 99; overflow-y: auto; box-shadow: var(--shadow-lg); transform: translateY(20px); opacity: 0; pointer-events: none; transition: var(--transition); }
   .viz-panel.open { transform: translateY(0); opacity: 1; pointer-events: all; }
-  .viz-panel::-webkit-scrollbar { width: 6px; }
-  .viz-panel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-
-  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle); }
-  .panel-header h2 { font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; color: var(--accent); background: none; -webkit-text-fill-color: var(--accent); font-family: var(--font-heading); }
-  .close-viz { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 20px; padding: 4px; transition: color 0.2s; }
-  .close-viz:hover { color: var(--text-primary); }
-
-  .control-group { margin-bottom: 24px; }
-  .control-group:last-child { margin-bottom: 0; }
-  .group-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 14px; font-family: var(--font-main); }
-  .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .control-row label { font-size: 0.95rem; color: var(--text-primary); font-weight: 600; }
-  .control-row .val { font-size: 0.9rem; color: var(--accent); font-family: var(--font-mono); font-weight: 700; }
-
-  input[type="range"] {
-    -webkit-appearance: none; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08);
-    border-radius: 10px; outline: none; margin-bottom: 16px; cursor: pointer;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 18px; height: 18px; background: var(--text-primary);
-    border: 2px solid var(--bg-deep); border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); transition: 0.2s;
-  }
-  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); background: var(--accent); }
-  input[type="color"] {
-    -webkit-appearance: none; width: 100%; height: 36px; border: 1px solid var(--border-subtle);
-    border-radius: 12px; background: rgba(0,0,0,0.3); cursor: pointer; padding: 4px;
-  }
-  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-  input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
-
-  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-  .viz-btn { padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 12px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-  .viz-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent); color: var(--accent); }
-  .viz-btn:active { transform: scale(0.95); box-shadow: 0 0 10px var(--accent-glow); }
-
+  
   /* Тесты */
   .grade-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 20px 0; }
-  .grade-btn { 
-    padding: 16px; border: 1px solid var(--border-subtle); background: var(--bg-panel); 
-    color: var(--text-primary); border-radius: 16px; cursor: pointer; font-size: 1.1rem; font-weight: 700;
-    transition: var(--transition); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  }
-  .grade-btn:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-  .grade-btn.active { border-color: var(--accent); background: var(--accent); color: #0a0a0f; box-shadow: var(--accent-glow); }
-  [data-theme="light"] .grade-btn.active { color: #ffffff; }
-  .grade-btn:active { transform: scale(0.95); }
-
+  .grade-btn { padding: 16px; border: 1px solid var(--border-subtle); background: var(--bg-panel); color: var(--text-primary); border-radius: 16px; cursor: pointer; font-size: 1.1rem; font-weight: 700; transition: var(--transition); }
+  .grade-btn:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .grade-btn.active { border-color: var(--accent); background: var(--accent); color: #0a0a0f; }
+  
   .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #ffb380); border-radius: 10px; width: 0%; transition: width 0.4s ease; box-shadow: 0 0 15px rgba(255,140,50,0.5); }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #ffb380); border-radius: 10px; width: 0%; transition: width 0.4s ease; }
 
-  .option-btn { 
-    display: block; width: 100%; text-align: left; margin-bottom: 10px; padding: 14px 20px; 
-    border: 1px solid var(--border-subtle); background: rgba(255,255,255,0.04); 
-    color: var(--text-primary); border-radius: 16px; cursor: pointer; transition: var(--transition); 
-    font-size: 1rem; font-family: var(--font-main); font-weight: 500;
-  }
-  .option-btn:hover { background: rgba(255, 140, 50, 0.1); border-color: var(--accent); transform: translateX(5px); box-shadow: 0 4px 15px rgba(255,140,50,0.15); }
-  .option-btn:active { transform: scale(0.98); box-shadow: 0 0 10px var(--accent-glow); }
+  .option-btn { display: block; width: 100%; text-align: left; margin-bottom: 10px; padding: 14px 20px; border: 1px solid var(--border-subtle); background: rgba(255,255,255,0.04); color: var(--text-primary); border-radius: 16px; cursor: pointer; transition: var(--transition); font-size: 1rem; font-weight: 500; }
+  .option-btn:hover { background: rgba(255, 140, 50, 0.1); border-color: var(--accent); transform: translateX(5px); }
 
-  .salvia-msg { background: rgba(255, 140, 50, 0.1); border-left: 4px solid var(--accent); padding: 12px 18px; margin: 15px 0; font-style: italic; border-radius: 0 12px 12px 0; font-size: 1rem; animation: slideUp 0.5s ease; }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
   .modal { background: var(--bg-panel); padding: 30px; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-lg); text-align: center; }
-  .modal h3 { font-family: var(--font-heading); margin-bottom: 20px; color: var(--accent); font-size: 1.4rem; }
-  .modal input { width: 100%; padding: 13px 16px; margin: 8px 0; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 14px; color: var(--text-primary); font-family: inherit; font-size: 1rem; transition: var(--transition); }
-  .modal input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(255,140,50,0.1); }
+  .modal h3 { font-family: var(--font-heading); margin-bottom: 20px; color: var(--accent); }
+  .modal input { width: 100%; padding: 13px 16px; margin: 8px 0; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 14px; color: var(--text-primary); font-family: inherit; font-size: 1rem; }
+  .modal input:focus { border-color: var(--accent); outline: none; }
 
-  .match-slot { border: 1px dashed var(--border-subtle); padding: 13px; margin-bottom: 10px; min-height: 45px; border-radius: 12px; font-size: 0.95rem; }
-  .match-item { background: rgba(255,255,255,0.04); padding: 13px; margin-bottom: 10px; cursor: grab; border-radius: 12px; border: 1px solid var(--border-subtle); font-size: 0.95rem; transition: 0.2s; }
-  .match-item:hover { border-color: var(--accent); background: rgba(255,140,50,0.08); }
-  .fill-input { display: block; width: 100%; padding: 9px 14px; margin-top: 5px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px; font-family: inherit; font-size: 0.95rem; }
-  .fill-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(255,140,50,0.1); }
-
-  /* Мобильная адаптация */
   @media (max-width: 768px) {
-    .top-nav { padding: 10px 15px; flex-wrap: nowrap; }
-    .logo { font-size: 1.2rem; }
+    .top-nav { padding: 10px 15px; }
     .hamburger { display: block; }
-    .nav-links {
-      display: none;
-      flex-direction: column;
-      position: absolute;
-      top: 100%; right: 10px;
-      width: auto;
-      min-width: 180px;
-      background: var(--bg-panel);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      padding: 15px;
-      gap: 10px;
-      border-radius: 0 0 16px 16px;
-      border: 1px solid var(--border-subtle);
-      border-top: none;
-      z-index: 49;
-      animation: slideDown 0.3s ease;
-    }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; right: 10px; width: auto; min-width: 180px; background: var(--bg-panel); padding: 15px; gap: 10px; border-radius: 0 0 16px 16px; border: 1px solid var(--border-subtle); }
     .nav-links.nav-active { display: flex; }
-    .nav-links a, .nav-links button { width: 100%; text-align: center; }
     .site-content { padding: 90px 15px 80px; }
     .home-center h1, .view h2 { font-size: 1.8rem; }
-    .home-center p { font-size: 1rem; }
     .fox-icon { width: 150px; }
-    .viz-panel { right: 10px; left: 10px; width: auto; max-width: none; }
-    .viz-toggle { right: 15px; bottom: 15px; }
     .grade-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 400px) {
-    .home-center h1, .view h2 { font-size: 1.5rem; }
-    .fox-icon { width: 120px; }
-    .grade-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -416,43 +163,15 @@
 <canvas id="bg-canvas"></canvas>
 <canvas id="particles-bg"></canvas>
 
-<button class="viz-toggle" id="vizToggle" title="Настройки визуализации">⚙</button>
+<button class="viz-toggle" id="vizToggle">⚙</button>
 <div class="viz-panel" id="vizPanel">
-  <div class="panel-header">
-    <h2>Настройки визуализации</h2>
-    <button class="close-viz" id="closeViz">✕</button>
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle);">
+    <h2 style="font-size: 1rem; color: var(--accent); font-family: var(--font-heading);">Настройки</h2>
+    <button id="closeViz" style="background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer;">✕</button>
   </div>
-  <div class="control-group">
-    <div class="group-label">Геометрия</div>
-    <div class="control-row"><label>Вершины</label><span class="val" id="v-points">4</span></div>
-    <input type="range" id="points" min="4" max="32" value="4" step="1">
-    <div class="control-row"><label>Базовый радиус</label><span class="val" id="v-radius">0.23</span></div>
-    <input type="range" id="radius" min="0.1" max="0.4" value="0.23" step="0.01">
-  </div>
-  <div class="control-group">
-    <div class="group-label">Деформация</div>
-    <div class="control-row"><label>Скорость</label><span class="val" id="v-speed">0.90</span></div>
-    <input type="range" id="speed" min="0" max="3" value="0.9" step="0.05">
-    <div class="control-row"><label>Амплитуда</label><span class="val" id="v-amp">1.70</span></div>
-    <input type="range" id="amp" min="0" max="2" value="1.7" step="0.05">
-  </div>
-  <div class="control-group">
-    <div class="group-label">Эффекты</div>
-    <div class="control-row"><label>Призрачные следы</label><span class="val" id="v-ghosts">0</span></div>
-    <input type="range" id="ghosts" min="0" max="6" value="0" step="1">
-    <div class="control-row"><label>Свечение</label><span class="val" id="v-glow">80</span></div>
-    <input type="range" id="glow" min="0" max="80" value="80" step="1">
-  </div>
-  <div class="control-group">
-    <div class="group-label">Внешний вид</div>
-    <div class="control-row" style="margin-bottom: 10px;"><label>Цвет фигуры</label></div>
-    <input type="color" id="color" value="#ff8c32">
-    <div class="control-row" style="margin-top: 16px;"><label>Параллакс мыши</label><span class="val" id="v-parallax">0</span></div>
-    <input type="range" id="parallax" min="0" max="150" value="0" step="1">
-  </div>
-  <div class="btn-row">
-    <button class="viz-btn" id="randomBtn">Random</button>
-    <button class="viz-btn" id="resetBtn">Reset</button>
+  <div style="margin-bottom: 20px;">
+    <label style="font-size: 0.9rem;">Вершины: <span id="v-points" style="color: var(--accent);">4</span></label>
+    <input type="range" id="points" min="4" max="32" value="4" step="1" style="width: 100%;">
   </div>
 </div>
 
@@ -469,7 +188,6 @@
 </nav>
 
 <main class="site-content">
-  <!-- ГЛАВНАЯ -->
   <section id="home-view" class="view active">
     <div class="home-center">
       <img src="persi_fox.png" alt="Лиса" class="fox-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
@@ -495,11 +213,10 @@
     </div>
   </section>
 
-  <!-- ИСТОРИЯ -->
   <section id="history-view" class="view">
     <div id="hist-intro">
       <h2>📜 Тест по истории России</h2>
-      <p style="margin-bottom:20px; color: var(--text-secondary); font-size: 1.1rem;">Проверь свои знания по истории. Выбери классы, которые хочешь включить.</p>
+      <p style="margin-bottom:20px; color: var(--text-secondary);">Проверь свои знания по истории. Выбери классы, которые хочешь включить.</p>
       <button class="btn primary" onclick="showGradeSelection()">Выбрать классы</button>
     </div>
     <div id="hist-grades" style="display:none;">
@@ -515,31 +232,29 @@
     </div>
     <div id="hist-test" style="display:none;">
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-      <div id="salvia-container"></div>
       <div id="question-container"></div>
       <button class="btn" onclick="resetHistoryTest()" style="margin-top:20px; float:right;">Назад к выбору</button>
     </div>
   </section>
 
-  <!-- ПСИХОЛОГИЯ -->
   <section id="psychology-view" class="view">
     <div id="psych-intro">
       <div style="text-align:center;">
         <img src="red_panda_asya.png" alt="Ася" class="fox-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
         <div style="display:none; font-size:100px; align-items:center; justify-content:center; height:150px; margin-bottom:20px;">🐾</div>
         <h2>Психология с Асей</h2>
-        <p style="margin-bottom:20px; color: var(--text-secondary); font-size: 1.1rem;">Привет! Я Ася 🐾 Помогу тебе лучше понять себя</p>
+        <p style="margin-bottom:20px; color: var(--text-secondary);">Привет! Я Ася 🐾 Помогу тебе лучше понять себя</p>
       </div>
       <div class="tests-grid">
         <div class="test-card" onclick="startPsyTest('kos')">
           <span class="test-tag">Коммуникация</span>
           <h3>Тест КОС</h3>
-          <p>40 вопросов на выявление коммуникативных и организаторских склонностей.</p>
+          <p>40 вопросов на выявление коммуникативных склонностей.</p>
         </div>
         <div class="test-card" onclick="startPsyTest('mikh')">
           <span class="test-tag">Поведение</span>
           <h3>Тест Михельсона</h3>
-          <p>27 ситуаций для оценки коммуникативной компетентности.</p>
+          <p>27 ситуаций для оценки компетентности.</p>
         </div>
       </div>
     </div>
@@ -550,21 +265,18 @@
     </div>
   </section>
 
-  <!-- О ПРОЕКТЕ -->
   <section id="about-view" class="view">
     <div class="test-card" style="padding: 40px; line-height: 1.7;">
       <h2 style="text-align: left; margin-bottom: 20px;">🌿 История Лисьего Сада</h2>
       <p style="color: var(--text-primary);">Говорят, что <strong>Лисий Сад</strong> существует столько же, сколько и первые книги. В самой чаще древнего леса, где время течёт иначе, поселился мудрый лис по имени <strong>Шалфей</strong>.</p>
-      <p style="color: var(--text-primary); margin-top: 15px;">Шалфей — хранитель памяти времён. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой, тёплый рассказ. Его золотистая шерсть светится мягким светом, а в глазах — спокойствие веков.</p>
-      <div style="text-align: center; margin: 30px 0; color: var(--accent); font-size: 1.5rem; letter-spacing: 6px;">✦ ✦ ✦</div>
+      <p style="color: var(--text-primary); margin-top: 15px;">Шалфей — хранитель памяти времён. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой, тёплый рассказ.</p>
+      <div style="text-align: center; margin: 30px 0; color: var(--accent); font-size: 1.5rem;">✦ ✦ ✦</div>
       <p style="color: var(--text-primary);">Если Шалфей следит за временем, то <strong>Ася</strong> — маленькая красная панда — хранит внутренний мир тех, кто приходит в Сад. Она появилась у тихого ручья, где вода поёт древние мелодии, и научилась слышать не только слова, но и тишину между ними.</p>
-      <p style="color: var(--text-primary); margin-top: 15px;">Ася — местный психолог и душевный проводник. Она проводит проверенные опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс.</p>
       <p style="margin-top: 25px; font-style: italic; text-align: center; opacity: 0.8; color: var(--text-primary);">Лисий Сад — место, где история встречается с душой.</p>
     </div>
   </section>
 </main>
 
-<!-- МОДАЛЬНОЕ ОКНО -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <h3 id="modal-title">Введите данные</h3>
@@ -575,396 +287,255 @@
 </div>
 
 <script>
-// --- ДАННЫЕ ТЕСТОВ ---
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmbw_-MYraqUsSp452jWfdf1tPOX7TNrGR_Gm8JcBO_DGzODjv35ybwq9nIGDqK4TWDw/exec';
+const SECRET_KEY = 'fox_secret_2026';
+
 const historyData = { 5: [ {q:"Как называлось первое орудие труда древнейших людей?", type:"choice", options:["рубило","гарпун","лук","мотыга"], correct:0}, {q:"Около какого времени появились первые государства в долине Нила?", type:"choice", options:["около 5 тыс. лет назад","около 3 тыс. лет до н.э.","около 1 тыс. лет до н.э.","в I в. н.э."], correct:1}, {q:"Что обозначает термин «неолит»?", type:"choice", options:["новый каменный век","древний каменный век","средний каменный век","бронзовый век"], correct:0}, {q:"Письменность древних египтян называлась:", type:"choice", options:["клинопись","иероглифы","буквенное письмо","узелковое письмо"], correct:1}, {q:"Кто в Древнем Египте считался «живым богом»?", type:"choice", options:["жрец","фараон","верховный судья","военачальник"], correct:1}, {q:"Где была изобретена первая в мире письменность – клинопись?", type:"choice", options:["в Египте","в Индии","в Междуречье (Двуречье)","в Китае"], correct:2}, {q:"Какая форма правления сложилась в Афинах в V в. до н.э.?", type:"choice", options:["тирания","олигархия","демократия","монархия"], correct:2}, {q:"В каком году, согласно легенде, был основан Рим?", type:"choice", options:["753 г. до н.э.","509 г. до н.э.","395 г. до н.э.","27 г. до н.э."], correct:0}, {q:"Кто создал огромную державу от Греции до Индии?", type:"choice", options:["Ганнибал","Юлий Цезарь","Александр Македонский","Кир Великий"], correct:2}, {q:"Что такое «республика» в Древнем Риме?", type:"choice", options:["власть одного правителя","власть знатного рода","власть народа, выбиравшего должностных лиц","власть жрецов"], correct:2} ], 6: [ {q:"В каком году произошло Крещение Руси?", type:"choice", options:["862 г.","882 г.","988 г.","1054 г."], correct:2}, {q:"Как назывался объезд князем земель для сбора дани?", type:"choice", options:["выход","полюдье","кормление","тягло"], correct:1}, {q:"Кто был автором «Повести временных лет»?", type:"choice", options:["митрополит Иларион","Нестор","Владимир Мономах","Никон"], correct:1}, {q:"Какое событие произошло в 1223 году?", type:"choice", options:["Невская битва","битва на Калке","Ледовое побоище","Куликовская битва"], correct:1}, {q:"Термин «вече» означал:", type:"choice", options:["совет знати","народное собрание","княжеский суд","церковный собор"], correct:1}, {q:"Кто разгромил монголов на Куликовом поле в 1380 году?", type:"choice", options:["Иван Калита","Дмитрий Донской","Василий Тёмный","Иван III"], correct:1}, {q:"Система содержания должностных лиц за счёт населения в XV–XVI вв.:", type:"choice", options:["кормление","поместье","вотчина","опричнина"], correct:0}, {q:"«Стояние на реке Угре», свергнувшее ордынское иго, состоялось в:", type:"choice", options:["1380 г.","1462 г.","1480 г.","1505 г."], correct:2}, {q:"Что такое «поместье» в Московском государстве?", type:"choice", options:["наследственное владение","земля за службу без права наследования","монастырская земля","купленная у татар земля"], correct:1}, {q:"Кто первым принял титул «государь всея Руси»?", type:"choice", options:["Василий II","Иван III","Василий III","Иван IV"], correct:1} ], 7: [ {q:"В каком году на престол избран Михаил Романов?", type:"choice", options:["1598 г.","1605 г.","1613 г.","1645 г."], correct:2}, {q:"Что такое «Смутное время»?", type:"choice", options:["период дворцовых переворотов","кризис государственности в начале XVII в.","восстание крестьян","война с Речью Посполитой"], correct:1}, {q:"Соборное уложение, закрепившее крепостное право, принято в:", type:"choice", options:["1607 г.","1649 г.","1667 г.","1682 г."], correct:1}, {q:"Кто возглавил церковный раскол в середине XVII века?", type:"choice", options:["патриарх Никон и протопоп Аввакум","митрополит Филипп","Сергий Радонежский","Геннадий Новгородский"], correct:0}, {q:"Старообрядцы — это:", type:"choice", options:["сторонники старых обрядов после реформы Никона","участники восстания Разина","купцы","служилые люди"], correct:0}, {q:"Восстание Степана Разина произошло в:", type:"choice", options:["1648 г.","1662 г.","1670–1671 гг.","1682 г."], correct:2}, {q:"«Ясачный сбор» в Сибири — это:", type:"choice", options:["налог с земель","пошлина с торговли","дань мехами с коренных народов","военный налог"], correct:2}, {q:"Фактическим правителем при малолетних Иване и Петре была:", type:"choice", options:["Борис Годунов","Василий Голицын","Софья Алексеевна","Фёдор Алексеевич"], correct:2}, {q:"Местничество отменено в:", type:"choice", options:["1649 г.","1676 г.","1682 г.","1689 г."], correct:2}, {q:"Регулярные пехотные полки XVII в. по западному образцу назывались:", type:"choice", options:["стрелецкие","полки нового строя","городовые казаки","опричники"], correct:1} ], 8: [ {q:"Северная война началась в:", type:"choice", options:["1696 г.","1700 г.","1709 г.","1721 г."], correct:1}, {q:"Какой орган создал Пётр I вместо Боярской думы?", type:"choice", options:["Сенат","Верховный тайный совет","Государственный совет","Кабинет министров"], correct:0}, {q:"«Ревизия» при Петре I — это:", type:"choice", options:["проверка войск","перепись податного населения","судебное следствие","таможенный досмотр"], correct:1}, {q:"Россия провозглашена империей в:", type:"choice", options:["1709 г.","1721 г.","1725 г.","1762 г."], correct:1}, {q:"Эпоха дворцовых переворотов длилась:", type:"choice", options:["1700–1725 гг.","1725–1762 гг.","1730–1740 гг.","1762–1796 гг."], correct:1}, {q:"«Просвещённый абсолютизм» — это политика:", type:"choice", options:["полного освобождения крестьян","Екатерины II с опорой на идеи Просвещения","зависимости монарха от дворянства","парламентской монархии"], correct:1}, {q:"Восстание Пугачёва было в:", type:"choice", options:["1762–1764 гг.","1773–1775 гг.","1785–1787 гг.","1790–1792 гг."], correct:1}, {q:"Освобождение дворян от обязательной службы даровал(а):", type:"choice", options:["Указ о единонаследии","Жалованная грамота дворянству (1785)","Табель о рангах","Манифест о вольности дворянской (1762)"], correct:3}, {q:"Указ о вольности дворянской принят в:", type:"choice", options:["1736 г.","1762 г.","1775 г.","1785 г."], correct:1}, {q:"Установите соответствие между датой и событием:", type:"match", pairs:[ {left:"1703 г.", right:"основание Санкт-Петербурга"}, {left:"1709 г.", right:"Полтавская битва"}, {left:"1721 г.", right:"провозглашение России империей"}, {left:"1762 г.", right:"начало царствования Екатерины II"} ]} ], 9: [ {q:"Павел I убит, Александр I вступил на престол в:", type:"choice", options:["1796 г.","1801 г.","1812 г.","1825 г."], correct:1}, {q:"14 декабря 1825 года произошло:", type:"choice", options:["восстание декабристов","начало Крымской войны","отмена крепостного права","убийство Александра II"], correct:0}, {q:"«Западники» — это:", type:"choice", options:["сторонники самобытного пути России","сторонники развития по западноевропейскому образцу","члены тайных обществ","чиновники западных губерний"], correct:1}, {q:"Крепостное право отменено в:", type:"choice", options:["1855 г.","1861 г.","1864 г.","1874 г."], correct:1}, {q:"«Отрезки» после реформы 1861 г. — это:", type:"choice", options:["земля, переданная крестьянам","часть наделов, отрезанная в пользу помещика","участки для общественных нужд","арендованные земли"], correct:1}, {q:"Манифест 17 октября (Конституция) принят в:", type:"choice", options:["1881 г.","1905 г.","1906 г.","1914 г."], correct:1}, {q:"Теорию «официальной народности» создал:", type:"choice", options:["Н.М. Карамзин","С.С. Уваров","М.Н. Погодин","К.П. Победоносцев"], correct:1}, {q:"В 1904–1905 гг. шла война:", type:"choice", options:["Крымская","Русско-турецкая","Русско-японская","Первая мировая"], correct:2}, {q:"Первая мировая война началась в:", type:"choice", options:["1912 г.","1914 г.","1915 г.","1917 г."], correct:1}, {q:"Заполните пропуски в таблице:", type:"fill", fields:[ {label:"1803 г. • Указ о «вольных хлебопашцах» • Правитель:", correct:"Александр I"}, {label:"1864 г. • ______________ (судебная реформа) • Правитель: Александр II", correct:"Судебная реформа"}, {label:"1897 г. • Денежная реформа • Министр:", correct:"Витте"}, {label:"1906 г. • Манифест 17 октября • Император:", correct:"Николай II"} ]} ] };
 const kosQuestions = [ "Много ли у Вас друзей?","Часто ли удается склонить товарищей?","Долго ли беспокоит обида?","Трудно ли ориентироваться в критической ситуации?","Стремитесь ли к новым знакомствам?","Нравится ли общественная работа?","Приятнее ли проводить время с книгами?","Легко ли отступаете от намерений?","Легко ли устанавливаете контакты со старшими?","Любите ли организовывать игры?","Трудно ли включаться в новую компанию?","Откладываете ли дела?","Легко ли контактировать с незнакомыми?","Стремитесь ли, чтобы товарищи действовали по Вашему мнению?","Трудно ли осваиваться в новом коллективе?","Нет ли конфликтов из-за невыполнения обязанностей?","Стремитесь ли знакомиться?","Принимаете ли инициативу?","Раздражают ли окружающие?","Плохо ли ориентируетесь в незнакомой обстановке?","Нравится ли быть среди людей?","Раздражение из-за незавершенного дела?","Стеснение при знакомстве?","Утомление от общения?","Любите ли коллективные игры?","Проявляете ли инициативу в интересах товарищей?","Неуверенность среди малознакомых?","Редко отстаиваете правоту?","Вносите ли оживление в компанию?","Участие в общественной работе?","Ограничиваете ли круг знакомых?","Не отстаиваете ли мнение?","Непринужденность в незнакомой компании?","Охотно организуете мероприятия?","Неуверенность перед группой?","Опаздываете ли?","Много ли друзей?","Смущение при общении?","Пугает ли новый коллектив?","Неуверенность в большой группе?" ];
 const mikhelsonQuestions = [ {q:'Кто-либо говорит Вам: "Мне кажется, что Вы замечательный человек". Вы обычно:', options:['"Нет, что Вы! Я таким не являюсь"','"Спасибо, я действительно человек выдающийся"','"Спасибо"','Ничего не говорите и краснеете','"Да, я отличаюсь от других в лучшую сторону"'], correct:2}, {q:'Кто-либо совершает замечательный поступок. Вы обычно:', options:['"Нормально!"','"Отлично, но я видел получше"','Ничего не говорите','"Я могу сделать гораздо лучше"','"Это действительно замечательно!"'], correct:4}, {q:'Вы делаете дело хорошо, кто-то говорит: "Мне это не нравится!". Вы:', options:['"Вы - болван!"','"Я думаю, это заслуживает хорошей оценки"','"Вы правы" (не согласны)','"Это выдающийся уровень. Что Вы понимаете?"','Обижаетесь и молчите'], correct:1}, {q:'Вы забыли предмет, кто-то говорит: "Вы такой растяпа!". Вы:', options:['"Я толковее Вас!"','"Да, иногда я веду себя как растяпа"','"Если кто растяпа, то Вы"','"У всех есть недостатки. Я не заслуживаю такой оценки"','Игнорируете'], correct:3}, {q:'Кто-то опоздал на 30 минут без объяснений. Вы:', options:['"Я расстроен, что заставили ждать"','"Я думал, когда Вы придёте"','"Это последний раз, когда я ждал Вас"','Ничего не говорите','"Как Вы смели так опаздывать!"'], correct:0}, {q:'Вам нужно, чтобы кто-то сделал для Вас вещь. Вы:', options:['Никого ни о чём не просите','"Вы должны сделать это для меня"','"Не могли бы Вы сделать одну вещь?" + объясняете','Слегка намекаете','"Я очень хочу, чтобы Вы сделали это"'], correct:2}, {q:'Вы знаете, что кто-то расстроен. Вы:', options:['"Вы выглядите расстроенным. Могу помочь?"','Не заводите разговор о состоянии','"У Вас неприятность?"','Ничего не говорите и оставляете одного','"Вы как большой ребенок!" (смеясь)'], correct:0}, {q:'Вы расстроены, кто-то говорит: "Вы выглядите расстроенным". Вы:', options:['Отрицательно качаете головой/не реагируете','"Это не Ваше дело!"','"Да, немного расстроен. Спасибо за участие"','"Пустяки"','"Оставьте меня одного"'], correct:2}, {q:'Вас порицают за ошибку, совершённую другими. Вы:', options:['"Вы с ума сошли!"','"Это не моя вина, ошибка другого"','"Я не думаю, что это моя вина"','"Оставьте меня, Вы не знаете, что говорите"','Принимаете вину или молчите'], correct:2}, {q:'Кто-то просит сделать что-то, но Вы не знаете зачем. Вы:', options:['"Это не имеет смысла, не хочу"','Выполняете и молчите','"Это глупость, не буду"','"Объясните, почему это должно быть сделано"','"Если Вы хотите..." + выполняете'], correct:3}, {q:'Кто-то говорит, что Вы сделали великолепно. Вы:', options:['"Да, я делаю лучше большинства"','"Нет, это не было столь здорово"','"Правильно, я делаю лучше всех"','"Спасибо"','Игнорируете'], correct:3}, {q:'Кто-то был очень любезен с Вами. Вы:', options:['"Вы действительно были очень любезны"','"Да, спасибо" (как будто не был любезен)','Вы вели себя нормально, но я заслуживаю большего"','Игнорируете','"Вы вели себя недостаточно хорошо"'], correct:0}, {q:'Вы громко разговариваете, кто-то просит говорить тише. Вы:', options:['Немедленно прекращаете беседу','"Если не нравится — проваливайте"','"Извините, буду говорить тише" + продолжаете приглушённо','"Извините" + прекращаете','"Всё в порядке" + продолжаете громко'], correct:2}, {q:'В очереди кто-то становится впереди Вас. Вы:', options:['Негромко комментируете, ни к кому не обращаясь','"Становитесь в хвост очереди!"','Ничего не говорите','"Выйди из очереди, нахал!" (громко)','"Я занял очередь раньше. Пожалуйста, станьте в конец"'], correct:4}, {q:'Кто-то делает то, что Вам не нравится и раздражает. Вы:', options:['"Вы болван, я ненавижу Вас!" (выкрик)','"Я сердит на Вас. Мне не нравится, что Вы делаете"','Повреждаете делу, но молчите','"Я рассержен. Вы мне не нравитесь"','Игнорируете'], correct:1}, {q:'У кого-то есть вещь, которой Вы хотели бы пользоваться. Вы:', options:['Требуете дать вещь','Воздерживаетесь от просьб','Отбираете вещь','Говорите, что хотели бы пользоваться, и просите','Рассуждаете, но не просите'], correct:3}, {q:'Кто-то просит одолжить новый предмет, но Вы не хотите. Вы:', options:['"Нет, только достал, не хочу расставаться; может потом"','"Не хотел бы давать, но можете попользоваться"','"Нет, приобретайте свой!"','Одалживаете вопреки нежеланию','"Вы с ума сошли!"'], correct:0}, {q:'Люди беседуют о хобби, которое нравится Вам, Вы хотите присоединиться. Вы:', options:['Ничего не говорите','Прерываете и рассказываете о своих успехах','Подходите и при удобном случае вступаете в разговор','Подходите и ждёте, когда обратят внимание','Прерываете и говорите, как сильно нравится хобби'], correct:2}, {q:'Вы занимаетесь хобби, кто-то спрашивает: "Что Вы делаете?". Вы:', options:['"О, это пустяк" / "Ничего особенного"','"Не мешайте, разве не видите, что занят?"','Продолжаете молча работать','"Это Вас не касается"','Прекращаете и объясняете, что делаете'], correct:4}, {q:'Вы видите споткнувшегося человека. Вы:', options:['"Почему не смотрите под ноги?" (смеясь)','"У Вас всё в порядке? Могу помочь?"','"Что случилось?"','"Это всё колдобины в тротуаре"','Никак не реагируете'], correct:1}, {q:'Вы ушиблись, кто-то спрашивает: "С Вами всё в порядке?". Вы:', options:['"Я прекрасно себя чувствую. Оставьте меня!"','Ничего не говорите, игнорируете','"Почему не занимаетесь своим делом?"','"Нет, ушиб голову, спасибо за внимание"','"Пустяки, всё будет о\'кей"'], correct:3}, {q:'Вы допустили ошибку, но вина возложена на другого. Вы:', options:['Ничего не говорите','"Это их ошибка!"','"Эту ошибку допустил Я"','"Я не думаю, что это сделал этот человек"','"Это их горькая доля"'], correct:2}, {q:'Вы оскорблены словами в Ваш адрес. Вы:', options:['Уходите, не сказав, что расстроены','Заявляйте, чтобы не смел больше','Ничего не говорите, хотя обижены','Оскорбляете в ответ','Заявляйте, что не нравится, и что не должен делать снова'], correct:4}, {q:'Кто-то часто перебивает, когда Вы говорите. Вы:', options:['"Извините, но я хотел бы закончить"','"Так не делают. Могу продолжить?"','Прерываете этого человека, возобновляя рассказ','Ничего не говорите, позволяя продолжать','"Замолчите! Вы меня перебили!"'], correct:0}, {q:'Кто-то просит сделать что-то, что помешает Вашим планам. Вы:', options:['"Имел другие планы, но сделаю, что хотите"','"Ни в коем случае! Поищите кого-то ещё"','"Хорошо, сделаю, что хотите"','"Отойдите, оставьте меня"','"Уже приступил к другим планам. Может, потом"'], correct:4}, {q:'Вы видите кого-то, с кем хотели бы познакомиться. Вы:', options:['Радостно окликаете и идёте навстречу','Подходите, представляетесь и начинаете разговор','Подходите и ждёте, когда заговорят с Вами','Подходите и рассказываете о крупных делах','Ничего не говорите'], correct:1}, {q:'Незнакомец окликает Вас: "Привет!". Вы:', options:['"Что Вам угодно?"','Ничего не говорите','"Оставьте меня в покое"','"Привет!", представляетесь и просите представиться','Киваете, "Привет!" и проходите мимо'], correct:3} ];
 
-// --- ЛОГИКА И СОСТОЯНИЯ ---
-let currentTheme = 'dark';
-let selectedGrades = [];
-let currentTestData = null;
-let currentQuestionIndex = 0;
-let userAnswers = [];
-let currentPsyTest = null;
-let psyQuestionIndex = 0;
-let psyAnswers = [];
+let currentTheme = 'dark', selectedGrades = [], currentTestData = null, currentQuestionIndex = 0, userAnswers = [];
+let currentPsyTest = null, psyQuestionIndex = 0, psyAnswers = [];
 
 function switchView(viewName) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(`${viewName}-view`).classList.add('active');
-  
-  // Обновление активной кнопки навигации
-  document.querySelectorAll('.nav-link-btn').forEach(link => link.classList.remove('active-nav'));
-  const activeLink = document.querySelector(`.nav-link-btn[data-view="${viewName}"]`);
-  if (activeLink) activeLink.classList.add('active-nav');
-  
-  // Закрытие мобильного меню при клике
+  document.querySelectorAll('.nav-link-btn').forEach(l => l.classList.remove('active-nav'));
+  const a = document.querySelector(`.nav-link-btn[data-view="${viewName}"]`);
+  if (a) a.classList.add('active-nav');
   document.getElementById('navLinks').classList.remove('nav-active');
-  
-  if (viewName === 'psychology') {
-    document.body.classList.add('psychology-mode');
-    setVisColor('#64b5f6');
-  } else {
-    document.body.classList.remove('psychology-mode');
-    if (currentTheme === 'light') setVisColor('#d9441e');
-    else setVisColor('#ff8c32');
-  }
+  document.body.classList.toggle('psychology-mode', viewName === 'psychology');
+  setVisColor(viewName === 'psychology' ? '#64b5f6' : (currentTheme === 'light' ? '#d9441e' : '#ff8c32'));
 }
 
 function toggleTheme() {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', currentTheme);
-  if (!document.body.classList.contains('psychology-mode')) {
-    setVisColor(currentTheme === 'light' ? '#d9441e' : '#ff8c32');
-  }
+  if (!document.body.classList.contains('psychology-mode')) setVisColor(currentTheme === 'light' ? '#d9441e' : '#ff8c32');
   document.getElementById('navLinks').classList.remove('nav-active');
 }
 
-// --- ЛОГИКА ПСИХОЛОГИИ ---
 function startPsyTest(type) {
-  currentPsyTest = type;
-  psyQuestionIndex = 0;
-  psyAnswers = [];
-  document.getElementById('modal-title').innerText = "Данные для психологического теста";
-  document.getElementById('user-name').value = '';
-  document.getElementById('user-email').value = '';
+  currentPsyTest = type; psyQuestionIndex = 0; psyAnswers = [];
+  document.getElementById('modal-title').innerText = "Данные для теста";
+  document.getElementById('user-name').value = ''; document.getElementById('user-email').value = '';
   document.getElementById('modal-overlay').classList.add('active');
 }
 
 function renderPsyQuestion() {
-  const container = document.getElementById('psych-question-container');
-  const total = currentPsyTest === 'kos' ? kosQuestions.length : mikhelsonQuestions.length;
-  document.getElementById('psych-progress-fill').style.width = `${(psyQuestionIndex / total) * 100}%`;
-
+  const c = document.getElementById('psych-question-container');
+  const t = currentPsyTest === 'kos' ? kosQuestions.length : mikhelsonQuestions.length;
+  document.getElementById('psych-progress-fill').style.width = `${(psyQuestionIndex / t) * 100}%`;
   let html = '';
   if (currentPsyTest === 'kos') {
-    html = `<h3 style="margin-bottom: 15px; font-family: var(--font-heading); font-weight: 500; font-size: 1.3rem;">${kosQuestions[psyQuestionIndex]}</h3>`;
-    html += `<button class="option-btn" onclick="recordPsyAnswer('Да')">Да</button>`;
-    html += `<button class="option-btn" onclick="recordPsyAnswer('Нет')">Нет</button>`;
+    html = `<h3 style="margin-bottom: 15px; font-family: var(--font-heading); font-size: 1.3rem;">${kosQuestions[psyQuestionIndex]}</h3>`;
+    html += `<button class="option-btn" onclick="recordPsyAnswer('Да')">Да</button><button class="option-btn" onclick="recordPsyAnswer('Нет')">Нет</button>`;
   } else {
     const q = mikhelsonQuestions[psyQuestionIndex];
-    html = `<h3 style="margin-bottom: 15px; font-family: var(--font-heading); font-weight: 500; font-size: 1.3rem;">${q.q}</h3>`;
-    q.options.forEach((opt, i) => {
-      html += `<button class="option-btn" onclick="recordPsyAnswer(${i})">${opt}</button>`;
-    });
+    html = `<h3 style="margin-bottom: 15px; font-family: var(--font-heading); font-size: 1.3rem;">${q.q}</h3>`;
+    q.options.forEach((o, i) => html += `<button class="option-btn" onclick="recordPsyAnswer(${i})">${o}</button>`);
   }
-  container.innerHTML = html;
+  c.innerHTML = html;
 }
 
-function recordPsyAnswer(ans) {
-  psyAnswers.push(ans);
-  psyQuestionIndex++;
-  const total = currentPsyTest === 'kos' ? kosQuestions.length : mikhelsonQuestions.length;
-  if (psyQuestionIndex < total) {
-    renderPsyQuestion();
-  } else {
-    finishPsyTest();
-  }
+function recordPsyAnswer(a) {
+  psyAnswers.push(a); psyQuestionIndex++;
+  const t = currentPsyTest === 'kos' ? kosQuestions.length : mikhelsonQuestions.length;
+  if (psyQuestionIndex < t) renderPsyQuestion(); else finishPsyTest();
 }
 
 function finishPsyTest() {
   document.getElementById('psych-test').style.display = 'none';
   document.getElementById('psych-intro').style.display = 'block';
-  alert("Тест завершён! Ваш результат отправлен.");
   
-  const name = document.getElementById('user-name').value;
-  const email = document.getElementById('user-email').value;
+  let score = 0;
+  if (currentPsyTest === 'mikh') {
+    psyAnswers.forEach((ans, i) => { if (ans === mikhelsonQuestions[i].correct) score++; });
+  }
+  const total = psyAnswers.length;
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+  const testTitle = currentPsyTest === 'kos' ? 'Психология: Тест КОС' : 'Психология: Тест Михельсона';
   
-  fetch("https://formsubmit.co/ajax/9266031377@bk.ru", {
-    method: "POST",
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({ test: currentPsyTest, name, email, answers: psyAnswers })
-  }).catch(err => console.error('Error:', err));
+  sendToSheet({
+    fio: document.getElementById('user-name').value,
+    email: document.getElementById('user-email').value,
+    test_title: testTitle,
+    score: score, total: total, pct: pct,
+    answers: psyAnswers
+  });
+  alert("Тест завершён! Результат отправлен.");
 }
 
-function resetPsyTest() {
-  document.getElementById('psych-test').style.display = 'none';
-  document.getElementById('psych-intro').style.display = 'block';
-}
-
-// --- ЛОГИКА ИСТОРИИ ---
 function showGradeSelection() {
   document.getElementById('hist-intro').style.display = 'none';
   document.getElementById('hist-grades').style.display = 'block';
 }
 
-function toggleGrade(grade, btn) {
-  if (selectedGrades.includes(grade)) {
-    selectedGrades = selectedGrades.filter(g => g !== grade);
-    btn.classList.remove('active');
-  } else {
-    selectedGrades.push(grade);
-    btn.classList.add('active');
-  }
+function toggleGrade(g, b) {
+  if (selectedGrades.includes(g)) { selectedGrades = selectedGrades.filter(x => x !== g); b.classList.remove('active'); }
+  else { selectedGrades.push(g); b.classList.add('active'); }
   document.getElementById('start-test-btn').disabled = selectedGrades.length === 0;
 }
 
 function startHistoryTest() {
   currentPsyTest = null;
-  document.getElementById('modal-title').innerText = "Данные для теста по истории";
-  document.getElementById('user-name').value = '';
-  document.getElementById('user-email').value = '';
+  document.getElementById('modal-title').innerText = "Данные для теста";
+  document.getElementById('user-name').value = ''; document.getElementById('user-email').value = '';
   document.getElementById('modal-overlay').classList.add('active');
 }
 
 function submitUserInfo() {
   const name = document.getElementById('user-name').value;
-  if (!name) { alert("Пожалуйста, введите ФИО"); return; }
+  if (!name) { alert("Введите ФИО"); return; }
   document.getElementById('modal-overlay').classList.remove('active');
-
   if (currentPsyTest) {
     document.getElementById('psych-intro').style.display = 'none';
     document.getElementById('psych-test').style.display = 'block';
     renderPsyQuestion();
   } else {
-    currentTestData = [];
-    selectedGrades.sort().forEach(g => { currentTestData = currentTestData.concat(historyData[g]); });
-    currentQuestionIndex = 0;
-    userAnswers = [];
+    currentTestData = []; selectedGrades.sort().forEach(g => currentTestData = currentTestData.concat(historyData[g]));
+    currentQuestionIndex = 0; userAnswers = [];
     document.getElementById('hist-grades').style.display = 'none';
     document.getElementById('hist-test').style.display = 'block';
     renderHistoryQuestion();
   }
 }
 
-const salviaMsgs = ["💬 Хмм, интересный ответ…", "💬 Любопытно, как ты мыслишь!", "💬 Продолжай в том же духе, это увлекательно!", "💬 Так-так, что тут у нас…", "💬 Интересный выбор!"];
-
 function renderHistoryQuestion() {
-  const container = document.getElementById('question-container');
+  const c = document.getElementById('question-container');
   document.getElementById('progress-fill').style.width = `${(currentQuestionIndex / currentTestData.length) * 100}%`;
-
-  const salviaContainer = document.getElementById('salvia-container');
-  if (currentQuestionIndex > 0 && currentQuestionIndex % 4 === 0) {
-    const msg = salviaMsgs[Math.floor(Math.random() * salviaMsgs.length)];
-    salviaContainer.innerHTML = `<div class="salvia-msg">${msg}</div>`;
-  } else {
-    salviaContainer.innerHTML = '';
-  }
-
   const q = currentTestData[currentQuestionIndex];
-  let html = `<h3 style="margin-bottom: 15px; font-family: var(--font-heading); font-weight: 500; font-size: 1.3rem;">${q.q}</h3>`;
-
+  let html = `<h3 style="margin-bottom: 15px; font-family: var(--font-heading); font-size: 1.3rem;">${q.q}</h3>`;
   if (q.type === 'choice') {
-    q.options.forEach((opt, i) => { html += `<button class="option-btn" onclick="selectChoice(${i})">${opt}</button>`; });
+    q.options.forEach((o, i) => html += `<button class="option-btn" onclick="selectChoice(${i})">${o}</button>`);
   } else if (q.type === 'match') {
-    html += '<p style="margin-bottom:15px; color: var(--text-secondary);">Перетащите элементы из правой колонки в левую:</p><div style="display:flex; gap:20px; flex-wrap:wrap;"><div style="flex:1; min-width:200px;">';
-    q.pairs.forEach((p, i) => { html += `<div class="match-slot" data-id="${i}" ondrop="dropMatch(event)" ondragover="allowDropMatch(event)">${p.left}</div>`; });
+    html += '<p style="margin-bottom:15px; color: var(--text-secondary);">Перетащите элементы:</p><div style="display:flex; gap:20px; flex-wrap:wrap;"><div style="flex:1; min-width:200px;">';
+    q.pairs.forEach((p, i) => html += `<div class="match-slot" data-id="${i}" ondrop="dropMatch(event)" ondragover="allowDropMatch(event)">${p.left}</div>`);
     html += '</div><div style="flex:1; min-width:200px;">';
-    q.pairs.forEach((p, i) => { html += `<div class="match-item" draggable="true" ondragstart="dragMatch(event)" data-id="${i}">${p.right}</div>`; });
-    html += '</div></div><button class="btn primary" style="margin-top:15px;" onclick="submitMatch()">Подтвердить соответствие</button>';
+    q.pairs.forEach((p, i) => html += `<div class="match-item" draggable="true" ondragstart="dragMatch(event)" data-id="${i}">${p.right}</div>`);
+    html += '</div></div><button class="btn primary" style="margin-top:15px;" onclick="submitMatch()">Подтвердить</button>';
   } else if (q.type === 'fill') {
-    q.fields.forEach((f, i) => { html += `<div style="margin-bottom:15px;"><label style="color: var(--text-secondary); font-size: 1rem;">${f.label}</label><input type="text" class="fill-input" data-id="${i}"></div>`; });
-    html += `<button class="btn primary" style="margin-top:15px;" onclick="submitFill()">Подтвердить ответы</button>`;
+    q.fields.forEach((f, i) => html += `<div style="margin-bottom:15px;"><label style="color: var(--text-secondary);">${f.label}</label><input type="text" class="fill-input" data-id="${i}"></div>`);
+    html += `<button class="btn primary" style="margin-top:15px;" onclick="submitFill()">Подтвердить</button>`;
   }
-  container.innerHTML = html;
+  c.innerHTML = html;
 }
 
-function selectChoice(index) { userAnswers.push({ qIndex: currentQuestionIndex, answer: index }); nextQuestion(); }
-function allowDropMatch(ev) { ev.preventDefault(); }
-function dragMatch(ev) { ev.dataTransfer.setData("text", ev.target.dataset.id); }
-function dropMatch(ev) {
-  ev.preventDefault();
-  const draggedId = ev.dataTransfer.getData("text");
-  const draggedElement = document.querySelector(`.match-item[data-id="${draggedId}"]`);
-  const slot = ev.target.closest('.match-slot');
-  if (draggedElement && slot) { slot.appendChild(draggedElement); }
+function selectChoice(i) { userAnswers.push({ qIndex: currentQuestionIndex, answer: i }); nextQuestion(); }
+function allowDropMatch(e) { e.preventDefault(); }
+function dragMatch(e) { e.dataTransfer.setData("text", e.target.dataset.id); }
+function dropMatch(e) {
+  e.preventDefault(); const id = e.dataTransfer.getData("text");
+  const el = document.querySelector(`.match-item[data-id="${id}"]`); const slot = e.target.closest('.match-slot');
+  if (el && slot) slot.appendChild(el);
 }
 function submitMatch() {
-  const slots = document.querySelectorAll('.match-slot');
-  let ans = [];
-  slots.forEach(s => { const slotId = s.dataset.id; const item = s.querySelector('.match-item'); ans.push({ slot: slotId, item: item ? item.dataset.id : null }); });
-  userAnswers.push({ qIndex: currentQuestionIndex, answer: ans });
-  nextQuestion();
+  let ans = []; document.querySelectorAll('.match-slot').forEach(s => { const item = s.querySelector('.match-item'); ans.push({ slot: s.dataset.id, item: item ? item.dataset.id : null }); });
+  userAnswers.push({ qIndex: currentQuestionIndex, answer: ans }); nextQuestion();
 }
 function submitFill() {
-  const inputs = document.querySelectorAll('.fill-input');
-  let ans = [];
-  inputs.forEach(inp => { ans.push({ field: inp.dataset.id, value: inp.value }); });
-  userAnswers.push({ qIndex: currentQuestionIndex, answer: ans });
-  nextQuestion();
+  let ans = []; document.querySelectorAll('.fill-input').forEach(i => ans.push({ field: i.dataset.id, value: i.value }));
+  userAnswers.push({ qIndex: currentQuestionIndex, answer: ans }); nextQuestion();
 }
-function nextQuestion() {
-  currentQuestionIndex++;
-  if (currentQuestionIndex < currentTestData.length) { renderHistoryQuestion(); } else { finishHistoryTest(); }
-}
+function nextQuestion() { currentQuestionIndex++; if (currentQuestionIndex < currentTestData.length) renderHistoryQuestion(); else finishHistoryTest(); }
 
 function finishHistoryTest() {
   document.getElementById('progress-fill').style.width = '100%';
-  document.getElementById('question-container').innerHTML = '<h2 style="text-align:center;">Тест завершён! Ваш результат отправлен.</h2>';
-  document.getElementById('salvia-container').innerHTML = '';
-
-  const name = document.getElementById('user-name').value;
-  const email = document.getElementById('user-email').value;
-  const payload = { name, email, grades: selectedGrades, results: userAnswers.map(a => { const q = currentTestData[a.qIndex]; return { question: q.q, userAnswer: a.answer, correctAnswer: q.correct || q.pairs || q.fields }; }) };
-
-  fetch("https://formsubmit.co/ajax/aniruf14.02@gmail.com", { method: "POST", headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) }).catch(err => console.error('FormSubmit Error:', err));
-  fetch("https://script.google.com/macros/s/AKfycbwmbw_-MYraqUsSp452jWfdf1tPOX7TNrGR_Gm8JcBO_DGzODjv35ybwq9nIGDqK4TWDw/exec?key=fox_secret_2026", { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(err => console.error('Sheets Error:', err));
-}
-
-function resetHistoryTest() {
-  selectedGrades = []; currentTestData = null; currentQuestionIndex = 0; userAnswers = [];
-  document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('hist-test').style.display = 'none';
-  document.getElementById('hist-grades').style.display = 'none';
-  document.getElementById('hist-intro').style.display = 'block';
-  document.getElementById('start-test-btn').disabled = true;
-}
-
-// --- ВИЗУАЛИЗАТОР И ЧАСТИЦЫ ---
-document.addEventListener('DOMContentLoaded', () => {
-  // Гамбургер меню
-  const hamburger = document.getElementById('hamburgerToggle');
-  const navLinks = document.getElementById('navLinks');
-  hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('nav-active');
-  });
-
-  // Частицы фона
-  const pCanvas = document.getElementById('particles-bg');
-  const pCtx = pCanvas.getContext('2d');
-  let pW, pH, particles = [];
-  function resizeP() { pW = pCanvas.width = window.innerWidth; pH = pCanvas.height = window.innerHeight; }
-  window.addEventListener('resize', resizeP); resizeP();
-  for (let i=0; i<50; i++) particles.push({x:Math.random()*pW,y:Math.random()*pH,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,alpha:Math.random()*0.5+0.2,pulse:Math.random()*Math.PI*2});
-  function animateP() {
-    pCtx.clearRect(0,0,pW,pH);
-    const bColor = currentTheme === 'light' ? '100,100,140' : '180,180,210';
-    particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<-10)p.x=pW+10;if(p.x>pW+10)p.x=-10;if(p.y<-10)p.y=pH+10;if(p.y>pH+10)p.y=-10;p.pulse+=0.02;const alpha=p.alpha+Math.sin(p.pulse)*0.15;pCtx.beginPath();pCtx.arc(p.x,p.y,p.r,0,Math.PI*2);pCtx.fillStyle=`rgba(${bColor},${Math.max(0.05,alpha)})`;pCtx.fill();});
-    for (let i=0;i<particles.length;i++) for (let j=i+1;j<particles.length;j++) { const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy); if(dist<120){pCtx.beginPath();pCtx.moveTo(particles[i].x,particles[i].y);pCtx.lineTo(particles[j].x,particles[j].y);pCtx.strokeStyle=`rgba(${bColor},${0.04*(1-dist/120)})`;pCtx.lineWidth=0.5;pCtx.stroke();}}
-    requestAnimationFrame(animateP);
-  }
-  animateP();
-
-  // Амплитудный визуализатор (полный экран)
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, cx, cy;
-  function resizeViz() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    cx = W / 2; cy = H / 2;
-  }
-  window.addEventListener('resize', resizeViz); resizeViz();
-
-  const vizParams = { points: 4, radius: 0.23, speed: 0.9, amp: 1.7, ghosts: 0, dt: 1.0, color: '#ff8c32', glow: 80, parallax: 0 };
-  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-  window.addEventListener('mousemove', e => { mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2; mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2; });
+  document.getElementById('question-container').innerHTML = '<h2 style="text-align:center;">Тест завершён! Результат отправлен.</h2>';
   
-  const waves = [{freq:1.0,amp:0.35,phase:0},{freq:2.3,amp:0.22,phase:Math.PI/3},{freq:3.7,amp:0.15,phase:Math.PI/1.7}];
-  let pulses = [];
-  function regenPulses(n) { pulses = []; for (let i=0; i<n; i++) pulses.push({freq:0.8+Math.random()*1.8, phase:Math.random()*Math.PI*2, amp:0.04+Math.random()*0.08}); }
-  regenPulses(vizParams.points);
+  let score = 0;
+  userAnswers.forEach(ans => {
+    const q = currentTestData[ans.qIndex];
+    if (q.type === 'choice' && ans.answer === q.correct) score++;
+  });
+  const total = currentTestData.length;
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+  const testTitle = `История: Классы ${selectedGrades.join(', ')}`;
+  
+  sendToSheet({
+    fio: document.getElementById('user-name').value,
+    email: document.getElementById('user-email').value,
+    test_title: testTitle,
+    score: score, total: total, pct: pct,
+    answers: userAnswers.map(a => a.answer)
+  });
+}
 
-  function computePoints(t, baseR) {
-    const n = vizParams.points; const points = [];
+function sendToSheet(data) {
+  data.key = SECRET_KEY;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' } // Обходит CORS
+  }).catch(err => console.error('Ошибка:', err));
+}
+
+// Визуализатор и частицы
+document.addEventListener('DOMContentLoaded', () => {
+  const h = document.getElementById('hamburgerToggle'), n = document.getElementById('navLinks');
+  h.onclick = () => n.classList.toggle('nav-active');
+  const vt = document.getElementById('vizToggle'), vp = document.getElementById('vizPanel'), cv = document.getElementById('closeViz');
+  vt.onclick = () => vp.classList.toggle('open'); cv.onclick = () => vp.classList.remove('open');
+
+  const pC = document.getElementById('particles-bg'), pCx = pC.getContext('2d');
+  let pW, pH, p = [];
+  const rP = () => { pW = pC.width = innerWidth; pH = pC.height = innerHeight; };
+  addEventListener('resize', rP); rP();
+  for (let i=0; i<50; i++) p.push({x:Math.random()*pW,y:Math.random()*pH,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,a:Math.random()*0.5+0.2,p:Math.random()*Math.PI*2});
+  const aP = () => {
+    pCx.clearRect(0,0,pW,pH); const b = currentTheme === 'light' ? '100,100,140' : '180,180,210';
+    p.forEach(pt => { pt.x+=pt.vx; pt.y+=pt.vy; if(pt.x<-10)pt.x=pW+10; if(pt.x>pW+10)pt.x=-10; if(pt.y<-10)pt.y=pH+10; if(pt.y>pH+10)pt.y=-10; pt.p+=0.02; const a=pt.a+Math.sin(pt.p)*0.15; pCx.beginPath(); pCx.arc(pt.x,pt.y,pt.r,0,Math.PI*2); pCx.fillStyle=`rgba(${b},${Math.max(0.05,a)})`; pCx.fill(); });
+    requestAnimationFrame(aP);
+  }; aP();
+
+  const c = document.getElementById('bg-canvas'), cx = c.getContext('2d');
+  let W, H, cxX, cy;
+  const rV = () => { W = c.width = innerWidth; H = c.height = innerHeight; cxX = W/2; cy = H/2; };
+  addEventListener('resize', rV); rV();
+  const vP = { points: 4, radius: 0.23, speed: 0.9, amp: 1.7, ghosts: 0, dt: 1.0, color: '#ff8c32', glow: 80, parallax: 0 };
+  const m = { x: 0, y: 0, tx: 0, ty: 0 };
+  addEventListener('mousemove', e => { m.tx = (e.clientX/innerWidth-0.5)*2; m.ty = (e.clientY/innerHeight-0.5)*2; });
+  const w = [{freq:1.0,amp:0.35,phase:0},{freq:2.3,amp:0.22,phase:Math.PI/3},{freq:3.7,amp:0.15,phase:Math.PI/1.7}];
+  let pl = []; const rPl = n => { pl = []; for(let i=0;i<n;i++) pl.push({freq:0.8+Math.random()*1.8,phase:Math.random()*Math.PI*2,amp:0.04+Math.random()*0.08}); }; rPl(vP.points);
+  
+  window.setVisColor = c => { vP.color = c; };
+  
+  const cP = (t, bR) => {
+    const n = vP.points, pts = [];
     for (let i=0; i<n; i++) {
-      const angle = (i/n)*Math.PI*2; let r = baseR;
-      for (const w of waves) {
-        r += baseR * w.amp * vizParams.amp * Math.sin(angle * w.freq + t * 0.8 * vizParams.speed + w.phase);
-        r += baseR * w.amp * 0.5 * vizParams.amp * Math.cos(angle * (w.freq+1) - t * 0.6 * vizParams.speed + w.phase);
-      }
-      const p = pulses[i] || {freq:1, phase:0, amp:0};
-      r *= 1 + p.amp * Math.sin(t * p.freq + p.phase);
-      points.push({x: Math.cos(angle)*r, y: Math.sin(angle)*r});
-    }
-    return points;
-  }
-
-  function drawCatmullRom(context, points, offX, offY, cX, cY) {
-    const n = points.length; context.beginPath();
+      const a = (i/n)*Math.PI*2; let r = bR;
+      for (const ww of w) { r += bR * ww.amp * vP.amp * Math.sin(a*ww.freq + t*0.8*vP.speed + ww.phase); r += bR * ww.amp * 0.5 * vP.amp * Math.cos(a*(ww.freq+1) - t*0.6*vP.speed + ww.phase); }
+      const pp = pl[i] || {freq:1,phase:0,amp:0}; r *= 1 + pp.amp * Math.sin(t*pp.freq + pp.phase);
+      pts.push({x: Math.cos(a)*r, y: Math.sin(a)*r});
+    } return pts;
+  };
+  const dC = (ctx, pts, oX, oY, cX, cY) => {
+    const n = pts.length; ctx.beginPath();
     for (let i=0; i<n; i++) {
-      const p0 = points[(i-1+n)%n], p1 = points[i], p2 = points[(i+1)%n], p3 = points[(i+2)%n];
-      const steps = 18;
-      for (let s=0; s<=steps; s++) {
-        const t = s/steps, t2 = t*t, t3 = t2*t;
-        // Исправленная математика Катмулл-Ром
-        const x = 0.5 * (2*p1.x + (-p0.x + p2.x)*t + (2*p0.x - 5*p1.x + 4*p2.x - p3.x)*t2 + (-p0.x + 3*p1.x - 3*p2.x + p3.x)*t3);
-        const y = 0.5 * (2*p1.y + (-p0.y + p2.y)*t + (2*p0.y - 5*p1.y + 4*p2.y - p3.y)*t2 + (-p0.y + 3*p1.y - 3*p2.y + p3.y)*t3);
-        const px = cX + x + offX, py = cY + y + offY;
-        if (i===0 && s===0) context.moveTo(px, py); else context.lineTo(px, py);
+      const p0=pts[(i-1+n)%n], p1=pts[i], p2=pts[(i+1)%n], p3=pts[(i+2)%n];
+      for (let s=0; s<=18; s++) {
+        const t=s/18, t2=t*t, t3=t2*t;
+        const x = 0.5*(2*p1.x + (-p0.x+p2.x)*t + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3);
+        const y = 0.5*(2*p1.y + (-p0.y+p2.y)*t + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3);
+        const px=cX+x+oX, py=cY+y+oY; if(i===0&&s===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
       }
+    } ctx.closePath();
+  };
+  const h2r = h => { const m=h.replace('#',''); return {r:parseInt(m.substring(0,2),16),g:parseInt(m.substring(2,4),16),b:parseInt(m.substring(4,6),16)}; };
+  const dS = t => {
+    cx.clearRect(0,0,W,H); const rgb=h2r(vP.color), cs=`${rgb.r}, ${rgb.g}, ${rgb.b}`;
+    const pX=m.x*vP.parallax*0.3, pY=m.y*vP.parallax*0.3;
+    for (let g=0; g<vP.ghosts; g++) {
+      const r=(g+1)/(vP.ghosts+1), dt=vP.dt*(vP.ghosts-g), al=0.03+r*0.1, wd=0.5+r*0.9;
+      dC(cx, cP(t-dt, Math.min(W,H)*vP.radius), pX*0.5, pY*0.5, cxX, cy);
+      cx.strokeStyle=`rgba(${cs},${al})`; cx.lineWidth=wd; cx.shadowBlur=6; cx.shadowColor=`rgba(${cs},${al})`; cx.stroke();
     }
-    context.closePath();
-  }
-
-  function hexToRgb(hex) { const m = hex.replace('#',''); return {r:parseInt(m.substring(0,2),16), g:parseInt(m.substring(2,4),16), b:parseInt(m.substring(4,6),16)}; }
-
-  function drawScene(t) {
-    ctx.clearRect(0,0,W,H);
-    const rgb = hexToRgb(vizParams.color); const colorStr = `${rgb.r}, ${rgb.g}, ${rgb.b}`;
-    const parX = mouse.x * vizParams.parallax * 0.3, parY = mouse.y * vizParams.parallax * 0.3;
-    
-    for (let g=0; g<vizParams.ghosts; g++) {
-      const ratio = (g+1)/(vizParams.ghosts+1), dt = vizParams.dt * (vizParams.ghosts-g);
-      const alpha = 0.03 + ratio * 0.1, width = 0.5 + ratio * 0.9;
-      const pts = computePoints(t - dt, Math.min(W,H) * vizParams.radius);
-      drawCatmullRom(ctx, pts, parX*0.5, parY*0.5, cx, cy);
-      ctx.strokeStyle = `rgba(${colorStr},${alpha})`; ctx.lineWidth = width;
-      ctx.shadowBlur = 6; ctx.shadowColor = `rgba(${colorStr},${alpha})`; ctx.stroke();
-    }
-    
-    const mainPts = computePoints(t, Math.min(W,H) * vizParams.radius);
-    drawCatmullRom(ctx, mainPts, parX, parY, cx, cy);
-    ctx.shadowBlur = vizParams.glow * 0.35; ctx.shadowColor = `rgba(${colorStr},0.85)`;
-    ctx.strokeStyle = `rgba(${colorStr},0.95)`; ctx.lineWidth = 1.6; ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = `rgba(${Math.min(255,rgb.r+50)},${Math.min(255,rgb.g+50)},${Math.min(255,rgb.b+60)},0.85)`;
-    ctx.lineWidth = 0.7; ctx.stroke();
-  }
-
-  let startTime = performance.now();
-  function animateViz() {
-    const t = (performance.now() - startTime) / 1000;
-    mouse.x += (mouse.tx - mouse.x) * 0.03; mouse.y += (mouse.ty - mouse.y) * 0.03;
-    drawScene(t);
-    requestAnimationFrame(animateViz);
-  }
-  animateViz();
-
-  // UI Привязки
-  const vizToggle = document.getElementById('vizToggle'), vizPanel = document.getElementById('vizPanel'), vizClose = document.getElementById('closeViz');
-  vizToggle.onclick = () => vizPanel.classList.toggle('open');
-  vizClose.onclick = () => vizPanel.classList.remove('open');
-
-  window.setVisColor = (color) => {
-    vizParams.color = color;
-    document.getElementById('color').value = color;
+    dC(cx, cP(t, Math.min(W,H)*vP.radius), pX, pY, cxX, cy);
+    cx.shadowBlur=vP.glow*0.35; cx.shadowColor=`rgba(${cs},0.85)`; cx.strokeStyle=`rgba(${cs},0.95)`; cx.lineWidth=1.6; cx.stroke();
+    cx.shadowBlur=0; cx.strokeStyle=`rgba(${Math.min(255,rgb.r+50)},${Math.min(255,rgb.g+50)},${Math.min(255,rgb.b+60)},0.85)`; cx.lineWidth=0.7; cx.stroke();
   };
-
-  function bindViz(id, key, displayId, format) {
-    const input = document.getElementById(id), display = displayId ? document.getElementById(displayId) : null;
-    input.addEventListener('input', () => {
-      const v = input.type === 'range' ? parseFloat(input.value) : input.value;
-      vizParams[key] = v;
-      if (display) display.textContent = format ? format(v) : v;
-      if (key === 'points') regenPulses(v);
-    });
-  }
-  bindViz('points', 'points', 'v-points', v => v.toFixed(0));
-  bindViz('radius', 'radius', 'v-radius', v => v.toFixed(2));
-  bindViz('speed', 'speed', 'v-speed', v => v.toFixed(2));
-  bindViz('amp', 'amp', 'v-amp', v => v.toFixed(2));
-  bindViz('ghosts', 'ghosts', 'v-ghosts', v => v.toFixed(0));
-  bindViz('glow', 'glow', 'v-glow', v => v.toFixed(0));
-  bindViz('parallax', 'parallax', 'v-parallax', v => v.toFixed(0));
-  bindViz('color', 'color');
-
-  document.getElementById('randomBtn').onclick = () => {
-    const rnd = (min, max) => Math.random() * (max - min) + min;
-    document.getElementById('points').value = Math.floor(rnd(4, 12)); vizParams.points = parseInt(document.getElementById('points').value); regenPulses(vizParams.points); document.getElementById('v-points').textContent = vizParams.points;
-    document.getElementById('amp').value = rnd(0.5, 2).toFixed(2); vizParams.amp = parseFloat(document.getElementById('amp').value); document.getElementById('v-amp').textContent = vizParams.amp.toFixed(2);
-    document.getElementById('speed').value = rnd(0.5, 2).toFixed(2); vizParams.speed = parseFloat(document.getElementById('speed').value); document.getElementById('v-speed').textContent = vizParams.speed.toFixed(2);
-  };
-  document.getElementById('resetBtn').onclick = () => {
-    const defaults = {points:4, radius:0.23, speed:0.9, amp:1.7, ghosts:0, glow:80, parallax:0};
-    Object.keys(defaults).forEach(k => {
-      vizParams[k] = defaults[k];
-      const el = document.getElementById(k);
-      if (el) { el.value = defaults[k]; const dsp = document.getElementById('v-'+k); if (dsp) dsp.textContent = defaults[k]; }
-    });
-    regenPulses(4);
-  };
+  const sT = performance.now();
+  const aV = () => { const t=(performance.now()-sT)/1000; m.x+=(m.tx-m.x)*0.03; m.y+=(m.ty-m.y)*0.03; dS(t); requestAnimationFrame(aV); }; aV();
 });
 </script>
 </body>
