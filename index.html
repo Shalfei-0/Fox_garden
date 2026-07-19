@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Лисий Сад | Самопознание и Обучение</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,7 +103,7 @@
     color: var(--text-primary);
     text-shadow: 0 0 15px var(--accent-glow);
   }
-  .nav-links { display: flex; gap: 12px; align-items: center; }
+  .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .nav-links a, .nav-links button {
     color: var(--text-secondary);
     text-decoration: none; background: none; border: 1px solid transparent;
@@ -161,15 +161,20 @@
   }
 
   .home-center { text-align: center; margin-top: 40px; }
+  
+  /* Изображения персонажей (без кружочков, больше размер) */
   .fox-icon {
-    width: 140px; height: 140px;
-    border-radius: 50%; object-fit: cover;
-    border: 3px solid var(--accent);
+    width: 260px; 
+    height: auto;
+    max-width: 85%;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
     margin-bottom: 20px;
-    box-shadow: 0 0 30px var(--accent-glow);
+    object-fit: contain;
     transition: transform 0.4s;
   }
-  .fox-icon:hover { transform: scale(1.08); }
+  .fox-icon:hover { transform: scale(1.05); }
   
   .home-center h1, .view h2 {
     font-family: var(--font-heading);
@@ -351,12 +356,26 @@
   .fill-input { display: block; width: 100%; padding: 9px 14px; margin-top: 5px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px; font-family: inherit; font-size: 0.95rem; }
   .fill-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(255,140,50,0.1); }
 
+  /* Мобильная адаптация */
   @media (max-width: 768px) {
+    .top-nav { padding: 10px 15px; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .logo { font-size: 1.2rem; }
+    .nav-links { gap: 5px; justify-content: center; }
+    .nav-links a, .nav-links button { padding: 6px 12px; font-size: 0.85rem; }
+    .site-content { padding: 140px 15px 80px; }
+    .home-center h1, .view h2 { font-size: 1.8rem; }
+    .home-center p { font-size: 1rem; }
+    .fox-icon { width: 200px; }
+    .viz-panel { right: 10px; left: 10px; width: auto; max-width: none; }
+    .viz-toggle { right: 15px; bottom: 15px; }
     .grade-grid { grid-template-columns: repeat(3, 1fr); }
-    .viz-panel { right: 15px; width: calc(100% - 30px); max-width: 320px; }
-    .viz-toggle { right: 20px; bottom: 20px; }
-    .home-center h1, .view h2 { font-size: 2rem; }
-    .nav-links a, .nav-links button { padding: 8px 12px; font-size: 0.9rem; }
+  }
+  @media (max-width: 400px) {
+    .nav-links { flex-direction: column; align-items: center; }
+    .nav-links a, .nav-links button { padding: 5px 10px; font-size: 0.8rem; }
+    .home-center h1, .view h2 { font-size: 1.5rem; }
+    .fox-icon { width: 150px; }
+    .grade-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -473,7 +492,7 @@
   <section id="psychology-view" class="view">
     <div id="psych-intro">
       <div style="text-align:center;">
-        <img src="red_panda_asya.png" alt="Ася" class="fox-icon" style="border-color: #64b5f6;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <img src="red_panda_asya.png" alt="Ася" class="fox-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
         <div style="display:none; font-size:100px; align-items:center; justify-content:center; height:150px; margin-bottom:20px;">🐾</div>
         <h2>Психология с Асей</h2>
         <p style="margin-bottom:20px; color: var(--text-secondary); font-size: 1.1rem;">Привет! Я Ася 🐾 Помогу тебе лучше понять себя</p>
@@ -756,7 +775,7 @@ function resetHistoryTest() {
 }
 
 // --- ВИЗУАЛИЗАТОР И ЧАСТИЦЫ ---
-(() => {
+document.addEventListener('DOMContentLoaded', () => {
   // Частицы фона
   const pCanvas = document.getElementById('particles-bg');
   const pCtx = pCanvas.getContext('2d');
@@ -815,8 +834,9 @@ function resetHistoryTest() {
       const steps = 18;
       for (let s=0; s<=steps; s++) {
         const t = s/steps, t2 = t*t, t3 = t2*t;
-        const x = 0.5 * ((2*p1.x) + (-p0.x+p2.x)*t + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3);
-        const y = 0.5 * ((2*p1.y) + (-p0.y+p2.y)*t + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3);
+        // Исправленная математика Катмулл-Ром
+        const x = 0.5 * (2*p1.x + (-p0.x + p2.x)*t + (2*p0.x - 5*p1.x + 4*p2.x - p3.x)*t2 + (-p0.x + 3*p1.x - 3*p2.x + p3.x)*t3);
+        const y = 0.5 * (2*p1.y + (-p0.y + p2.y)*t + (2*p0.y - 5*p1.y + 4*p2.y - p3.y)*t2 + (-p0.y + 3*p1.y - 3*p2.y + p3.y)*t3);
         const px = cX + x + offX, py = cY + y + offY;
         if (i===0 && s===0) context.moveTo(px, py); else context.lineTo(px, py);
       }
@@ -901,7 +921,7 @@ function resetHistoryTest() {
     });
     regenPulses(4);
   };
-})();
+});
 </script>
 </body>
 </html>
