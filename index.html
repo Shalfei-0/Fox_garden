@@ -9,14 +9,27 @@
 </head>
 <body>
 <div id="app">
-  <!-- Фон с визуализацией -->
+  <!-- Визуализация Catmull-Rom (левый верхний угол) -->
   <canvas id="visualizer"></canvas>
-  
+  <button class="viz-toggle" id="vizToggle" title="Настройки анимации">⚙</button>
+  <div class="viz-panel hidden" id="vizPanel">
+    <button class="viz-close" id="vizClose">✕</button>
+    <h4>Настройки визуализации</h4>
+    <div class="viz-row"><label>Скорость</label><input type="range" id="vizSpeed" min="0" max="3" step="0.1" value="0.9"><span id="vizSpeedVal">0.9</span></div>
+    <div class="viz-row"><label>Амплитуда</label><input type="range" id="vizAmp" min="0" max="2" step="0.1" value="1.7"><span id="vizAmpVal">1.7</span></div>
+    <div class="viz-row"><label>Цвет</label><input type="color" id="vizColor" value="#ff8c32"></div>
+    <div class="viz-row"><label>Свечение</label><input type="range" id="vizGlow" min="0" max="80" value="80"><span id="vizGlowVal">80</span></div>
+  </div>
+
   <!-- Навигация -->
   <nav class="nav">
-    <div class="nav-logo">🦊 Лисий Сад</div>
+    <div class="nav-logo">
+      <img src="persi_fox.png" alt="Шалфей" class="nav-fox">
+      <span>Лисий Сад</span>
+    </div>
     <div class="nav-links">
       <button class="nav-link active" data-tab="home">Главная</button>
+      <button class="nav-link" data-tab="history">📜 Тесты</button>
       <button class="nav-link" data-tab="psychology">🧠 Психология</button>
       <button class="nav-link" data-tab="about">О проекте</button>
     </div>
@@ -29,9 +42,9 @@
     <section id="home" class="tab active">
       <div class="hero">
         <h1>Добро пожаловать в Лисий Сад</h1>
-        <p class="hero-sub">Интерактивное пространство для самопознания и гармонии</p>
+        <p class="hero-sub">Интерактивное пространство для самопознания и обучения</p>
         <div class="hero-actions">
-          <button class="btn-primary" onclick="switchTab('psychology')">Начать тестирование</button>
+          <button class="btn-primary" onclick="switchTab('history')">Начать тестирование</button>
           <button class="btn-secondary" onclick="switchTab('about')">Узнать больше</button>
         </div>
       </div>
@@ -39,89 +52,118 @@
         <div class="feature-card">
           <div class="feature-icon">🧠</div>
           <h3>Психологические тесты</h3>
-          <p>Профессиональные методики для понимания себя: КОС и тест Михельсона</p>
+          <p>Профессиональные методики с Асей: КОС и тест Михельсона</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🎨</div>
-          <h3>Визуальная медитация</h3>
-          <p>Успокаивающая анимация Catmull-Rom кривых для релаксации</p>
+          <div class="feature-icon">📚</div>
+          <h3>Тесты по истории</h3>
+          <p>5–9 классы: даты, понятия, личности + интерактивные задания</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🔒</div>
           <h3>Конфиденциальность</h3>
-          <p>Ваши результаты отправляются только вам и не сохраняются на сервере</p>
+          <p>Результаты отправляются только вам и не сохраняются на сервере</p>
         </div>
       </div>
     </section>
 
-    <!-- Психология с Асей -->
-    <section id="psychology" class="tab">
-      <div class="psych-header">
-        <div class="asya-avatar">
-          <img src="red_panda_asya.png" alt="Ася">
-          <div class="asya-glow"></div>
+    <!-- Тесты по истории -->
+    <section id="history" class="tab">
+      <h2>📜 Тесты по истории России</h2>
+      
+      <!-- Выбор класса -->
+      <div id="grade-select-view">
+        <p style="margin-bottom:20px;color:var(--text-muted)">Выберите класс для тестирования:</p>
+        <div class="grade-buttons">
+          <button class="grade-btn" data-grade="5">5 класс • Древний мир</button>
+          <button class="grade-btn" data-grade="6">6 класс • IX–XVI вв.</button>
+          <button class="grade-btn" data-grade="7">7 класс • XVII век</button>
+          <button class="grade-btn" data-grade="8">8 класс • XVIII век</button>
+          <button class="grade-btn" data-grade="9">9 класс • XIX–XX вв.</button>
         </div>
-        <div>
+      </div>
+      
+      <!-- Модальное окно ФИО -->
+      <div class="modal-overlay hidden" id="fio-modal">
+        <div class="modal-box">
+          <h3>🦊 Перед началом теста</h3>
+          <p style="margin:8px 0 16px;opacity:0.8;font-size:0.9rem">Введите ваше имя для персонализации результатов</p>
+          <input type="text" id="fio-input" placeholder="ФИО *" class="input">
+          <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
+          <div class="modal-actions">
+            <button class="btn-primary" id="start-test-btn">Начать</button>
+            <button class="btn-secondary" id="cancel-test-btn">Отмена</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Контейнер теста -->
+      <div id="history-quiz" class="hidden">
+        <div class="quiz-header">
+          <div class="sage-tip" id="sage-tip">💬 <span id="sage-text">Удачи! Я верю в тебя!</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="quiz-info"><span id="quiz-grade"></span> • Вопрос <span id="q-num">1</span>/<span id="q-total">10</span></div>
+        </div>
+        <div id="quiz-content"></div>
+        <div id="quiz-actions"></div>
+      </div>
+      
+      <!-- Результаты -->
+      <div id="history-results" class="hidden">
+        <div class="results-card">
+          <h3>✅ Тест завершён!</h3>
+          <p id="result-summary"></p>
+          <div id="result-details"></div>
+          <div id="h-mail-status" style="padding:12px;margin-top:15px;background:rgba(255,255,255,0.05);border-radius:10px;text-align:center">📤 Отправка...</div>
+        </div>
+      </div>
+      
+      <button class="btn-back hidden" id="history-back-btn" onclick="exitHistoryTest()">← Назад к выбору</button>
+    </section>
+
+    <!-- Психология с Асей -->
+    <section id="psychology" class="psych-overlay">
+      <div class="psych-container">
+        <div class="geometric-flowers" id="geo-flowers"></div>
+        <div class="asya-header">
+          <div class="asya-logo-wrap">
+            <div class="asya-pulse"></div>
+            <img src="red_panda_asya.png" alt="Ася" class="asya-logo">
+          </div>
           <h2>Психология с Асей</h2>
           <p>Привет! Я Ася 🐾 Помогу тебе лучше понять себя через проверенные методики</p>
         </div>
-      </div>
-      
-      <div class="test-cards">
-        <div class="test-card" onclick="openFioModal('kos')">
-          <div class="test-card-icon">🧩</div>
-          <h3>Тест КОС</h3>
-          <p>Коммуникативные и организаторские склонности • 40 вопросов</p>
-          <span class="test-duration">~10 минут</span>
+        <div id="psych-menu-view">
+          <div class="psych-menu" id="psych-menu">
+            <div class="psych-card" onclick="openFioModal('kos')">🧠 Тест КОС (40 вопросов)</div>
+            <div class="psych-card" onclick="openFioModal('michelson')">💬 Тест Михельсона (27 вопросов)</div>
+          </div>
         </div>
-        <div class="test-card" onclick="openFioModal('michelson')">
-          <div class="test-card-icon">💬</div>
-          <h3>Тест Михельсона</h3>
-          <p>Коммуникативная компетентность • 27 ситуационных вопросов</p>
-          <span class="test-duration">~8 минут</span>
-        </div>
+        <div id="psych-quiz" class="hidden"></div>
+        <div id="psych-results" class="hidden"></div>
+        <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← Назад к выбору</button>
+        <button class="btn-exit-psych" onclick="switchTab('home')">← Вернуться</button>
       </div>
-      
-      <!-- Контейнер для теста -->
-      <div id="psych-quiz" class="hidden"></div>
-      <div id="psych-results" class="hidden"></div>
-      <button class="btn-back hidden" id="psych-back-btn" onclick="backToPsychMenu()">← Назад к выбору</button>
     </section>
 
     <!-- О проекте -->
     <section id="about" class="tab">
       <div class="about-card">
-        <h2>О проекте</h2>
-        <p><strong>Лисий Сад</strong> — это интерактивное пространство, созданное для поддержки вашего психологического благополучия.</p>
-        <p>Мы объединили проверенные психологические методики с успокаивающей визуальной эстетикой, чтобы создать комфортную среду для самопознания.</p>
+        <h2>🌿 История Лисьего Сада</h2>
+        <p>Говорят, что <strong>Лисий Сад</strong> существует столько же, сколько и первые книги. В самой чаще древнего леса, где время течёт иначе, поселился мудрый лис по имени <strong>Шалфей</strong>.</p>
+        <p>Шалфей — хранитель памяти времён. Он собирает оброненные даты, забытые имена и мудрость летописцев, превращая сухую историю в живой, тёплый рассказ. Его золотистая шерсть светится мягким светом, а в глазах — спокойствие веков. Шалфей не просто хранит знания — он помогает тебе пройти сквозь века без ошибок и скуки, подсказывая верный путь в моменты сомнений.</p>
         
-        <h3 style="margin-top:24px">Технологии</h3>
-        <ul class="tech-list">
-          <li>✨ Визуализация Catmull-Rom кривых в реальном времени</li>
-          <li>🎨 Адаптивный тёмный интерфейс с плавными переходами</li>
-          <li>🔐 Безопасная отправка результатов через FormSubmit</li>
-          <li>📱 Полная поддержка мобильных устройств</li>
-        </ul>
+        <div class="lore-divider">✦ ✦ ✦</div>
         
-        <h3 style="margin-top:24px">Контакты</h3>
-        <p>По вопросам сотрудничества: <a href="mailto:aniruf14.02@gmail.com">aniruf14.02@gmail.com</a></p>
+        <p>Если Шалфей следит за временем, то <strong>Ася</strong> — маленькая красная панда — хранит внутренний мир тех, кто приходит в Сад. Она появилась у тихого ручья, где вода поёт древние мелодии, и научилась слышать не только слова, но и тишину между ними.</p>
+        <p>Ася — местный психолог и душевный проводник. Она проводит проверенные опросы, чтобы помочь тебе понять свои мысли, укрепить уверенность и найти баланс. Её пушистый хвост мягко обнимает, когда трудно, а тёплый взгляд напоминает: ты не один.</p>
+        
+        <div class="lore-footer">
+          <p><em>Лисий Сад — место, где история встречается с душой.</em></p>
+        </div>
       </div>
     </section>
   </main>
-
-  <!-- Модальное окно для ввода ФИО -->
-  <div class="modal-overlay" id="fio-modal">
-    <div class="modal-box">
-      <h3>🐾 Перед началом теста</h3>
-      <p style="margin:8px 0 16px;opacity:0.8;font-size:0.9rem">Введите ваше имя для персонализации результатов</p>
-      <input type="text" id="fio-input" placeholder="ФИО *" class="input">
-      <input type="email" id="email-input" placeholder="Email (необязательно)" class="input">
-      <div class="modal-actions">
-        <button class="btn-primary" id="start-test-btn">Начать</button>
-        <button class="btn-secondary" id="cancel-test-btn">Отмена</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <script src="script.js"></script>
