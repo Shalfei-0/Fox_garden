@@ -293,13 +293,8 @@
 </div>
 
 <script>
-// ВАША ССЫЛКА НА GOOGLE APPS SCRIPT (ДЛЯ ТАБЛИЦЫ)
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyattrqXMif5IBzSrqNii5oXpNGgGFWjWjllFkK1YTPAz-X2UQ7ZH4Z6jgvtYBeFj-CAw/exec';
 const SECRET_KEY = 'fox_secret_2026';
-
-// ПОЧТЫ ДЛЯ ОТПРАВКИ ПИСЕМ (ЧЕРЕЗ FORMSUBMIT)
-const MAIL_HISTORY = 'aniruf14.02@gmail.com';
-const MAIL_PSYCH = '9266031377@bk.ru';
 
 const historyData = { 5: [ {q:"Как называлось первое орудие труда древнейших людей?", type:"choice", options:["рубило","гарпун","лук","мотыга"], correct:0}, {q:"Около какого времени появились первые государства в долине Нила?", type:"choice", options:["около 5 тыс. лет назад","около 3 тыс. лет до н.э.","около 1 тыс. лет до н.э.","в I в. н.э."], correct:1}, {q:"Что обозначает термин «неолит»?", type:"choice", options:["новый каменный век","древний каменный век","средний каменный век","бронзовый век"], correct:0}, {q:"Письменность древних египтян называлась:", type:"choice", options:["клинопись","иероглифы","буквенное письмо","узелковое письмо"], correct:1}, {q:"Кто в Древнем Египте считался «живым богом»?", type:"choice", options:["жрец","фараон","верховный судья","военачальник"], correct:1}, {q:"Где была изобретена первая в мире письменность – клинопись?", type:"choice", options:["в Египте","в Индии","в Междуречье (Двуречье)","в Китае"], correct:2}, {q:"Какая форма правления сложилась в Афинах в V в. до н.э.?", type:"choice", options:["тирания","олигархия","демократия","монархия"], correct:2}, {q:"В каком году, согласно легенде, был основан Рим?", type:"choice", options:["753 г. до н.э.","509 г. до н.э.","395 г. до н.э.","27 г. до н.э."], correct:0}, {q:"Кто создал огромную державу от Греции до Индии?", type:"choice", options:["Ганнибал","Юлий Цезарь","Александр Македонский","Кир Великий"], correct:2}, {q:"Что такое «республика» в Древнем Риме?", type:"choice", options:["власть одного правителя","власть знатного рода","власть народа, выбиравшего должностных лиц","власть жрецов"], correct:2} ], 6: [ {q:"В каком году произошло Крещение Руси?", type:"choice", options:["862 г.","882 г.","988 г.","1054 г."], correct:2}, {q:"Как назывался объезд князем земель для сбора дани?", type:"choice", options:["выход","полюдье","кормление","тягло"], correct:1}, {q:"Кто был автором «Повести временных лет»?", type:"choice", options:["митрополит Иларион","Нестор","Владимир Мономах","Никон"], correct:1}, {q:"Какое событие произошло в 1223 году?", type:"choice", options:["Невская битва","битва на Калке","Ледовое побоище","Куликовская битва"], correct:1}, {q:"Термин «вече» означал:", type:"choice", options:["совет знати","народное собрание","княжеский суд","церковный собор"], correct:1}, {q:"Кто разгромил монголов на Куликовом поле в 1380 году?", type:"choice", options:["Иван Калита","Дмитрий Донской","Василий Тёмный","Иван III"], correct:1}, {q:"Система содержания должностных лиц за счёт населения в XV–XVI вв.:", type:"choice", options:["кормление","поместье","вотчина","опричнина"], correct:0}, {q:"«Стояние на реке Угре», свергнувшее ордынское иго, состоялось в:", type:"choice", options:["1380 г.","1462 г.","1480 г.","1505 г."], correct:2}, {q:"Что такое «поместье» в Московском государстве?", type:"choice", options:["наследственное владение","земля за службу без права наследования","монастырская земля","купленная у татар земля"], correct:1}, {q:"Кто первым принял титул «государь всея Руси»?", type:"choice", options:["Василий II","Иван III","Василий III","Иван IV"], correct:1} ], 7: [ {q:"В каком году на престол избран Михаил Романов?", type:"choice", options:["1598 г.","1605 г.","1613 г.","1645 г."], correct:2}, {q:"Что такое «Смутное время»?", type:"choice", options:["период дворцовых переворотов","кризис государственности в начале XVII в.","восстание крестьян","война с Речью Посполитой"], correct:1}, {q:"Соборное уложение, закрепившее крепостное право, принято в:", type:"choice", options:["1607 г.","1649 г.","1667 г.","1682 г."], correct:1}, {q:"Кто возглавил церковный раскол в середине XVII века?", type:"choice", options:["патриарх Никон и протопоп Аввакум","митрополит Филипп","Сергий Радонежский","Геннадий Новгородский"], correct:0}, {q:"Старообрядцы — это:", type:"choice", options:["сторонники старых обрядов после реформы Никона","участники восстания Разина","купцы","служилые люди"], correct:0}, {q:"Восстание Степана Разина произошло в:", type:"choice", options:["1648 г.","1662 г.","1670–1671 гг.","1682 г."], correct:2}, {q:"«Ясачный сбор» в Сибири — это:", type:"choice", options:["налог с земель","пошлина с торговли","дань мехами с коренных народов","военный налог"], correct:2}, {q:"Фактическим правителем при малолетних Иване и Петре была:", type:"choice", options:["Борис Годунов","Василий Голицын","Софья Алексеевна","Фёдор Алексеевич"], correct:2}, {q:"Местничество отменено в:", type:"choice", options:["1649 г.","1676 г.","1682 г.","1689 г."], correct:2}, {q:"Регулярные пехотные полки XVII в. по западному образцу назывались:", type:"choice", options:["стрелецкие","полки нового строя","городовые казаки","опричники"], correct:1} ], 8: [ {q:"Северная война началась в:", type:"choice", options:["1696 г.","1700 г.","1709 г.","1721 г."], correct:1}, {q:"Какой орган создал Пётр I вместо Боярской думы?", type:"choice", options:["Сенат","Верховный тайный совет","Государственный совет","Кабинет министров"], correct:0}, {q:"«Ревизия» при Петре I — это:", type:"choice", options:["проверка войск","перепись податного населения","судебное следствие","таможенный досмотр"], correct:1}, {q:"Россия провозглашена империей в:", type:"choice", options:["1709 г.","1721 г.","1725 г.","1762 г."], correct:1}, {q:"Эпоха дворцовых переворотов длилась:", type:"choice", options:["1700–1725 гг.","1725–1762 гг.","1730–1740 гг.","1762–1796 гг."], correct:1}, {q:"«Просвещённый абсолютизм» — это политика:", type:"choice", options:["полного освобождения крестьян","Екатерины II с опорой на идеи Просвещения","зависимости монарха от дворянства","парламентской монархии"], correct:1}, {q:"Восстание Пугачёва было в:", type:"choice", options:["1762–1764 гг.","1773–1775 гг.","1785–1787 гг.","1790–1792 гг."], correct:1}, {q:"Освобождение дворян от обязательной службы даровал(а):", type:"choice", options:["Указ о единонаследии","Жалованная грамота дворянству (1785)","Табель о рангах","Манифест о вольности дворянской (1762)"], correct:3}, {q:"Указ о вольности дворянской принят в:", type:"choice", options:["1736 г.","1762 г.","1775 г.","1785 г."], correct:1}, {q:"Установите соответствие между датой и событием:", type:"match", pairs:[ {left:"1703 г.", right:"основание Санкт-Петербурга"}, {left:"1709 г.", right:"Полтавская битва"}, {left:"1721 г.", right:"провозглашение России империей"}, {left:"1762 г.", right:"начало царствования Екатерины II"} ]} ], 9: [ {q:"Павел I убит, Александр I вступил на престол в:", type:"choice", options:["1796 г.","1801 г.","1812 г.","1825 г."], correct:1}, {q:"14 декабря 1825 года произошло:", type:"choice", options:["восстание декабристов","начало Крымской войны","отмена крепостного права","убийство Александра II"], correct:0}, {q:"«Западники» — это:", type:"choice", options:["сторонники самобытного пути России","сторонники развития по западноевропейскому образцу","члены тайных обществ","чиновники западных губерний"], correct:1}, {q:"Крепостное право отменено в:", type:"choice", options:["1855 г.","1861 г.","1864 г.","1874 г."], correct:1}, {q:"«Отрезки» после реформы 1861 г. — это:", type:"choice", options:["земля, переданная крестьянам","часть наделов, отрезанная в пользу помещика","участки для общественных нужд","арендованные земли"], correct:1}, {q:"Манифест 17 октября (Конституция) принят в:", type:"choice", options:["1881 г.","1905 г.","1906 г.","1914 г."], correct:1}, {q:"Теорию «официальной народности» создал:", type:"choice", options:["Н.М. Карамзин","С.С. Уваров","М.Н. Погодин","К.П. Победоносцев"], correct:1}, {q:"В 1904–1905 гг. шла война:", type:"choice", options:["Крымская","Русско-турецкая","Русско-японская","Первая мировая"], correct:2}, {q:"Первая мировая война началась в:", type:"choice", options:["1912 г.","1914 г.","1915 г.","1917 г."], correct:1}, {q:"Заполните пропуски в таблице:", type:"fill", fields:[ {label:"1803 г. • Указ о «вольных хлебопашцах» • Правитель:", correct:"Александр I"}, {label:"1864 г. • ______________ (судебная реформа) • Правитель: Александр II", correct:"Судебная реформа"}, {label:"1897 г. • Денежная реформа • Министр:", correct:"Витте"}, {label:"1906 г. • Манифест 17 октября • Император:", correct:"Николай II"} ]} ] };
 const kosQuestions = [ "Много ли у Вас друзей?","Часто ли удается склонить товарищей?","Долго ли беспокоит обида?","Трудно ли ориентироваться в критической ситуации?","Стремитесь ли к новым знакомствам?","Нравится ли общественная работа?","Приятнее ли проводить время с книгами?","Легко ли отступаете от намерений?","Легко ли устанавливаете контакты со старшими?","Любите ли организовывать игры?","Трудно ли включаться в новую компанию?","Откладываете ли дела?","Легко ли контактировать с незнакомыми?","Стремитесь ли, чтобы товарищи действовали по Вашему мнению?","Трудно ли осваиваться в новом коллективе?","Нет ли конфликтов из-за невыполнения обязанностей?","Стремитесь ли знакомиться?","Принимаете ли инициативу?","Раздражают ли окружающие?","Плохо ли ориентируетесь в незнакомой обстановке?","Нравится ли быть среди людей?","Раздражение из-за незавершенного дела?","Стеснение при знакомстве?","Утомление от общения?","Любите ли коллективные игры?","Проявляете ли инициативу в интересах товарищей?","Неуверенность среди малознакомых?","Редко отстаиваете правоту?","Вносите ли оживление в компанию?","Участие в общественной работе?","Ограничиваете ли круг знакомых?","Не отстаиваете ли мнение?","Непринужденность в незнакомой компании?","Охотно организуете мероприятия?","Неуверенность перед группой?","Опаздываете ли?","Много ли друзей?","Смущение при общении?","Пугает ли новый коллектив?","Неуверенность в большой группе?" ];
@@ -353,6 +348,7 @@ function toggleTheme() {
   document.getElementById('navLinks').classList.remove('nav-active');
 }
 
+// --- ПСИХОЛОГИЯ ---
 function startPsyTest(type) { 
   currentPsyTest = type; psyQuestionIndex = 0; psyAnswers = []; 
   document.getElementById('modal-title').innerText = "Данные для теста"; 
@@ -382,33 +378,44 @@ function finishPsyTest() {
   document.getElementById('psych-test').style.display = 'none'; 
   document.getElementById('psych-intro').style.display = 'block';
   let score = 0; let correctnessArray = []; let cumulativeScore = []; let currentScore = 0;
-  if (currentPsyTest === 'mikh') { 
-    psyAnswers.forEach((ans, i) => { 
-      let isCorrect = (ans === mikhelsonQuestions[i].correct); 
-      if (isCorrect) score++; 
-      currentScore += isCorrect ? 1 : 0; 
-      correctnessArray.push(isCorrect ? 1 : 0); 
-      cumulativeScore.push(currentScore); 
-    }); 
-  } else { 
-    psyAnswers.forEach(ans => { 
-      correctnessArray.push(ans === 'Да' ? 1 : 0); 
-      currentScore += ans === 'Да' ? 1 : 0; 
-      cumulativeScore.push(currentScore); 
-    }); 
-  }
+  
+  // Формируем красивый массив для психологии
+  const formattedAnswers = psyAnswers.map((ans, i) => {
+    if (currentPsyTest === 'mikh') {
+      let isCorrect = (ans === mikhelsonQuestions[i].correct);
+      if (isCorrect) score++;
+      currentScore += isCorrect ? 1 : 0;
+      correctnessArray.push(isCorrect ? 1 : 0);
+      cumulativeScore.push(currentScore);
+      return {
+        question: mikhelsonQuestions[i].q,
+        userAnswer: mikhelsonQuestions[i].options[ans] || "-",
+        correctAnswer: mikhelsonQuestions[i].options[mikhelsonQuestions[i].correct],
+        isCorrect: isCorrect
+      };
+    } else {
+      // Для теста КОС нет правильных ответов
+      correctnessArray.push(ans === 'Да' ? 1 : 0);
+      currentScore += ans === 'Да' ? 1 : 0;
+      cumulativeScore.push(currentScore);
+      return {
+        question: kosQuestions[i],
+        userAnswer: ans,
+        correctAnswer: "(Для теста КОС нет правильных/неправильных ответов)",
+        isCorrect: false
+      };
+    }
+  });
+
   const total = psyAnswers.length; const pct = Math.round((score / total) * 100); 
   const testTitle = currentPsyTest === 'kos' ? 'Психология: Тест КОС' : 'Психология: Тест Михельсона';
   
-  const payload = { 
+  sendToSheet({ 
     fio: document.getElementById('user-name').value, 
     email: document.getElementById('user-email').value, 
     test_title: testTitle, score: score, total: total, pct: pct, 
-    answers: psyAnswers, correctnessArray: correctnessArray, cumulativeScore: cumulativeScore 
-  };
-  
-  sendToSheet(payload);
-  sendToMail(MAIL_PSYCH, payload);
+    answers: formattedAnswers, correctnessArray: correctnessArray, cumulativeScore: cumulativeScore 
+  });
   alert("Тест завершён! Результат отправлен.");
 }
 function resetPsyTest() {
@@ -418,6 +425,7 @@ function resetPsyTest() {
   psyAnswers = [];
 }
 
+// --- ИСТОРИЯ ---
 function showGradeSelection() { 
   document.getElementById('hist-intro').style.display = 'none'; 
   document.getElementById('hist-grades').style.display = 'block'; 
@@ -496,28 +504,62 @@ function submitFill() {
   userAnswers.push({ qIndex: currentQuestionIndex, answer: ans }); nextQuestion(); 
 }
 function nextQuestion() { currentQuestionIndex++; if (currentQuestionIndex < currentTestData.length) renderHistoryQuestion(); else finishHistoryTest(); }
+
 function finishHistoryTest() {
   document.getElementById('progress-fill').style.width = '100%'; 
   document.getElementById('question-container').innerHTML = '<h2 style="text-align:center;">Тест завершён! Результат отправлен.</h2>';
   let score = 0; let correctnessArray = []; let cumulativeScore = []; let currentScore = 0;
-  userAnswers.forEach(ans => { 
-    const q = currentTestData[ans.qIndex]; let isCorrect = (q.type === 'choice' && ans.answer === q.correct); 
-    if (isCorrect) score++; currentScore += isCorrect ? 1 : 0; 
-    correctnessArray.push(isCorrect ? 1 : 0); cumulativeScore.push(currentScore); 
+  
+  // Формируем красивый массив с вопросами и ответами
+  const formattedAnswers = userAnswers.map(ans => {
+    const q = currentTestData[ans.qIndex]; 
+    let isCorrect = false;
+    let userAnsText = "—";
+    let correctAnsText = "—";
+
+    if (q.type === 'choice') {
+      isCorrect = (ans.answer === q.correct);
+      if (isCorrect) score++;
+      userAnsText = q.options[ans.answer] || "-";
+      correctAnsText = q.options[q.correct];
+    } else if (q.type === 'match') {
+      userAnsText = q.pairs.map((p, i) => {
+        const userMatch = ans.answer.find(a => a.slot == i);
+        const itemIdx = userMatch ? userMatch.item : null;
+        return `${p.left} ➔ ${itemIdx !== null ? q.pairs[itemIdx].right : 'нет ответа'}`;
+      }).join('<br>');
+      correctAnsText = q.pairs.map(p => `${p.left} ➔ ${p.right}`).join('<br>');
+    } else if (q.type === 'fill') {
+      userAnsText = q.fields.map((f, i) => {
+        const userField = ans.answer.find(a => a.field == i);
+        return `${f.label.split('•')[0].trim()}: ${userField ? userField.value : 'нет ответа'}`;
+      }).join('<br>');
+      correctAnsText = q.fields.map(f => `${f.label.split('•')[0].trim()}: ${f.correct}`).join('<br>');
+    }
+
+    currentScore += isCorrect ? 1 : 0;
+    correctnessArray.push(isCorrect ? 1 : 0);
+    cumulativeScore.push(currentScore);
+
+    return {
+      question: q.q,
+      userAnswer: userAnsText,
+      correctAnswer: correctAnsText,
+      isCorrect: isCorrect
+    };
   });
+
   const total = currentTestData.length; const pct = Math.round((score / total) * 100); 
   const testTitle = `История: Классы ${selectedGrades.join(', ')}`;
   
-  const payload = { 
+  sendToSheet({ 
     fio: document.getElementById('user-name').value, 
     email: document.getElementById('user-email').value, 
     test_title: testTitle, score: score, total: total, pct: pct, 
-    answers: userAnswers.map(a => a.answer), correctnessArray: correctnessArray, cumulativeScore: cumulativeScore 
-  };
-  
-  sendToSheet(payload);
-  sendToMail(MAIL_HISTORY, payload);
+    answers: formattedAnswers, correctnessArray: correctnessArray, cumulativeScore: cumulativeScore 
+  });
 }
+
 function resetHistoryTest() {
   selectedGrades = []; currentTestData = null; currentQuestionIndex = 0; userAnswers = [];
   document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
@@ -535,23 +577,6 @@ function sendToSheet(data) {
     body: JSON.stringify(data),
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
   }).catch(err => console.error('Sheet Error:', err));
-}
-
-// ОТПРАВКА ПИСЬМА НА ПОЧТУ ЧЕРЕЗ FORMSUBMIT
-function sendToMail(email, data) {
-  const formData = new FormData();
-  formData.append('_subject', `🦊 Лисий Сад: ${data.test_title} - ${data.fio}`);
-  formData.append('Имя', data.fio);
-  formData.append('Email ученика', data.email || 'Не указан');
-  formData.append('Тест', data.test_title);
-  formData.append('Результат', `${data.score} из ${data.total} (${data.pct}%)`);
-  formData.append('Ответы', JSON.stringify(data.answers, null, 2));
-  
-  fetch(`https://formsubmit.co/ajax/${email}`, {
-    method: 'POST',
-    headers: { 'Accept': 'application/json' },
-    body: formData
-  }).catch(err => console.error('Mail Error:', err));
 }
 
 // --- ВИЗУАЛИЗАТОР И ЧАСТИЦЫ (С НОВЫМ СВЕЧЕНИЕМ) ---
